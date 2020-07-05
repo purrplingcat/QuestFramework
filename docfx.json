@@ -10,9 +10,7 @@
         }
       ],
       "dest": "obj/temp/qfapi",
-      "filter": "apiFilter.yml",
-      "disableGitFeatures": false,
-      "disableDefaultFilter": false
+      "filter": "apiFilter.yml"
     }
   ],
   "build": {
@@ -26,6 +24,7 @@
         "files": [
           "docs/**.md",
           "docs/**/toc.yml",
+          "examples/examples.md",
           "toc.yml",
           "*.md"
         ]
@@ -57,9 +56,6 @@
     ],
     "postProcessors": [],
     "markdownEngineName": "markdig",
-    "noLangKeyword": false,
-    "keepFileLink": false,
-    "cleanupCacheHistory": false,
-    "disableGitFeatures": false
+    "noLangKeyword": false
   }
 }

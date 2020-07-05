@@ -2,3 +2,5 @@
   href: docs/
 - name: API Reference
   href: obj/temp/qfapi/
+- name: Examples
+  href: examples/examples.md
