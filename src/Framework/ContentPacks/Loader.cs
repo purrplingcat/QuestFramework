@@ -80,7 +80,7 @@ namespace QuestFramework.Framework.ContentPacks
             // Register quests
             foreach (var quest in content.Quests)
             {
-                CustomQuest managedQuest = MapQuest(content, quest);
+                CustomQuest managedQuest = this.MapQuest(content, quest);
 
                 if (quest.Hooks != null)
                 {
@@ -103,21 +103,37 @@ namespace QuestFramework.Framework.ContentPacks
 
         }
 
+        private int GetJsonAssetId(string name, string type)
+        {
+            if (QuestFrameworkMod.Instance.Bridge.JsonAssets == null)
+            {
+                this.Monitor.Log("JsonAssets mod is not installed! To use JsonAssets items install it from https://www.nexusmods.com/stardewvalley/mods/1720", LogLevel.Error);
+                return -1;
+            }
+
+            switch (type.ToLower())
+            {
+                case "object":
+                    return QuestFrameworkMod.Instance.Bridge.JsonAssets.GetObjectId(name);
+                case "bigcraftable":
+                    return QuestFrameworkMod.Instance.Bridge.JsonAssets.GetBigCraftableId(name);
+                default:
+                    this.Monitor.Log($"Unsupported JsonAssets type by Quest Framework: {type}", LogLevel.Error);
+                    return -1;
+            }
+        }
+
         private string TranspileToken(string name, string value)
         {
             switch (name)
             {
                 case "ja":
-                    if (QuestFrameworkMod.Instance.Bridge.JsonAssets == null)
-                    {
-                        this.Monitor.Log("JsonAssets mod is not installed! To use JsonAssets items install it from https://www.nexusmods.com/stardewvalley/mods/1720", LogLevel.Error);
-                        return "-1";
-                    }
-
-                    int id = QuestFrameworkMod.Instance.Bridge.JsonAssets.GetObjectId(value);
+                    string[] s = value.Split('|');
+                    string type = s.Length < 2 ? "object" : s[1].Trim();
+                    int id = this.GetJsonAssetId(s[0].Trim(), type);
 
                     if (id == -1)
-                        this.Monitor.Log($"JsonAssets: Unknown item name `{value}`", LogLevel.Error);
+                        this.Monitor.Log($"JsonAssets: Unknown item name `{s[0]}` of type `{type}`", LogLevel.Error);
 
                     return id.ToString();
 

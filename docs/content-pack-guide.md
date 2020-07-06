@@ -1,4 +1,5 @@
-﻿← [README](../README.md)
+﻿
+← [README](../README.md)
 
 # Content pack guide
 
@@ -72,7 +73,7 @@ Reward            |           | (int) Reward in SDV currency "golds". If this fi
 RewardDescription |           | (string) Reward description
 Cancelable        |           | (boolean) Can player cancel this quest?
 ReactionText      |           | (string) NPC's reaction text when you complete this quest (only for quests which interacts with NPCs)
-Trigger           |           | (string) or (int) Completion trigger (see quest types for more info)
+Trigger           |           | (string) Completion trigger (see quest types for more info) Supports [JSON Assets](#json-assets-support)
 Hooks             |           | (Hook) Quest hooks (see hooks for more info)
 
 #### Example
@@ -123,7 +124,7 @@ See the `Data/ObjectInformation` game resource for available items.
 
 Deliver specified item to specified NPC.
 
-*Trigger*: `<string:NPC_name> <int:item_id>` like `Abigail 66` for bring Amethyst for Abigail. 
+*Trigger*: `<string:NPC_name> <int:object_id>` like `Abigail 66` for bring Amethyst for Abigail or `Willy {{ja:Fish Oil}}` if you want to use JsonAssets item (JsonAssets required for use JA token)
 See the `Data/ObjectInformation` game resource for available items.
 
 This quest type accepts `ReactionText`.
@@ -404,6 +405,38 @@ Text         | (string) Text of the quest source letter (required)
     }
   ]
 }
+```
+
+## Compatibility with other mods
+
+### Json Assets support
+
+Quest Framework is compatible with JsonAssets mod. The framework supports JsonAssets objects for the `Trigger` quest field via token named `ja` and supports two item types: `object` and `bigcraftable`.
+
+Token looks like: `{{ja: <itemName> [|bigcraftable]}}`
+
+If you add suffix `|bigcraftable` after item name, then Quest Framework looks in the BigCraftable sheet. Otherwise looks in Object sheet.
+
+#### Example
+
+```js
+{
+  "Format": "1.0",
+  "Quests": [
+    {
+      "Name": "willy_fish_oil", // No id needed, will be automatically generated
+      "Type": "ItemDelivery", // Vanilla quest type
+      "Title": "Fish Oil needed",
+      "Description": "Hi. I need a fish oil. ASAP please.\n                                - Willy",
+      "Objective": "Bring Fish Oil to Willy",
+      "Reward": 220, // 220g
+      "Cancelable": true,
+      "Trigger": "Willy {{ja:Fish Oil}}", // Bring Fish Oil to Willy (this item is from JA items)
+      "ReactionText": "This one smells very intensive! Thank you so much, @!$h"
+    }
+  ]
+}
+
 ```
 
 ## Outbound
