@@ -180,6 +180,7 @@ namespace QuestFramework.Framework.ContentPacks
                 Description = quest.Description,
                 BaseType = quest.Type,
                 Objective = quest.Objective,
+                DaysLeft = quest.DaysLeft,
                 Reward = quest.Reward,
                 RewardDescription = quest.RewardDescription,
                 ReactionText = quest.ReactionText,

@@ -75,7 +75,8 @@ namespace QuestFramework
                 new Patches.LocationPatch(this.HookManager),
                 new Patches.Game1Patch(this.QuestManager, this.QuestOfferManager),
                 new Patches.DialoguePatch(this.QuestManager),
-                new Patches.NPCPatch(this.QuestManager, this.QuestOfferManager));
+                new Patches.NPCPatch(this.QuestManager, this.QuestOfferManager),
+                new Patches.BillboardPatch());
 
             helper.ConsoleCommands.Add("quests_list", "List all managed quests", Commands.ListQuests);
             helper.ConsoleCommands.Add("quests_log", "List all managed quests which are in player's quest log", Commands.ListLog);

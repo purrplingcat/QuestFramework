@@ -7,6 +7,7 @@
       "Title": "The purple lunch",
       "Description": "Abigail is very hungry. She wants to eat something special from mines.",
       "Objective": "Bring amethyst to Abigail",
+      "DaysLeft": 1,
       "Reward": 150, // 150g
       "Cancelable": true,
       "Trigger": "Abigail 66", // Bring amethyst to Abby

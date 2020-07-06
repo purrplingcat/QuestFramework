@@ -3,6 +3,7 @@ using QuestFramework.Framework.Store;
 using QuestFramework.Hooks;
 using StardewModdingAPI;
 using StardewValley;
+using System;
 using System.Collections.Generic;
 
 namespace QuestFramework.Quests
@@ -27,6 +28,7 @@ namespace QuestFramework.Quests
         public string RewardDescription { get; set; }
         public bool Cancelable { get; set; }
         public string ReactionText { get; set; }
+        public int DaysLeft { get; set; } = 0;
         public List<Hook> Hooks { get; set; }
         
         public string Trigger 
@@ -41,6 +43,11 @@ namespace QuestFramework.Quests
 
                 this.trigger = value;
             }
+        }
+
+        public bool IsDailyQuest()
+        {
+            return this.DaysLeft > 0;
         }
 
         public int CustomTypeId 

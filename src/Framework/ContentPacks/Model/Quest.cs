@@ -17,6 +17,7 @@ namespace QuestFramework.Framework.ContentPacks.Model
         public string Description { get; set; }
         public string Objective { get; set; }
         public List<string> NextQuests { get; set; }
+        public int DaysLeft { get; set; }
         public int Reward { get; set; }
         public string RewardDescription { get; set; }
         public bool Cancelable { get; set; }

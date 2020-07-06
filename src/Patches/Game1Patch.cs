@@ -1,5 +1,6 @@
 ﻿using Harmony;
 using PurrplingCore.Patching;
+using QuestFramework.Extensions;
 using QuestFramework.Framework;
 using StardewModdingAPI;
 using StardewValley;
@@ -60,11 +61,28 @@ namespace QuestFramework.Patches
             return true;
         }
 
+        private static void After_CanAcceptDailyQuest(ref bool __result)
+        {
+            try
+            {
+                if (Game1.questOfTheDay != null && Game1.questOfTheDay.IsManaged() && Game1.player.hasQuest(Game1.questOfTheDay.id.Value))
+                    __result = false;
+            }
+            catch (Exception e)
+            {
+                Instance.LogFailure(e, nameof(Game1Patch.After_CanAcceptDailyQuest));
+            }
+        }
+
         protected override void Apply(HarmonyInstance harmony)
         {
             harmony.Patch(
                 original: AccessTools.Method(typeof(Game1), nameof(Game1.RefreshQuestOfTheDay)),
                 prefix: new HarmonyMethod(typeof(Game1Patch), nameof(Game1Patch.Before_RefreshQuestOfTheDay))
+            );
+            harmony.Patch(
+                original: AccessTools.Method(typeof(Game1), nameof(Game1.CanAcceptDailyQuest)),
+                postfix: new HarmonyMethod(typeof(Game1Patch), nameof(Game1Patch.After_CanAcceptDailyQuest))
             );
         }
     }

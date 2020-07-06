@@ -7,6 +7,7 @@
       "Title": "Fish Oil needed",
       "Description": "Hi. I need a fish oil. ASAP please.\n                                - Willy",
       "Objective": "Bring Fish Oil to Willy",
+      "DaysLeft": 3,
       "Reward": 220, // 220g
       "Cancelable": true,
       "Trigger": "Willy {{ja:Fish Oil}}", // Bring amethyst to Abby

@@ -220,7 +220,7 @@ namespace QuestFramework.Framework.Controllers
 
         public Dictionary<string, int> GetQuestIds()
         {
-            throw new NotImplementedException();
+            return this.questIdCache;
         }
     }
 }

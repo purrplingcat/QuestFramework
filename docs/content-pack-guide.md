@@ -1,4 +1,5 @@
 ﻿
+
 ← [README](../README.md)
 
 # Content pack guide
@@ -69,6 +70,7 @@ Title             | required  | (string) Quest title in the quest log
 Description       |           | (string) Quest description
 Objective         | required  | (string) Quest objective
 NextQuests        |           | (string[]) One of more next quests which will be added to player's quest log when this quest is completed.
+DaysLeft          |           | (int) If this field is filled or is greater than 0, this quest is marked as daily and limited for specified number of days here.
 Reward            |           | (int) Reward in SDV currency "golds". If this field is not defined or has value `0`, then player will receive no money reward.
 RewardDescription |           | (string) Reward description
 Cancelable        |           | (boolean) Can player cancel this quest?
@@ -88,6 +90,7 @@ Hooks             |           | (Hook) Quest hooks (see hooks for more info)
       "Title": "The purple lunch",
       "Description": "Abigail are very hungry. She wants to eat something special from mines.",
       "Objective": "Bring amethyst to Abigail",
+      "DaysLeft": 5, // If player don't complete this quest until 5 days, this quest will be removed from quest log automatically without completion
       "Reward": 300, // 300g
       "Cancelable": true, // This quest can be cancelled by player
       "Trigger": "Abigail 66", // Bring amethyst to Abby

@@ -35,6 +35,8 @@ namespace QuestFramework.Patches
                         (__result as SlayMonsterQuest).dialogueparts.Clear();
                     }
 
+                    __result.dailyQuest.Value = customQuest.IsDailyQuest();
+                    __result.daysLeft.Value = customQuest.DaysLeft;
                     __result.canBeCancelled.Value = customQuest.Cancelable;
                     __result.questType.Value = customQuest.CustomTypeId != -1
                             ? customQuest.CustomTypeId
