@@ -1,11 +1,8 @@
 ﻿using Newtonsoft.Json.Linq;
-using QuestFramework.Framework;
 using QuestFramework.Framework.Store;
 using QuestFramework.Hooks;
 using StardewModdingAPI;
 using StardewValley;
-using StardewValley.Quests;
-using System;
 using System.Collections.Generic;
 
 namespace QuestFramework.Quests
@@ -16,6 +13,7 @@ namespace QuestFramework.Quests
     public class CustomQuest
     {
         private int customTypeId;
+        private string trigger;
 
         internal int id = -1;
         public string Name { get; set; }
@@ -29,8 +27,22 @@ namespace QuestFramework.Quests
         public string RewardDescription { get; set; }
         public bool Cancelable { get; set; }
         public string ReactionText { get; set; }
-        public object Trigger { get; set; }
         public List<Hook> Hooks { get; set; }
+        
+        public string Trigger 
+        {
+            get => this.trigger;
+            set
+            {
+                if (this is ITriggerLoader triggerLoader)
+                {
+                    triggerLoader.LoadTrigger(value);
+                }
+
+                this.trigger = value;
+            }
+        }
+
         public int CustomTypeId 
         { 
             get => this.BaseType == QuestType.Custom ? this.customTypeId : -1; 

@@ -113,7 +113,7 @@ namespace QuestFramework.Framework.ContentPacks
                 RewardDescription = quest.RewardDescription,
                 ReactionText = quest.ReactionText,
                 Cancelable = quest.Cancelable,
-                Trigger = quest.Trigger,
+                Trigger = quest.Trigger?.ToString(),
                 NextQuests = quest.NextQuests,
                 OwnedByModUid = content.owner.Manifest.UniqueID,
             };

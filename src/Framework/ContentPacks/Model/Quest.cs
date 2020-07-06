@@ -1,4 +1,5 @@
-﻿using QuestFramework.Hooks;
+﻿using Newtonsoft.Json.Linq;
+using QuestFramework.Hooks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace QuestFramework.Framework.ContentPacks.Model
         public string RewardDescription { get; set; }
         public bool Cancelable { get; set; }
         public string ReactionText { get; set; }
-        public object Trigger { get; set; }
+        public JToken Trigger { get; set; }
         public List<Hook> Hooks { get; set; }
     }
 }
