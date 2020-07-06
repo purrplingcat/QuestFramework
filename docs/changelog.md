@@ -4,6 +4,7 @@
 
 ### Common changes
 
+- Added new global conditions: *MinDaysPlayed*, *MaxDaysPlayed*, *DaysPlayed* and *IsFarmerMarried*
 - Added support for daily quests (day limited quests)
 
 ### For Content Pack modders

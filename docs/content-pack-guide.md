@@ -268,6 +268,10 @@ MailReceived    | `CF_Fish`                  | Trig action when this mail was re
 EventSeen       | `3910674`                  | Trig action when event with this event id seen by player.
 MailNotReceived | `JunimoKart`               | Same as `MailReceived`, but trigs action when specified mail **was not received** by farmer.
 EventNotSeen    | `3910674`                  | Same as `EventSeen` but trigs action when event was **not seen yet** by player.
+MinDaysPlayed   | `34`                       | Minimum played days from start of new game (from 1 spring year 1)
+MaxDaysPlayed   | `51`                       | Maximum played days from start of new game (from 1 spring year 1)
+DaysPlayed      | `19`                       | Total played days from start of new game (from 1 spring year 1)
+IsPlayerMarried | `yes` or `no`              | Is player married?
 
 ## Offers
 

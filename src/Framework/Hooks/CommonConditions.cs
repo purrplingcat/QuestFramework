@@ -26,6 +26,10 @@ namespace QuestFramework.Framework.Hooks
                 ["EventSeen"] = (valueToCheck) => CheckEventSeenCondition(valueToCheck),
                 ["MailNotReceived"] = (valueToCheck) => CheckReceivedMailCondition(valueToCheck, not: true),
                 ["EventNotSeen"] = (valueToCheck) => CheckEventSeenCondition(valueToCheck, not: true),
+                ["MinDaysPlayed"] = (valueToCheck) => Game1.Date.TotalDays >= Convert.ToInt32(valueToCheck),
+                ["MaxDaysPlayed"] = (valueToCheck) => Game1.Date.TotalDays <= Convert.ToInt32(valueToCheck),
+                ["DaysPlayed"] = (valueToCheck) => Game1.Date.TotalDays == Convert.ToInt32(valueToCheck),
+                ["IsPlayerMarried"] = (valueToCheck) => ParseBool(valueToCheck) == Game1.player.isMarried(),
             };
         }
 
@@ -76,6 +80,21 @@ namespace QuestFramework.Framework.Hooks
             }
 
             return flag;
+        }
+
+        private static bool ParseBool(string str)
+        {
+            var truthyVals = new string[] { "true", "yes", "1", "on", "enabled" };
+            var falsyVals = new string[] { "false", "no", "0", "off", "disabled" };
+            str = str.ToLower();
+
+            if (truthyVals.Contains(str))
+                return true;
+
+            if (falsyVals.Contains(str))
+                return false;
+
+            throw new InvalidCastException($"Unable to convert `{str}` to boolean.");
         }
 
         private static string GetCurrentWeatherName()
