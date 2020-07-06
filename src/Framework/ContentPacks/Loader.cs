@@ -1,4 +1,6 @@
-﻿using QuestFramework.Framework.ContentPacks.Model;
+﻿using PurrplingCore.Lexing;
+using PurrplingCore.Lexing.LexTokens;
+using QuestFramework.Framework.ContentPacks.Model;
 using QuestFramework.Quests;
 using StardewModdingAPI;
 using System;
@@ -101,8 +103,61 @@ namespace QuestFramework.Framework.ContentPacks
 
         }
 
-        private static CustomQuest MapQuest(Content content, Quest quest)
+        private string TranspileToken(string name, string value)
         {
+            switch (name)
+            {
+                case "ja":
+                    if (QuestFrameworkMod.Instance.Bridge.JsonAssets == null)
+                    {
+                        this.Monitor.Log("JsonAssets mod is not installed! To use JsonAssets items install it from https://www.nexusmods.com/stardewvalley/mods/1720", LogLevel.Error);
+                        return "-1";
+                    }
+
+                    int id = QuestFrameworkMod.Instance.Bridge.JsonAssets.GetObjectId(value);
+
+                    if (id == -1)
+                        this.Monitor.Log($"JsonAssets: Unknown item name `{value}`", LogLevel.Error);
+
+                    return id.ToString();
+
+            }
+
+            return "{{" + name + ":" + value + "}}";
+        }
+
+        private string ApplyTokens(string rawStr)
+        {
+            var lexer = new Lexer();
+            List<string> parts = new List<string>();
+
+            if (rawStr == null)
+                return null;
+
+            foreach (var bit in lexer.ParseBits(rawStr, false))
+            {
+                if (bit.Type == LexTokenType.Literal)
+                {
+                    parts.Add(bit.ToString());
+                    continue;
+                }
+
+                if (bit.Type == LexTokenType.Token && bit is LexTokenToken token)
+                {
+                    parts.Add(this.TranspileToken(token.Name, token.InputArgs.ToString()));
+                    continue;
+                }
+
+                parts.Add(bit.ToString());
+            }
+
+            return string.Join("", parts);
+        }
+
+        private CustomQuest MapQuest(Content content, Quest quest)
+        {
+            string trigger = quest.Trigger?.ToString();
+
             var managedQuest = new CustomQuest(quest.Name)
             {
                 Title = quest.Title,
@@ -113,7 +168,7 @@ namespace QuestFramework.Framework.ContentPacks
                 RewardDescription = quest.RewardDescription,
                 ReactionText = quest.ReactionText,
                 Cancelable = quest.Cancelable,
-                Trigger = quest.Trigger?.ToString(),
+                Trigger = this.ApplyTokens(trigger),
                 NextQuests = quest.NextQuests,
                 OwnedByModUid = content.owner.Manifest.UniqueID,
             };

@@ -8,5 +8,12 @@
   "MinimumApiVersion": "3.6.1",
   "UpdateKeys": [
     "Nexus:6414"
+  ],
+  "Dependencies": [
+    {
+      "UniqueID": "spacechase0.JsonAssets",
+      "MinimumVersion": "1.6.2",
+      "IsRequired": false
+    }
   ]
 }

@@ -26,8 +26,9 @@ namespace QuestFramework.Framework
                     .AppendLine($"    Type: {quest.BaseType}")
                     .AppendLine($"    Custom type: {quest.CustomTypeId}")
                     .AppendLine($"    Name: {quest.Name}")
-                    .AppendLine($"    Category: {quest.OwnedByModUid}")
+                    .AppendLine($"    Owned by: {quest.OwnedByModUid}")
                     .AppendLine($"    Current ID: {quest.id}")
+                    .AppendLine($"    Trigger: {quest.Trigger ?? "null"}")
                     .AppendLine($"    Active: {(quest.id >= 0 ? "Yes" : "No")}");
             }
 
@@ -56,8 +57,9 @@ namespace QuestFramework.Framework
                     .AppendLine($"    Type: {quest.BaseType}")
                     .AppendLine($"    Custom type: {quest.CustomTypeId}")
                     .AppendLine($"    Name: {quest.Name}")
-                    .AppendLine($"    Category: {quest.OwnedByModUid}")
+                    .AppendLine($"    Owned by: {quest.OwnedByModUid}")
                     .AppendLine($"    Current ID: {quest.id}")
+                    .AppendLine($"    Trigger: {quest.Trigger ?? "null"}")
                     .AppendLine($"    Cancelable: {quest.Cancelable}");
             }
 

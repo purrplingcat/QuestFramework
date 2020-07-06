@@ -1,6 +1,7 @@
 ﻿using PurrplingCore.Patching;
 using QuestFramework.Api;
 using QuestFramework.Framework;
+using QuestFramework.Framework.Bridges;
 using QuestFramework.Framework.ContentPacks;
 using QuestFramework.Framework.Controllers;
 using QuestFramework.Framework.Events;
@@ -23,6 +24,7 @@ namespace QuestFramework
         private bool hasInitMessageArrived = false;
 
         internal State Status { get; private set; }
+        internal Bridge Bridge { get; private set; }
         internal QuestManager QuestManager { get; private set; }
         internal QuestApi Api { get; private set; }
         internal QuestStateStore QuestStateStore { get; private set; }
@@ -42,6 +44,7 @@ namespace QuestFramework
         {
             Instance = this;
 
+            this.Bridge = new Bridge(helper.ModRegistry);
             this.EventManager = new EventManager();
             this.QuestManager = new QuestManager(this.Monitor);
             this.QuestStateStore = new QuestStateStore(helper.Data, this.Monitor);
@@ -232,6 +235,7 @@ namespace QuestFramework
         [EventPriority(EventPriority.High + 100)]
         private void OnGameStarted(object sender, GameLaunchedEventArgs e)
         {
+            this.Bridge.Init();
             this.ChangeState(State.STANDBY);
             this.RegisterDefaultHooks();
             this.Monitor.Log("Quest framework established their internal systems");
