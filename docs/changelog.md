@@ -1,9 +1,10 @@
 ﻿# Changelog
 
-## Upcoming release
+## 1.0.0-beta.1
 
 ### Common changes
 
+- Fixed saving game
 - Added new global conditions: *MinDaysPlayed*, *MaxDaysPlayed*, *DaysPlayed* and *IsFarmerMarried*
 - Added support for daily quests (day limited quests)
 
