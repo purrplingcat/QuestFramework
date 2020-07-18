@@ -1,5 +1,18 @@
 ﻿# Changelog
 
+## Upcoming version
+
+### Common changes
+
+- Added `not:` prefix for negate result of checked condition (can be used in hooks and offers and in both programatic and content pack usage)
+- Added new conditions for check if quest was current season: `QuestAcceptedThisYear`, `QuestAcceptedThisSeason`, `QuestAcceptedThisDay` and `QuestAcceptedThisWeekDay`
+- Added stats support
+- Improved some minor refactors
+
+### For SMAPI modders
+
+- Added extensions for `CustomQuest` class (use namespace `QuestFramework.Extensions` for apply)
+
 ## 1.0.0-beta.1
 
 ### Common changes

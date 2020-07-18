@@ -44,7 +44,8 @@ namespace QuestFramework.Framework.Networing
                 {
                     { e.Peer.PlayerID, this.questStateStore.GetPayloadList(e.Peer.PlayerID) }
                 };
-                var message = new InitalMessage(this.questController.GetQuestIds(), store);
+                var stats = this.statsManager.GetStats();
+                var message = new InitalMessage(this.questController.GetQuestIds(), store, stats);
 
                 this.helper.SendMessage(
                     message, "Init", new[] { this.modManifest.UniqueID }, new[] { e.Peer.PlayerID });
@@ -98,6 +99,7 @@ namespace QuestFramework.Framework.Networing
                 this.hasInitReceived = true;
                 this.questController.SetQuestIdCache(inital.QuestIdList);
                 this.questStateStore.RestoreData(inital.InitalStore);
+                this.statsManager.SetStats(inital.QuestStats);
                 this.monitor.Log($"Received inital data from host. World ready: {Context.IsWorldReady}");
                 this.InitReceived?.Invoke(this, new EventArgs());
             }

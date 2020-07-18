@@ -29,15 +29,24 @@ namespace QuestFramework.Framework.Stats
             this.stats[playerId] = stats;
         }
 
+        public void SetStats(Dictionary<long, Stats> stats)
+        {
+            this.stats = stats;
+        }
+
         public Stats GetStats(long playerId)
         {
             if (!this.stats.ContainsKey(playerId))
             {
                 this.SetStats(playerId, new Stats());
-                this.Sync();
             }
 
             return this.stats[playerId];
+        }
+
+        public Dictionary<long, Stats> GetStats()
+        {
+            return this.stats;
         }
 
         public void LoadStats()
@@ -73,6 +82,11 @@ namespace QuestFramework.Framework.Stats
         {
             this.AddQuestStat(
                 questName, this.GetStats(PlayerId).RemovedQuests);
+        }
+
+        public void Clean()
+        {
+            this.stats = new Dictionary<long, Stats>();
         }
 
         private void Sync()

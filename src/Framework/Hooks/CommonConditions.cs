@@ -35,6 +35,8 @@ namespace QuestFramework.Framework.Hooks
                 ["QuestAcceptedThisSeason"] = (valueToCheck, managedQuest) => IsQuestAcceptedThisSeason(valueToCheck, managedQuest),
                 ["QuestAcceptedThisDay"] = (valueToCheck, managedQuest) => IsQuestAcceptedThisDay(valueToCheck, managedQuest),
                 ["QuestAcceptedThisWeekDay"] = (valueToCheck, managedQuest) => IsQuestAcceptedThisWeekDay(valueToCheck, managedQuest),
+                ["KnownCraftingRecipe"] = (valueToCheck, _) => Game1.player.craftingRecipes.ContainsKey(valueToCheck),
+                ["KnownCookingRecipe"] = (valueToCheck, _) => Game1.player.cookingRecipes.ContainsKey(valueToCheck),
             };
         }
 

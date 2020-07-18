@@ -280,6 +280,8 @@ QuestAcceptedThisYear    | `@self` or `abigail_amethyst` or `abigail_amethyst@pu
 QuestAcceptedThisSeason  | same as *QuestAcceptedThisYear* | Same as *QuestAcceptedThisYear* but for season.
 QuestAcceptedThisDay     | same as *QuestAcceptedThisYear* | Same as *QuestAcceptedThisYear* but for day.
 QuestAcceptedThisWeekDay | same as *QuestAcceptedThisYear* | Same as *QuestAcceptedThisYear* but for weekday.
+KnownCraftingRecipe      | `Furance`                  | Player knows specified crafting recipe.
+KnownCookingRecipe       | `Fried Egg`                | Player knows specified cooking recipe.
 
 Every condition enlisted in this common conditions list you can prefix with `not:` for negate condition result. 
 For example: `not:EventSeen` means event with specified id was not seen by player.

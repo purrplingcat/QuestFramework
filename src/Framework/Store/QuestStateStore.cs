@@ -70,5 +70,10 @@ namespace QuestFramework.Framework.Store
             this.Store[payload.FarmerId][payload.QuestName] = payload;
             this.Monitor.Log($"Payload `{payload.QuestName}/{payload.FarmerId}` type `{payload.StateData.Type}` commited to store");
         }
+
+        internal void Clean()
+        {
+            this.Store = new QuestStateStoreData();
+        }
     }
 }

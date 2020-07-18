@@ -97,6 +97,15 @@ namespace QuestFramework
                 this.ContentPackLoader.LoadPacks(packs);
         }
 
+        [EventPriority(EventPriority.High + 100)]
+        private void OnGameStarted(object sender, GameLaunchedEventArgs e)
+        {
+            this.Bridge.Init();
+            this.ChangeState(State.STANDBY);
+            this.RegisterDefaultHooks();
+            this.Monitor.Log("Quest framework established their internal systems");
+        }
+
         private void OnSaving(object sender, SavingEventArgs e)
         {
             if (Context.IsMainPlayer)
@@ -144,6 +153,8 @@ namespace QuestFramework
             this.QuestManager.Quests.Clear();
             this.QuestOfferManager.Offers.Clear();
             this.HookManager.Clean();
+            this.QuestStateStore.Clean();
+            this.StatsManager.Clean();
             this.NetworkOperator.Reset();
             this.hasInitialized = false;
             this.hasSaveLoaded = false;
@@ -265,15 +276,6 @@ namespace QuestFramework
             this.Status = state;
             this.EventManager.ChangeState.Fire(new Events.ChangeStateEventArgs(previous, this.Status), this);
             this.Monitor.Log($"State changed: {previous} -> {this.Status}");
-        }
-
-        [EventPriority(EventPriority.High + 100)]
-        private void OnGameStarted(object sender, GameLaunchedEventArgs e)
-        {
-            this.Bridge.Init();
-            this.ChangeState(State.STANDBY);
-            this.RegisterDefaultHooks();
-            this.Monitor.Log("Quest framework established their internal systems");
         }
     }
 }
