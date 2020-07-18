@@ -37,6 +37,7 @@ namespace QuestFramework.Framework.Hooks
                 ["QuestAcceptedThisWeekDay"] = (valueToCheck, managedQuest) => IsQuestAcceptedThisWeekDay(valueToCheck, managedQuest),
                 ["KnownCraftingRecipe"] = (valueToCheck, _) => Game1.player.craftingRecipes.ContainsKey(valueToCheck),
                 ["KnownCookingRecipe"] = (valueToCheck, _) => Game1.player.cookingRecipes.ContainsKey(valueToCheck),
+                ["Random"] = (valueToCheck, _) => Game1.random.NextDouble() < Convert.ToDouble(valueToCheck) / 100, // Chance is in %
             };
         }
 

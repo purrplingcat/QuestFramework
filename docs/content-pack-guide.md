@@ -282,6 +282,7 @@ QuestAcceptedThisDay     | same as *QuestAcceptedThisYear* | Same as *QuestAccep
 QuestAcceptedThisWeekDay | same as *QuestAcceptedThisYear* | Same as *QuestAcceptedThisYear* but for weekday.
 KnownCraftingRecipe      | `Furance`                  | Player knows specified crafting recipe.
 KnownCookingRecipe       | `Fried Egg`                | Player knows specified cooking recipe.
+Random                   | `52` or `22.272`           | A random chance in % (0 - 100). Number `52` means 52% of chance, number `22.272` means 22.272% of chance.
 
 Every condition enlisted in this common conditions list you can prefix with `not:` for negate condition result. 
 For example: `not:EventSeen` means event with specified id was not seen by player.
