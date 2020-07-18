@@ -5,6 +5,7 @@
 ### Common changes
 
 - Added `not:` prefix for negate result of checked condition (can be used in hooks and offers and in both programatic and content pack usage)
+- Added new conditions for check known recipes: `KnownCraftingRecipe` and `KnownCookingRecipe`
 - Added new conditions for check if quest was current season: `QuestAcceptedThisYear`, `QuestAcceptedThisSeason`, `QuestAcceptedThisDay` and `QuestAcceptedThisWeekDay`
 - Added stats support
 - Improved some minor refactors
