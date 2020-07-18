@@ -10,7 +10,7 @@ namespace QuestFramework.Framework
     internal class HookManager
     {
         public List<Hook> Hooks { get; private set; }
-        public Dictionary<string, Func<string, bool>> Conditions { get; private set; }
+        public Dictionary<string, Func<string, CustomQuest, bool>> Conditions { get; private set; }
         public Dictionary<string, HookObserver> Observers { get; }
 
         public HookManager()
@@ -28,7 +28,7 @@ namespace QuestFramework.Framework
                         select new { managedQuest = quest, hook };
 
             this.Hooks = hooks.Select(h => { 
-                h.hook.managedQuest = h.managedQuest; return h.hook; 
+                h.hook.ManagedQuest = h.managedQuest; return h.hook; 
             }).ToList();
         }
 
@@ -52,7 +52,7 @@ namespace QuestFramework.Framework
             this.Observers.Add(hookObserver.Name, hookObserver);
         }
 
-        public bool CheckConditions(Dictionary<string, string> conditions, IEnumerable<string> ignore = null)
+        public bool CheckConditions(Dictionary<string, string> conditions, CustomQuest context, IEnumerable<string> ignore = null)
         {
             bool flag = true;
 
@@ -64,16 +64,27 @@ namespace QuestFramework.Framework
                 if (ignore != null && ignore.Any(ig => ig == cond.Key))
                     continue;
 
-                flag &= this.CheckCondition(cond.Key, cond.Value);
+                flag &= this.CheckCondition(cond.Key, cond.Value, context);
             }
 
             return flag;
         }
 
-        public bool CheckCondition(string condition, string value)
+        public bool CheckCondition(string condition, string value, CustomQuest context)
         {
+            bool isNot = false;
+
+            if (condition.StartsWith("not:"))
+            {
+                condition = condition.Substring(4);
+                isNot = true;
+            }
+
             if (this.Conditions.TryGetValue(condition, out var conditionFunc))
-                return conditionFunc(value);
+            {
+                bool result = conditionFunc(value, context);
+                return isNot ? !result : result;
+            }
             
             return false;
         }

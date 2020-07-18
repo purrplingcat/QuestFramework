@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using QuestFramework.Framework.Stats;
 using QuestFramework.Framework.Store;
 using QuestFramework.Hooks;
 using StardewModdingAPI;
@@ -30,6 +31,8 @@ namespace QuestFramework.Quests
         public string ReactionText { get; set; }
         public int DaysLeft { get; set; } = 0;
         public List<Hook> Hooks { get; set; }
+
+        public event EventHandler<IQuestInfo> Completed;
         
         public string Trigger 
         {
@@ -50,6 +53,12 @@ namespace QuestFramework.Quests
             return this.DaysLeft > 0;
         }
 
+        internal void Complete(IQuestInfo questInfo)
+        {
+            StatsManager.AddCompletedQuest(this.GetFullName());
+            this.Completed?.Invoke(this, questInfo);
+        }
+
         public int CustomTypeId 
         { 
             get => this.BaseType == QuestType.Custom ? this.customTypeId : -1; 
@@ -58,6 +67,7 @@ namespace QuestFramework.Quests
 
         internal protected static IModHelper Helper => QuestFrameworkMod.Instance.Helper;
         internal protected static IMonitor Monitor => QuestFrameworkMod.Instance.Monitor;
+        private static StatsManager StatsManager => QuestFrameworkMod.Instance.StatsManager;
 
         public CustomQuest()
         {

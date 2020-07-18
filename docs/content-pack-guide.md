@@ -1,5 +1,6 @@
 ﻿
 
+
 ← [README](../README.md)
 
 # Content pack guide
@@ -180,7 +181,7 @@ Field  | Description
 ------ | -----------
 When   | When this hook will be trigered (see hook types)
 Action | Which action will be executed (see actions)
-Has    | Conditions for execute the hook (see conditions)
+Has    | Conditions for execute the hook (see conditions and hook types).
 
 #### Example
 
@@ -230,6 +231,9 @@ Accept          | Accept this quest and add it to player's quest log as new.
 
 ### Hook types
 
+Some hook types has own specific conditions. See them bellow.
+**NOTE:** For specialized hook type's conditions you cant't use the negation `not:` prefix. This prefix is only for [common conditions](common-environment-conditions) and for global custom conditions.
+
 #### Location
 
 This hook is triggered when player entered or leaved specific location and all other conditions are met.
@@ -256,22 +260,29 @@ TouchAction     | Touch action property value must be this defined value for tri
 
 ### Common environment conditions
 
-Condition name  | Example value              | Description
---------------- | -------------------------- | -----------
-Weather         | `sunny`                    | Current weather. Allowed values: `rainy`, `snowy`, `stormy`, `cloudy`, `sunny`
-Date            | `17 spring`, `5 summer Y2` | Game date in format `<day> <season>` or `<day> <season> Y<year>`
-Days            | `2 6 12`                   | Trig action only when today is one of these days. You can specify any count of days.
-Seasons         | `summer fall`              | Trig action only when current season is on of these seasons. You can specify any count of seasons.
-DaysOfWeek      | `monday wednesday`         | Trig action when today's weekday is one of these weekdays. You can specify any count of weekdays
-Friendship      | `Abigail 8`, `Maru 5 Shane 4` | Trig action when friendship heart level is the same as specified value for specified NPC. You can specify more than one friendship conditions.
-MailReceived    | `CF_Fish`                  | Trig action when this mail was received by farmer.
-EventSeen       | `3910674`                  | Trig action when event with this event id seen by player.
-MailNotReceived | `JunimoKart`               | Same as `MailReceived`, but trigs action when specified mail **was not received** by farmer.
-EventNotSeen    | `3910674`                  | Same as `EventSeen` but trigs action when event was **not seen yet** by player.
-MinDaysPlayed   | `34`                       | Minimum played days from start of new game (from 1 spring year 1)
-MaxDaysPlayed   | `51`                       | Maximum played days from start of new game (from 1 spring year 1)
-DaysPlayed      | `19`                       | Total played days from start of new game (from 1 spring year 1)
-IsPlayerMarried | `yes` or `no`              | Is player married?
+These global conditions can be used in hooks or in the quest offers.
+
+Condition name           | Example value              | Description
+------------------------ | -------------------------- | -----------
+Weather                  | `sunny`                    | Current weather. Allowed values: `rainy`, `snowy`, `stormy`, `cloudy`, `sunny`
+Date                     | `17 spring`, `5 summer Y2` | Game date in format `<day> <season>` or `<day> <season> Y<year>`
+Days                     | `2 6 12`                   | Trig action only when today is one of these days. You can specify any count of days.
+Seasons                  | `summer fall`              | Trig action only when current season is on of these seasons. You can specify any count of seasons.
+DaysOfWeek               | `monday wednesday`         | Trig action when today's weekday is one of these weekdays. You can specify any count of weekdays
+Friendship               | `Abigail 8`, `Maru 5 Shane 4` | Trig action when friendship heart level is the same as specified value for specified NPC. You can specify more than one friendship conditions.
+MailReceived             | `CF_Fish`                  | Trig action when this mail was received by farmer.
+EventSeen                | `3910674`                  | Trig action when event with this event id seen by player.
+MinDaysPlayed            | `34`                       | Minimum played days from start of new game (from 1 spring year 1)
+MaxDaysPlayed            | `51`                       | Maximum played days from start of new game (from 1 spring year 1)
+DaysPlayed               | `19`                       | Total played days from start of new game (from 1 spring year 1)
+IsPlayerMarried          | `yes` or `no`              | Is player married?
+QuestAcceptedThisYear    | `@self` or `abigail_amethyst` or `abigail_amethyst@purrplingcat.testquests` | Put magic `@self` or quest name or fullqualified quest name for check if this quest was accepted this year. non-fullqualified name or magic `@self` will be handled in current quest context.
+QuestAcceptedThisSeason  | same as *QuestAcceptedThisYear* | Same as *QuestAcceptedThisYear* but for season.
+QuestAcceptedThisDay     | same as *QuestAcceptedThisYear* | Same as *QuestAcceptedThisYear* but for day.
+QuestAcceptedThisWeekDay | same as *QuestAcceptedThisYear* | Same as *QuestAcceptedThisYear* but for weekday.
+
+Every condition enlisted in this common conditions list you can prefix with `not:` for negate condition result. 
+For example: `not:EventSeen` means event with specified id was not seen by player.
 
 ## Offers
 

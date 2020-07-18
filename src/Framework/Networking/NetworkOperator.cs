@@ -1,13 +1,11 @@
 ﻿using QuestFramework.Framework.Controllers;
 using QuestFramework.Framework.Networking;
+using QuestFramework.Framework.Stats;
 using QuestFramework.Framework.Store;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QuestFramework.Framework.Networing
 {
@@ -16,6 +14,7 @@ namespace QuestFramework.Framework.Networing
         private readonly IMultiplayerHelper helper;
         private readonly QuestStateStore questStateStore;
         private readonly QuestController questController;
+        private readonly StatsManager statsManager;
         private readonly IManifest modManifest;
         private readonly IMonitor monitor;
 
@@ -23,11 +22,12 @@ namespace QuestFramework.Framework.Networing
 
         public event EventHandler InitReceived;
 
-        public NetworkOperator(IMultiplayerHelper helper, IMultiplayerEvents events, QuestStateStore questStateStore, QuestController questController, IManifest modManifest, IMonitor monitor)
+        public NetworkOperator(IMultiplayerHelper helper, IMultiplayerEvents events, QuestStateStore questStateStore, StatsManager statsManager, QuestController questController, IManifest modManifest, IMonitor monitor)
         {
             this.helper = helper;
             this.questStateStore = questStateStore;
             this.questController = questController;
+            this.statsManager = statsManager;
             this.modManifest = modManifest;
             this.monitor = monitor;
 
@@ -73,6 +73,19 @@ namespace QuestFramework.Framework.Networing
                 }
 
                 this.questStateStore.Commit(payload);
+            }
+
+            if (e.Type == "QuestStats")
+            {
+                var payload = e.ReadAs<Stats.Stats>();
+
+                if (payload == null)
+                {
+                    this.monitor.Log("Got quest stats payload which is null. Discard.");
+                    return;
+                }
+
+                this.statsManager.SetStats(e.FromPlayerID, payload);
             }
 
             if (e.Type == "Init" && !Context.IsMainPlayer && !this.hasInitReceived)

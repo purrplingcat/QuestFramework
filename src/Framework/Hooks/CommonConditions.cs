@@ -1,4 +1,7 @@
 ﻿using PurrplingCore;
+using QuestFramework.Framework.Stats;
+using QuestFramework.Quests;
+using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
 using StardewValley;
 using System;
@@ -11,29 +14,82 @@ namespace QuestFramework.Framework.Hooks
 {
     internal class CommonConditions
     {
-        public static Dictionary<string, Func<string, bool>> GetConditions()
+        public static Dictionary<string, Func<string, CustomQuest, bool>> GetConditions()
         {
-            return new Dictionary<string, Func<string, bool>>()
+            return new Dictionary<string, Func<string, CustomQuest, bool>>()
             {
-                ["Weather"] = (valueToCheck) => GetCurrentWeatherName() == valueToCheck,
-                ["Date"] = (valueToCheck) => SDate.Now() == Utils.ParseDate(valueToCheck),
-                ["Days"] = (valueToCheck) => Utility.parseStringToIntArray(valueToCheck).Any(d => d == SDate.Now().Day),
-                ["Seasons"] = (valueToCheck) => valueToCheck.Split(' ').Any(s => s == SDate.Now().Season),
-                ["DaysOfWeek"] = (valueToCheck) => valueToCheck.Split(' ').Any(
+                ["Weather"] = (valueToCheck, _) => GetCurrentWeatherName() == valueToCheck,
+                ["Date"] = (valueToCheck, _) => SDate.Now() == Utils.ParseDate(valueToCheck),
+                ["Days"] = (valueToCheck, _) => Utility.parseStringToIntArray(valueToCheck).Any(d => d == SDate.Now().Day),
+                ["Seasons"] = (valueToCheck, _) => valueToCheck.Split(' ').Any(s => s == SDate.Now().Season),
+                ["DaysOfWeek"] = (valueToCheck, _) => valueToCheck.Split(' ').Any(
                         d => d.ToLower() == SDate.Now().DayOfWeek.ToString().ToLower()),
-                ["Friendship"] = (valueToCheck) => CheckFriendshipCondition(valueToCheck),
-                ["MailReceived"] = (valueToCheck) => CheckReceivedMailCondition(valueToCheck),
-                ["EventSeen"] = (valueToCheck) => CheckEventSeenCondition(valueToCheck),
-                ["MailNotReceived"] = (valueToCheck) => CheckReceivedMailCondition(valueToCheck, not: true),
-                ["EventNotSeen"] = (valueToCheck) => CheckEventSeenCondition(valueToCheck, not: true),
-                ["MinDaysPlayed"] = (valueToCheck) => Game1.Date.TotalDays >= Convert.ToInt32(valueToCheck),
-                ["MaxDaysPlayed"] = (valueToCheck) => Game1.Date.TotalDays <= Convert.ToInt32(valueToCheck),
-                ["DaysPlayed"] = (valueToCheck) => Game1.Date.TotalDays == Convert.ToInt32(valueToCheck),
-                ["IsPlayerMarried"] = (valueToCheck) => ParseBool(valueToCheck) == Game1.player.isMarried(),
+                ["Friendship"] = (valueToCheck, _) => CheckFriendshipCondition(valueToCheck),
+                ["MailReceived"] = (valueToCheck, _) => CheckReceivedMailCondition(valueToCheck),
+                ["EventSeen"] = (valueToCheck, _) => CheckEventSeenCondition(valueToCheck),
+                ["MinDaysPlayed"] = (valueToCheck, _) => Game1.Date.TotalDays >= Convert.ToInt32(valueToCheck),
+                ["MaxDaysPlayed"] = (valueToCheck, _) => Game1.Date.TotalDays <= Convert.ToInt32(valueToCheck),
+                ["DaysPlayed"] = (valueToCheck, _) => Game1.Date.TotalDays == Convert.ToInt32(valueToCheck),
+                ["IsPlayerMarried"] = (valueToCheck, _) => ParseBool(valueToCheck) == Game1.player.isMarried(),
+                ["QuestAcceptedThisYear"] = (valueToCheck, managedQuest) => IsQuestAcceptedThisYear(valueToCheck, managedQuest),
+                ["QuestAcceptedThisSeason"] = (valueToCheck, managedQuest) => IsQuestAcceptedThisSeason(valueToCheck, managedQuest),
+                ["QuestAcceptedThisDay"] = (valueToCheck, managedQuest) => IsQuestAcceptedThisDay(valueToCheck, managedQuest),
+                ["QuestAcceptedThisWeekDay"] = (valueToCheck, managedQuest) => IsQuestAcceptedThisWeekDay(valueToCheck, managedQuest),
             };
         }
 
-        public static bool CheckEventSeenCondition(string valueToCheck, bool not = false)
+        private static bool IsQuestAcceptedThisYear(string valueToCheck, CustomQuest managedQuest)
+        {
+            if (!Context.IsWorldReady)
+                return false;
+
+            return GetQuestStats(valueToCheck, managedQuest).LastAccepted?.Year == SDate.Now().Year;
+        }
+
+        private static bool IsQuestAcceptedThisSeason(string valueToCheck, CustomQuest managedQuest)
+        {
+            if (!Context.IsWorldReady)
+                return false;
+
+            return GetQuestStats(valueToCheck, managedQuest).LastAccepted?.Season == SDate.Now().Season;
+        }
+
+        private static bool IsQuestAcceptedThisDay(string valueToCheck, CustomQuest managedQuest)
+        {
+            if (!Context.IsWorldReady)
+                return false;
+
+            return GetQuestStats(valueToCheck, managedQuest).LastAccepted?.Day == SDate.Now().Day;
+        }
+
+        private static bool IsQuestAcceptedThisWeekDay(string valueToCheck, CustomQuest managedQuest)
+        {
+            if (!Context.IsWorldReady)
+                return false;
+
+            return GetQuestStats(valueToCheck, managedQuest).LastAccepted?.DayOfWeek == SDate.Now().DayOfWeek;
+        }
+
+        private static QuestStatSummary GetQuestStats(string valueToCheck, CustomQuest managedQuest)
+        {
+            return QuestFrameworkMod.Instance
+                .StatsManager
+                .GetStats(Game1.player.UniqueMultiplayerID)
+                .GetQuestStatSummary(ResolveQuestName(valueToCheck, managedQuest));
+        }
+
+        private static string ResolveQuestName(string possibleName, CustomQuest context)
+        {
+            if (possibleName == "@self")
+                return context.GetFullName();
+
+            if (possibleName.Contains('@'))
+                return possibleName;
+
+            return $"{possibleName}@{context.OwnedByModUid}";
+        }
+
+        public static bool CheckEventSeenCondition(string valueToCheck)
         {
             int[] events = Utility.parseStringToIntArray(valueToCheck);
             bool flag = true;
@@ -46,10 +102,10 @@ namespace QuestFramework.Framework.Hooks
                 flag &= Game1.player.eventsSeen.Contains(ev);
             }
 
-            return not ? !flag : flag;
+            return flag;
         }
 
-        public static bool CheckReceivedMailCondition(string valueToCheck, bool not = false)
+        public static bool CheckReceivedMailCondition(string valueToCheck)
         {
             string[] mails = valueToCheck.Split(' ');
             bool flag = true;
@@ -62,7 +118,7 @@ namespace QuestFramework.Framework.Hooks
                 flag &= Game1.player.mailReceived.Contains(mail);
             }
 
-            return not ? !flag : flag;
+            return flag;
         }
 
         public static bool CheckFriendshipCondition(string friendshipDefinition)

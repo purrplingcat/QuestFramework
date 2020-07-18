@@ -6,6 +6,7 @@ using QuestFramework.Quests;
 using StardewValley;
 using StardewValley.Quests;
 using System;
+using System.Collections.Generic;
 
 namespace QuestFramework.Patches
 {
@@ -14,10 +15,12 @@ namespace QuestFramework.Patches
         public override string Name => nameof(QuestPatch);
 
         QuestManager QuestManager { get; }
+        HashSet<Quest> QuestCheckerLock { get; }
 
         public QuestPatch(QuestManager questManager)
         {
             this.QuestManager = questManager;
+            this.QuestCheckerLock = new HashSet<Quest>();
             Instance = this;
         }
 
@@ -30,8 +33,9 @@ namespace QuestFramework.Patches
 
                 if (__result != null && customQuest != null)
                 {
-                    if (customQuest.BaseType == QuestType.Monster)
+                    if (customQuest.BaseType == QuestType.Monster && __result is SlayMonsterQuest)
                     {
+                        // This is fix for use custom dialogue text for slay monster quest type
                         (__result as SlayMonsterQuest).dialogueparts.Clear();
                     }
 
@@ -96,11 +100,7 @@ namespace QuestFramework.Patches
                 if (managedQuest == null || __instance.completed.Value == __state)
                     return; // Do nothing if it's not managed quest or completion status wasn't changed
 
-                if (managedQuest is IQuestObserver observer)
-                {
-                    observer.Completed(
-                        new QuestInfo(__instance, Game1.player));
-                }
+                managedQuest.Complete(new QuestInfo(__instance, Game1.player));
 
                 if (managedQuest is IStatefull statefullManagedQuest)
                 {
@@ -153,30 +153,35 @@ namespace QuestFramework.Patches
         {
             try
             {
+                if (Instance.QuestCheckerLock.Contains(__instance))
+                    return true; // Always call only the original method for locked quests
+
                 var managedQuest = Instance.QuestManager.GetById(__instance.id.Value);
 
-                if (managedQuest == null || !(managedQuest is IQuestObserver))
+                if (managedQuest is IQuestObserver observer)
                 {
-                    // It's vanilla quest, unmanaged quest or managed quest without observer. 
-                    // We call the original method
-                    return true;
+                    Instance.QuestCheckerLock.Add(__instance);
+                    var goingComplete = observer.CheckIfComplete(
+                        new QuestInfo(__instance, Game1.player),
+                        new CompletionArgs(n, number1, number2, item, str));
+
+                    if (goingComplete && !__instance.completed.Value)
+                        __instance.questComplete();
+
+                    __result = goingComplete;
+                    Instance.QuestCheckerLock.Remove(__instance);
+
+                    // For observed managed quest we don't call the original method Quest.checkIfComplete
+                    return false;
                 }
 
-                var goingComplete = (managedQuest as IQuestObserver).CheckIfComplete(
-                    new QuestInfo(__instance, Game1.player),
-                    new CompletionArgs(n, number1, number2, item, str));
-
-                if (goingComplete.HasValue && goingComplete.Value && !__instance.completed.Value)
-                    __instance.questComplete();
-
-                if (goingComplete.HasValue)
-                    __result = goingComplete.Value;
-
-                return !goingComplete.HasValue;
+                return true;
 
             } catch (Exception e)
             {
                 Instance.LogFailure(e, nameof(Before_checkIfComplete));
+                Instance.QuestCheckerLock.Remove(__instance);
+
                 return true;
             }
         }
