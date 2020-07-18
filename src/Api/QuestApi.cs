@@ -35,13 +35,15 @@ namespace QuestFramework.Api
         private readonly Dictionary<string, ManagedQuestApi> managers;
         private readonly QuestManager baseManager;
         private readonly QuestOfferManager scheduleManager;
+        private readonly HookManager hookManager;
         private readonly IMonitor monitor;
 
-        internal QuestApi(QuestManager baseManager, EventManager eventManager, QuestOfferManager scheduleManager, IMonitor monitor)
+        internal QuestApi(QuestManager baseManager, EventManager eventManager, QuestOfferManager scheduleManager, HookManager hookManager, IMonitor monitor)
         {
             this.managers = new Dictionary<string, ManagedQuestApi>();
             this.baseManager = baseManager;
             this.scheduleManager = scheduleManager;
+            this.hookManager = hookManager;
             this.monitor = monitor;
             this.Events = new QuestFrameworkEvents(eventManager);
         }
@@ -54,7 +56,7 @@ namespace QuestFramework.Api
         {
             if (!this.managers.TryGetValue(manifest.UniqueID, out ManagedQuestApi proxy))
             {
-                proxy = new ManagedQuestApi(manifest.UniqueID, this.baseManager, this.scheduleManager);
+                proxy = new ManagedQuestApi(manifest.UniqueID, this.baseManager, this.scheduleManager, this.hookManager);
                 this.managers.Add(manifest.UniqueID, proxy);
                 this.monitor.Log($"Mod {manifest.UniqueID} requested scoped API.");
             }

@@ -13,6 +13,7 @@
 
 ### For SMAPI modders
 
+- Added new managed API: `ExposeGlobalCondition` for expose global condition(s) for using in quest offers or hooks.
 - Added extensions for `CustomQuest` class (use namespace `QuestFramework.Extensions` for apply)
 
 ## 1.0.0-beta.1

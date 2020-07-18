@@ -131,7 +131,7 @@ namespace QuestFramework
         {
             if (this.Api == null)
             {
-                this.Api = new QuestApi(this.QuestManager, this.EventManager, this.QuestOfferManager, this.Monitor);
+                this.Api = new QuestApi(this.QuestManager, this.EventManager, this.QuestOfferManager, this.HookManager, this.Monitor);
             }
 
             return this.Api;

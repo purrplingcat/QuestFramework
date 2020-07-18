@@ -1,6 +1,7 @@
 ﻿using QuestFramework.Framework.Hooks;
 using QuestFramework.Hooks;
 using QuestFramework.Quests;
+using StardewModdingAPI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,13 +11,14 @@ namespace QuestFramework.Framework
     internal class HookManager
     {
         public List<Hook> Hooks { get; private set; }
-        public Dictionary<string, Func<string, CustomQuest, bool>> Conditions { get; private set; }
+        public Dictionary<string, Func<string, CustomQuest, bool>> Conditions { get; }
         public Dictionary<string, HookObserver> Observers { get; }
 
         public HookManager()
         {
             this.Hooks = new List<Hook>();
             this.Observers = new Dictionary<string, HookObserver>();
+            this.Conditions = CommonConditions.GetConditions();
             this.Clean();
         }
 
@@ -85,13 +87,15 @@ namespace QuestFramework.Framework
                 bool result = conditionFunc(value, context);
                 return isNot ? !result : result;
             }
+
+            QuestFrameworkMod.Instance?.Monitor.Log(
+                $"Checked unknown condition `{condition}`. Result for unknown conditions is always false.", LogLevel.Warn);
             
             return false;
         }
 
         public void Clean()
         {
-            this.Conditions = CommonConditions.GetConditions();
             this.Hooks.Clear();
         }
     }

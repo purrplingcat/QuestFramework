@@ -1,5 +1,6 @@
 ﻿using QuestFramework.Offers;
 using QuestFramework.Quests;
+using System;
 using System.Collections.Generic;
 
 namespace QuestFramework.Api
@@ -62,5 +63,12 @@ namespace QuestFramework.Api
         ///     Throws when this method is called outside of loaded game
         /// </exception>
         IEnumerable<QuestOffer<TAttributes>> GetTodayQuestOffers<TAttributes>(string source);
+
+        /// <summary>
+        /// Exposes global condition for usage in offers or hooks.
+        /// </summary>
+        /// <param name="conditionName">Name of condition</param>
+        /// <param name="conditionHandler">Handler for this condition</param>
+        void ExposeGlobalCondition(string conditionName, Func<string, CustomQuest, bool> conditionHandler);
     }
 }

@@ -14,12 +14,14 @@ namespace QuestFramework.Api
         public string Category { get; }
         public QuestManager QuestManager { get; }
         public QuestOfferManager ScheduleManager { get; }
+        public HookManager HookManager { get; }
 
-        public ManagedQuestApi(string category, QuestManager questManager, QuestOfferManager scheduleManager)
+        public ManagedQuestApi(string category, QuestManager questManager, QuestOfferManager scheduleManager, HookManager hookManager)
         {
             this.Category = category;
             this.QuestManager = questManager;
             this.ScheduleManager = scheduleManager;
+            this.HookManager = hookManager;
         }
 
         public void AcceptQuest(string fullQuestName)
@@ -76,6 +78,13 @@ namespace QuestFramework.Api
                 throw new InvalidOperationException("Unable to get today quest schedules when world is not ready!");
 
             return this.ScheduleManager.GetMatchedOffers<TAttributes>(source);
+        }
+
+        public void ExposeGlobalCondition(string conditionName, Func<string, CustomQuest, bool> conditionHandler)
+        {
+            string fullConditionName = $"{this.Category}/{conditionName}";
+
+            this.HookManager.Conditions[fullConditionName] = conditionHandler;
         }
     }
 }
