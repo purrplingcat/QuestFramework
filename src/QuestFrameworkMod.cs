@@ -13,6 +13,7 @@ using QuestFramework.Framework.Store;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Menus;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -48,7 +49,7 @@ namespace QuestFramework
             Instance = this;
 
             this.Bridge = new Bridge(helper.ModRegistry);
-            this.EventManager = new EventManager();
+            this.EventManager = new EventManager(this.Monitor);
             this.QuestManager = new QuestManager(this.Monitor);
             this.QuestStateStore = new QuestStateStore(helper.Data, this.Monitor);
             this.StatsManager = new StatsManager(helper.Multiplayer, helper.Data);
@@ -75,12 +76,13 @@ namespace QuestFramework
             helper.Events.GameLoop.DayStarted += this.OnDayStarted;
             helper.Events.GameLoop.DayEnding += this.OnDayEnding;
             helper.Events.GameLoop.ReturnedToTitle += this.OnReturnToTitle;
+            helper.Events.Display.MenuChanged += this.OnQuestLogMenuChanged;
             this.NetworkOperator.InitReceived += this.OnNetworkInitMessageReceived;
 
             GamePatcher patcher = new GamePatcher(this.ModManifest.UniqueID, this.Monitor);
 
             patcher.Apply(
-                new Patches.QuestPatch(this.QuestManager),
+                new Patches.QuestPatch(this.QuestManager, this.EventManager),
                 new Patches.LocationPatch(this.HookManager),
                 new Patches.Game1Patch(this.QuestManager, this.QuestOfferManager),
                 new Patches.DialoguePatch(this.QuestManager),
@@ -242,6 +244,20 @@ namespace QuestFramework
                 this.StatsManager.AddRemovedQuest(managedQuest.GetFullName());
                 this.Monitor.Log($"Managed quest `{managedQuest.GetFullName()}` removed from player's quest log");
             }
+
+            if (oldValue == null && newValue != null)
+                this.EventManager.QuestAccepted.Fire(new Events.QuestEventArgs(newValue), this);
+
+            if (newValue == null && oldValue != null)
+                this.EventManager.QuestRemoved.Fire(new Events.QuestEventArgs(oldValue), this);
+        }
+
+        private void OnQuestLogMenuChanged(object sender, MenuChangedEventArgs e)
+        {
+            if (e.NewMenu is QuestLog && !(e.OldMenu is QuestLog))
+                this.EventManager.QuestLogMenuOpen.Fire(new System.EventArgs(), this);
+            if (!(e.NewMenu is QuestLog) && e.OldMenu is QuestLog)
+                this.EventManager.QuestLogMenuClosed.Fire(new System.EventArgs(), this);
         }
 
         private void RegisterDefaultHooks()

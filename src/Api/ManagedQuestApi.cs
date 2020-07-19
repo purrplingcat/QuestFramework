@@ -11,14 +11,16 @@ namespace QuestFramework.Api
 {
     internal class ManagedQuestApi : IManagedQuestApi
     {
-        public string Category { get; }
+        public string ModUid { get; }
         public QuestManager QuestManager { get; }
         public QuestOfferManager ScheduleManager { get; }
         public HookManager HookManager { get; }
 
-        public ManagedQuestApi(string category, QuestManager questManager, QuestOfferManager scheduleManager, HookManager hookManager)
+        private static IMonitor Monitor => QuestFrameworkMod.Instance.Monitor;
+
+        public ManagedQuestApi(string modUid, QuestManager questManager, QuestOfferManager scheduleManager, HookManager hookManager)
         {
-            this.Category = category;
+            this.ModUid = modUid;
             this.QuestManager = questManager;
             this.ScheduleManager = scheduleManager;
             this.HookManager = hookManager;
@@ -28,7 +30,7 @@ namespace QuestFramework.Api
         {
             if (!fullQuestName.Contains('@'))
             {
-                fullQuestName = $"{fullQuestName}@{this.Category}";
+                fullQuestName = $"{fullQuestName}@{this.ModUid}";
             }
 
             this.QuestManager.AcceptQuest(fullQuestName);
@@ -41,14 +43,14 @@ namespace QuestFramework.Api
 
         public void RegisterQuest(CustomQuest quest)
         {
-            quest.OwnedByModUid = this.Category;
+            quest.OwnedByModUid = this.ModUid;
 
             this.QuestManager.RegisterQuest(quest);
         }
 
         public void CompleteQuest(string questName)
         {
-            int questId = this.QuestManager.ResolveGameQuestId($"{questName}@{this.Category}");
+            int questId = this.QuestManager.ResolveGameQuestId($"{questName}@{this.ModUid}");
 
             if (questId > -1 && Game1.player.hasQuest(questId))
                 Game1.player.completeQuest(questId);
@@ -58,7 +60,7 @@ namespace QuestFramework.Api
         {
             if (!offer.QuestName.Contains('@'))
             {
-                offer.QuestName = $"{offer.QuestName}@{this.Category}";
+                offer.QuestName = $"{offer.QuestName}@{this.ModUid}";
             }
 
             this.ScheduleManager.AddOffer(offer);
@@ -82,9 +84,10 @@ namespace QuestFramework.Api
 
         public void ExposeGlobalCondition(string conditionName, Func<string, CustomQuest, bool> conditionHandler)
         {
-            string fullConditionName = $"{this.Category}/{conditionName}";
+            string fullConditionName = $"{this.ModUid}/{conditionName}";
 
             this.HookManager.Conditions[fullConditionName] = conditionHandler;
+            Monitor.Log($"Exposed custom global condition `{fullConditionName}`");
         }
     }
 }

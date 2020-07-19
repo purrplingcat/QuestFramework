@@ -1,6 +1,7 @@
 ﻿using Harmony;
 using PurrplingCore.Patching;
 using QuestFramework.Framework;
+using QuestFramework.Framework.Events;
 using QuestFramework.Framework.Quests;
 using QuestFramework.Quests;
 using StardewValley;
@@ -15,11 +16,13 @@ namespace QuestFramework.Patches
         public override string Name => nameof(QuestPatch);
 
         QuestManager QuestManager { get; }
+        EventManager EventManager { get; }
         HashSet<Quest> QuestCheckerLock { get; }
 
-        public QuestPatch(QuestManager questManager)
+        public QuestPatch(QuestManager questManager, EventManager eventManager)
         {
             this.QuestManager = questManager;
+            this.EventManager = eventManager;
             this.QuestCheckerLock = new HashSet<Quest>();
             Instance = this;
         }
@@ -95,10 +98,16 @@ namespace QuestFramework.Patches
         {
             try
             {
+                if (!__instance.completed.Value || __instance.completed.Value == __state)
+                    return; // Do nothing if completion status wasn't changed or completion status is false
+
                 var managedQuest = Instance.QuestManager.GetById(__instance.id.Value);
 
-                if (managedQuest == null || __instance.completed.Value == __state)
-                    return; // Do nothing if it's not managed quest or completion status wasn't changed
+                if (managedQuest == null)
+                {
+                    Instance.EventManager.QuestCompleted.Fire(new Events.QuestEventArgs(__instance), Instance);
+                    return; // Only fire global uest completed event if quest is unmanaged
+                }
 
                 managedQuest.Complete(new QuestInfo(__instance, Game1.player));
 
@@ -116,8 +125,8 @@ namespace QuestFramework.Patches
                     }
                 }
 
-                Instance.Monitor.Log($"Quest `{managedQuest.GetFullName()}` #{__instance.id.Value} completed!"); 
-
+                Instance.EventManager.QuestCompleted.Fire(new Events.QuestEventArgs(__instance), Instance);
+                Instance.Monitor.Log($"Quest `{managedQuest.GetFullName()}` #{__instance.id.Value} completed!");
             }
             catch (Exception e)
             {
