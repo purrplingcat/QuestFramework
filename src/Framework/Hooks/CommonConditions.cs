@@ -31,65 +31,57 @@ namespace QuestFramework.Framework.Hooks
                 ["MaxDaysPlayed"] = (valueToCheck, _) => Game1.Date.TotalDays <= Convert.ToInt32(valueToCheck),
                 ["DaysPlayed"] = (valueToCheck, _) => Game1.Date.TotalDays == Convert.ToInt32(valueToCheck),
                 ["IsPlayerMarried"] = (valueToCheck, _) => ParseBool(valueToCheck) == Game1.player.isMarried(),
-                ["QuestAcceptedThisYear"] = (valueToCheck, managedQuest) => IsQuestAcceptedThisYear(valueToCheck, managedQuest),
-                ["QuestAcceptedThisSeason"] = (valueToCheck, managedQuest) => IsQuestAcceptedThisSeason(valueToCheck, managedQuest),
-                ["QuestAcceptedThisDay"] = (valueToCheck, managedQuest) => IsQuestAcceptedThisDay(valueToCheck, managedQuest),
-                ["QuestAcceptedThisWeekDay"] = (valueToCheck, managedQuest) => IsQuestAcceptedThisWeekDay(valueToCheck, managedQuest),
+                ["QuestAcceptedInTimePeriod"] = (valueToCheck, managedQuest) => IsQuestAcceptedInTimePeriod(valueToCheck, managedQuest),
                 ["KnownCraftingRecipe"] = (valueToCheck, _) => Game1.player.craftingRecipes.ContainsKey(valueToCheck),
                 ["KnownCookingRecipe"] = (valueToCheck, _) => Game1.player.cookingRecipes.ContainsKey(valueToCheck),
                 ["Random"] = (valueToCheck, _) => Game1.random.NextDouble() < Convert.ToDouble(valueToCheck) / 100, // Chance is in %
             };
         }
 
-        private static bool IsQuestAcceptedThisYear(string valueToCheck, CustomQuest managedQuest)
+        private static bool IsQuestAcceptedInTimePeriod(string valueToCheck, CustomQuest managedQuest)
         {
             if (!Context.IsWorldReady)
                 return false;
 
-            return GetQuestStats(valueToCheck, managedQuest).LastAccepted?.Year == SDate.Now().Year;
-        }
+            var parts = valueToCheck.Split(' ');
+            var acceptDate = GetQuestStats(managedQuest).LastAccepted;
+            SDate now = SDate.Now();
 
-        private static bool IsQuestAcceptedThisSeason(string valueToCheck, CustomQuest managedQuest)
-        {
-            if (!Context.IsWorldReady)
+            if (parts.Length < 1 || acceptDate == null || (parts.Contains("date") && acceptDate != now))
                 return false;
 
-            return GetQuestStats(valueToCheck, managedQuest).LastAccepted?.Season == SDate.Now().Season;
+            bool flag = true;
+            foreach (string part in parts)
+            {
+                switch (part)
+                {
+                    case "year":
+                        flag &= acceptDate.Year == now.Year;
+                        break;
+                    case "season":
+                        flag &= acceptDate.Season == now.Season;
+                        break;
+                    case "weekday":
+                        flag &= acceptDate.DayOfWeek == now.DayOfWeek;
+                        break;
+                    case "day":
+                        flag &= acceptDate.Day == now.Day;
+                        break;
+                    default:
+                        flag &= false;
+                        break;
+                }
+            }
+
+            return flag;
         }
 
-        private static bool IsQuestAcceptedThisDay(string valueToCheck, CustomQuest managedQuest)
-        {
-            if (!Context.IsWorldReady)
-                return false;
-
-            return GetQuestStats(valueToCheck, managedQuest).LastAccepted?.Day == SDate.Now().Day;
-        }
-
-        private static bool IsQuestAcceptedThisWeekDay(string valueToCheck, CustomQuest managedQuest)
-        {
-            if (!Context.IsWorldReady)
-                return false;
-
-            return GetQuestStats(valueToCheck, managedQuest).LastAccepted?.DayOfWeek == SDate.Now().DayOfWeek;
-        }
-
-        private static QuestStatSummary GetQuestStats(string valueToCheck, CustomQuest managedQuest)
+        private static QuestStatSummary GetQuestStats(CustomQuest managedQuest)
         {
             return QuestFrameworkMod.Instance
                 .StatsManager
                 .GetStats(Game1.player.UniqueMultiplayerID)
-                .GetQuestStatSummary(ResolveQuestName(valueToCheck, managedQuest));
-        }
-
-        private static string ResolveQuestName(string possibleName, CustomQuest context)
-        {
-            if (possibleName == "@self")
-                return context.GetFullName();
-
-            if (possibleName.Contains('@'))
-                return possibleName;
-
-            return $"{possibleName}@{context.OwnedByModUid}";
+                .GetQuestStatSummary(managedQuest.GetFullName());
         }
 
         public static bool CheckEventSeenCondition(string valueToCheck)

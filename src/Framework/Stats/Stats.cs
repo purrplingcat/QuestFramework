@@ -33,11 +33,7 @@ namespace QuestFramework.Framework.Stats
 
         private static SDate GetLastDate(IEnumerable<QuestStat> questStats)
         {
-            int keySelector(QuestStat stat) => stat.DaysSinceStart;
-
-            return questStats.OrderByDescending(keySelector)
-                .FirstOrDefault()?
-                .Date;
+            return questStats.LastOrDefault()?.Date;
         }
     }
 }

@@ -44,8 +44,8 @@ namespace QuestFramework.Framework
         public IEnumerable<QuestOffer<TAttributes>> GetMatchedOffers<TAttributes>(string source)
         {
             return this.GetMatchedOffers(source)
-                .Select(schedule => schedule.AsOfferWithDetails<TAttributes>())
-                .Where(schedule => schedule != null);
+                .Select(offer => offer.AsOfferWithDetails<TAttributes>())
+                .Where(offer => offer != null);
         }
     }
 }

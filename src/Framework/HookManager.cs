@@ -69,12 +69,15 @@ namespace QuestFramework.Framework
                 flag &= this.CheckCondition(cond.Key, cond.Value, context);
             }
 
+            QuestFrameworkMod.Instance?.Monitor.Log($"All checked conditions result is {flag}");
+
             return flag;
         }
 
         public bool CheckCondition(string condition, string value, CustomQuest context)
         {
             bool isNot = false;
+            string realConditionName = condition;
 
             if (condition.StartsWith("not:"))
             {
@@ -85,6 +88,10 @@ namespace QuestFramework.Framework
             if (this.Conditions.TryGetValue(condition, out var conditionFunc))
             {
                 bool result = conditionFunc(value, context);
+                
+                QuestFrameworkMod.Instance?.Monitor.Log(
+                    $"Checked condition `{realConditionName}` for `{value}` in quest context `{context.GetFullName()}` returns {(isNot ? !result : result)}");
+
                 return isNot ? !result : result;
             }
 
