@@ -2,13 +2,9 @@
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Quests;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace QuestFramework.src.Extensions
+namespace QuestFramework.Extensions
 {
     public static class CustomQuestExtensions
     {
@@ -49,7 +45,7 @@ namespace QuestFramework.src.Extensions
         /// <returns>null if this quest is not in quest log, otherwise the connected vanilla quest</returns>
         public static Quest GetInQuestLog(this CustomQuest customQuest)
         {
-            if (Context.IsWorldReady)
+            if (!Context.IsWorldReady)
                 return null;
 
             return Game1.player.questLog

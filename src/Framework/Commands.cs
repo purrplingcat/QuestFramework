@@ -1,8 +1,10 @@
 ﻿using QuestFramework.Framework.Stats;
+using QuestFramework.Extensions;
 using StardewModdingAPI;
 using StardewValley;
 using System.Linq;
 using System.Text;
+using System.Collections.Generic;
 
 namespace QuestFramework.Framework
 {
@@ -28,7 +30,10 @@ namespace QuestFramework.Framework
                     .AppendLine($"    Owned by: {quest.OwnedByModUid}")
                     .AppendLine($"    Current ID: {quest.id}")
                     .AppendLine($"    Trigger: {quest.Trigger ?? "null"}")
-                    .AppendLine($"    Active: {(quest.id >= 0 ? "Yes" : "No")}");
+                    .AppendLine($"    Reward: {quest.Reward}g")
+                    .AppendLine($"    Active: {(quest.id >= 0 ? "Yes" : "No")}")
+                    .AppendLine($"    Is in quest log: {quest.IsInQuestLog()}")
+                    .AppendLine($"    Next quests: {string.Join(", ", quest.NextQuests ?? new List<string>())}");
             }
 
             Monitor.Log(builder.ToString(), LogLevel.Info);
@@ -44,8 +49,8 @@ namespace QuestFramework.Framework
             }
 
             var managedLog = Game1.player.questLog
-                .Where(q => QuestManager.IsManaged(q.id.Value))
-                .Select(q => QuestManager.GetById(q.id.Value));
+                .Where(q => q.IsManaged())
+                .Select(q => q.AsManagedQuest());
             StringBuilder builder = new StringBuilder();
 
             builder.AppendLine($"Quest framework has {managedLog.Count()} managed quests in player's quest log:");
@@ -59,12 +64,16 @@ namespace QuestFramework.Framework
                     .AppendLine($"    Owned by: {quest.OwnedByModUid}")
                     .AppendLine($"    Current ID: {quest.id}")
                     .AppendLine($"    Trigger: {quest.Trigger ?? "null"}")
-                    .AppendLine($"    Cancelable: {quest.Cancelable}");
+                    .AppendLine($"    Reward: {quest.Reward}g")
+                    .AppendLine($"    Cancelable: {(quest.Cancelable ? "Yes" : "No")}")
+                    .AppendLine($"    Completed: {(quest.GetInQuestLog().completed.Value ? "Yes" : "No")}")
+                    .AppendLine($"    Next quests: {string.Join(", ", quest.NextQuests ?? new List<string>())}");
             }
 
             Monitor.Log(builder.ToString(), LogLevel.Info);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Styl", "IDE0060", Justification = "Command handler")]
         internal static void QuestStats(string name, string[] args)
         {
             if (!Context.IsWorldReady)
