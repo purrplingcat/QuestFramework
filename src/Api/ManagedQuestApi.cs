@@ -26,14 +26,14 @@ namespace QuestFramework.Api
             this.HookManager = hookManager;
         }
 
-        public void AcceptQuest(string fullQuestName)
+        public void AcceptQuest(string fullQuestName, bool silent = false)
         {
             if (!fullQuestName.Contains('@'))
             {
                 fullQuestName = $"{fullQuestName}@{this.ModUid}";
             }
 
-            this.QuestManager.AcceptQuest(fullQuestName);
+            this.QuestManager.AcceptQuest(fullQuestName, silent);
         }
 
         public CustomQuest GetById(int id)

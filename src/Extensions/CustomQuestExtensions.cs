@@ -62,15 +62,5 @@ namespace QuestFramework.Extensions
         {
             return Context.IsWorldReady && Game1.player.hasQuest(customQuest.id);
         }
-
-        /// <summary>
-        /// Check if this quest is included and accepted in player's quest log.
-        /// </summary>
-        /// <param name="customQuest"></param>
-        /// <returns></returns>
-        public static bool IsAccepted(this CustomQuest customQuest)
-        {
-            return IsInQuestLog(customQuest) && GetInQuestLog(customQuest).accepted.Value;
-        }
     }
 }

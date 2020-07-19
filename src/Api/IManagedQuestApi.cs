@@ -11,7 +11,7 @@ namespace QuestFramework.Api
         /// Add custom quest to player's questlog and mark then accepted and new.
         /// </summary>
         /// <param name="questName">Name without @ has resolved in your mod scope</param>
-        void AcceptQuest(string questName);
+        void AcceptQuest(string questName, bool silent = false);
 
         /// <summary>
         /// Resolve game quest id and returns custom quest

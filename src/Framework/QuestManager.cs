@@ -1,4 +1,5 @@
-﻿using QuestFramework.Quests;
+﻿using QuestFramework.Extensions;
+using QuestFramework.Quests;
 using StardewModdingAPI;
 using StardewValley;
 using System;
@@ -46,7 +47,7 @@ namespace QuestFramework.Framework
             this.monitor.Log($"Added quest `{quest.Name}` #{quest.id} to quest manager");
         }
 
-        public void AcceptQuest(string fullQuestName)
+        public void AcceptQuest(string fullQuestName, bool silent = false)
         {
             int id = this.ResolveGameQuestId(fullQuestName);
 
@@ -64,7 +65,12 @@ namespace QuestFramework.Framework
                 if (this.Quests.Any(q => q.id == id) && this.GetById(id) is IStatefull statefullQuest)
                     statefullQuest.ResetState();
 
-                Game1.player.addQuest(id);
+                if (silent)
+                    Game1.player.AddQuestQuiet(id);
+                else
+                    Game1.player.addQuest(id);
+
+                this.monitor.Log($"Quest `{fullQuestName}` #{id} {(silent ? "silently " : "")}added to the quest log.");
             } else
             {
                 this.monitor.Log($"Quest `{fullQuestName}` #{id} is already in quest log!");
