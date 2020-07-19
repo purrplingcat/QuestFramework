@@ -128,7 +128,7 @@ See the `Data/ObjectInformation` game resource for available items.
 
 Deliver specified item to specified NPC.
 
-*Trigger*: `<string:NPC_name> <int:object_id>` like `Abigail 66` for bring Amethyst for Abigail or `Willy {{ja:Fish Oil}}` if you want to use JsonAssets item (JsonAssets required for use JA token)
+*Trigger*: `<string:NPC_name> <int:object_id> [<int:count>]` like `Abigail 66` for bring Amethyst to Abigail, `Abigail 66 5` for bring 5 pieces of Amethyst to Abigail; or `Willy {{ja:Fish Oil}}` if you want to use JsonAssets item (JsonAssets required for use JA token)
 See the `Data/ObjectInformation` game resource for available items.
 
 This quest type accepts `ReactionText`.
