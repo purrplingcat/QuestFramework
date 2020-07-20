@@ -262,24 +262,24 @@ TouchAction     | Touch action property value must be this defined value for tri
 
 These global conditions can be used in hooks or in the quest offers.
 
-Condition name            | Example value              | Description
-------------------------- | -------------------------- | -----------
-Weather                   | `sunny`                    | Current weather. Allowed values: `rainy`, `snowy`, `stormy`, `cloudy`, `sunny`
-Date                      | `17 spring`, `5 summer Y2` | Game date in format `<day> <season>` or `<day> <season> Y<year>`
-Days                      | `2 6 12`                   | Trig action only when today is one of these days. You can specify any count of days.
-Seasons                   | `summer fall`              | Trig action only when current season is on of these seasons. You can specify any count of seasons.
-DaysOfWeek                | `monday wednesday`         | Trig action when today's weekday is one of these weekdays. You can specify any count of weekdays
-Friendship                | `Abigail 8`, `Maru 5 Shane 4` | Trig action when friendship heart level is the same as specified value for specified NPC. You can specify more than one friendship conditions.
-MailReceived              | `CF_Fish`                  | Trig action when this mail was received by farmer.
-EventSeen                 | `3910674`                  | Trig action when event with this event id seen by player.
-MinDaysPlayed             | `34`                       | Minimum played days from start of new game (from 1 spring year 1)
-MaxDaysPlayed             | `51`                       | Maximum played days from start of new game (from 1 spring year 1)
-DaysPlayed                | `19`                       | Total played days from start of new game (from 1 spring year 1)
-IsPlayerMarried           | `yes` or `no`              | Is player married?
-QuestAcceptedInTimePeriod | `season` or `season year` or `date` | Checks if this quest was accepted in current specified time period. Consumes combinations of: `day`, `weekday`, `season`, `year`, `date`.
-KnownCraftingRecipe       | `Furance`                  | Player knows specified crafting recipe.
-KnownCookingRecipe        | `Fried Egg`                | Player knows specified cooking recipe.
-Random                    | `52` or `22.272`           | A random chance in % (0 - 100). Number `52` means 52% of chance, number `22.272` means 22.272% of chance.
+Condition name           | Example value              | Description
+------------------------ | -------------------------- | -----------
+Weather                  | `sunny`                    | Current weather. Allowed values: `rainy`, `snowy`, `stormy`, `cloudy`, `sunny`
+Date                     | `17 spring`, `5 summer Y2` | Game date in format `<day> <season>` or `<day> <season> Y<year>`
+Days                     | `2 6 12`                   | Trig action only when today is one of these days. You can specify any count of days.
+Seasons                  | `summer fall`              | Trig action only when current season is on of these seasons. You can specify any count of seasons.
+DaysOfWeek               | `monday wednesday`         | Trig action when today's weekday is one of these weekdays. You can specify any count of weekdays
+Friendship               | `Abigail 8`, `Maru 5 Shane 4` | Trig action when friendship heart level is the same as specified value for specified NPC. You can specify more than one friendship conditions.
+MailReceived             | `CF_Fish`                  | Trig action when this mail was received by farmer.
+EventSeen                | `3910674`                  | Trig action when event with this event id seen by player.
+MinDaysPlayed            | `34`                       | Minimum played days from start of new game (from 1 spring year 1)
+MaxDaysPlayed            | `51`                       | Maximum played days from start of new game (from 1 spring year 1)
+DaysPlayed               | `19`                       | Total played days from start of new game (from 1 spring year 1)
+IsPlayerMarried          | `yes` or `no`              | Is player married?
+QuestAcceptedInPeriod    | `season` or `season year` or `today` or `season year weekday` | Checks if this quest was accepted in current specified time period. Consumes combinations of: `day`, `weekday`, `season`, `year`, `date`. Value `season year` means quest was accepted in this year in current season and in any day; `season` means quest was accepted in current season in any year and any day; `today` means quest was accepted just today.
+KnownCraftingRecipe      | `Furance`                  | Player knows specified crafting recipe.
+KnownCookingRecipe       | `Fried Egg`                | Player knows specified cooking recipe.
+Random                   | `52` or `22.272`           | A random chance in % (0 - 100). Number `52` means 52% of chance, number `22.272` means 22.272% of chance.
 
 Every condition enlisted in this common conditions list you can prefix with `not:` for negate condition result. 
 For example: `not:EventSeen` means event with specified id was not seen by player.

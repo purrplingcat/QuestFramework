@@ -14,6 +14,7 @@ namespace QuestFramework.Framework.Hooks
 {
     internal class CommonConditions
     {
+        internal protected static IMonitor Monitor => QuestFrameworkMod.Instance.Monitor;
         public static Dictionary<string, Func<string, CustomQuest, bool>> GetConditions()
         {
             return new Dictionary<string, Func<string, CustomQuest, bool>>()
@@ -31,14 +32,14 @@ namespace QuestFramework.Framework.Hooks
                 ["MaxDaysPlayed"] = (valueToCheck, _) => Game1.Date.TotalDays <= Convert.ToInt32(valueToCheck),
                 ["DaysPlayed"] = (valueToCheck, _) => Game1.Date.TotalDays == Convert.ToInt32(valueToCheck),
                 ["IsPlayerMarried"] = (valueToCheck, _) => ParseBool(valueToCheck) == Game1.player.isMarried(),
-                ["QuestAcceptedInTimePeriod"] = (valueToCheck, managedQuest) => IsQuestAcceptedInTimePeriod(valueToCheck, managedQuest),
+                ["QuestAcceptedInPeriod"] = (valueToCheck, managedQuest) => IsQuestAcceptedInPeriod(valueToCheck, managedQuest),
                 ["KnownCraftingRecipe"] = (valueToCheck, _) => Game1.player.craftingRecipes.ContainsKey(valueToCheck),
                 ["KnownCookingRecipe"] = (valueToCheck, _) => Game1.player.cookingRecipes.ContainsKey(valueToCheck),
                 ["Random"] = (valueToCheck, _) => Game1.random.NextDouble() < Convert.ToDouble(valueToCheck) / 100, // Chance is in %
             };
         }
 
-        private static bool IsQuestAcceptedInTimePeriod(string valueToCheck, CustomQuest managedQuest)
+        private static bool IsQuestAcceptedInPeriod(string valueToCheck, CustomQuest managedQuest)
         {
             if (!Context.IsWorldReady)
                 return false;
@@ -46,8 +47,11 @@ namespace QuestFramework.Framework.Hooks
             var parts = valueToCheck.Split(' ');
             var acceptDate = GetQuestStats(managedQuest).LastAccepted;
             SDate now = SDate.Now();
+            
+            Monitor.VerboseLog(
+                $"Checking quest accept date `{acceptDate}` matches current `{now}` by `{valueToCheck}`");
 
-            if (parts.Length < 1 || acceptDate == null || (parts.Contains("date") && acceptDate != now))
+            if (parts.Length < 1 || acceptDate == null || (parts.Contains("today") && acceptDate != now))
                 return false;
 
             bool flag = true;
@@ -95,6 +99,7 @@ namespace QuestFramework.Framework.Hooks
             foreach (var ev in events)
             {
                 flag &= Game1.player.eventsSeen.Contains(ev);
+                Monitor.VerboseLog($"Checked if event `{ev}` was seen. Current flag: {flag}");
             }
 
             return flag;
@@ -111,6 +116,7 @@ namespace QuestFramework.Framework.Hooks
             foreach (string mail in mails)
             {
                 flag &= Game1.player.mailReceived.Contains(mail);
+                Monitor.VerboseLog($"Checked if mail letter `{mail}` was received. Current flag: {flag}");
             }
 
             return flag;
@@ -126,8 +132,18 @@ namespace QuestFramework.Framework.Hooks
 
             for (int i = 0; i < fships.Length; i += 2)
             {
-                flag &= Game1.player.getFriendshipHeartLevelForNPC(fships[i])
-                    == Convert.ToInt32(fships[i + 1]);
+                string who = fships[i];
+                int currentLevel = Game1.player.getFriendshipHeartLevelForNPC(who);
+                int expectedLevel = Convert.ToInt32(fships[i + 1]);
+
+                flag &= currentLevel >= expectedLevel;
+                
+                if (Monitor.IsVerbose)
+                    Monitor.Log(
+                        $"Checked friendship level for `{who}`, " +
+                        $"current level: {currentLevel}, " +
+                        $"expected: {expectedLevel}, " +
+                        $"current flag: {flag}");
             }
 
             return flag;

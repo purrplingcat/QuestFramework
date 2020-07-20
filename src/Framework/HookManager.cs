@@ -10,16 +10,19 @@ namespace QuestFramework.Framework
 {
     internal class HookManager
     {
+        private readonly IMonitor monitor;
+
         public List<Hook> Hooks { get; private set; }
         public Dictionary<string, Func<string, CustomQuest, bool>> Conditions { get; }
         public Dictionary<string, HookObserver> Observers { get; }
 
-        public HookManager()
+        public HookManager(IMonitor monitor)
         {
             this.Hooks = new List<Hook>();
             this.Observers = new Dictionary<string, HookObserver>();
             this.Conditions = CommonConditions.GetConditions();
             this.Clean();
+            this.monitor = monitor;
         }
 
         public void CollectHooks(List<CustomQuest> managedQuests)
@@ -69,7 +72,7 @@ namespace QuestFramework.Framework
                 flag &= this.CheckCondition(cond.Key, cond.Value, context);
             }
 
-            QuestFrameworkMod.Instance?.Monitor.Log($"All checked conditions result is {flag}");
+            this.monitor.VerboseLog($"All checked conditions result is {flag}");
 
             return flag;
         }
@@ -89,13 +92,16 @@ namespace QuestFramework.Framework
             {
                 bool result = conditionFunc(value, context);
                 
-                QuestFrameworkMod.Instance?.Monitor.Log(
-                    $"Checked condition `{realConditionName}` for `{value}` in quest context `{context.GetFullName()}` returns {(isNot ? !result : result)}");
+                if (this.monitor.IsVerbose)
+                    this.monitor.Log(
+                        $"Checked condition `{realConditionName}` for `{value}` " +
+                        $"in quest context `{context.GetFullName()}` " +
+                        $"returns {(isNot ? !result : result)}");
 
                 return isNot ? !result : result;
             }
 
-            QuestFrameworkMod.Instance?.Monitor.Log(
+            this.monitor.Log(
                 $"Checked unknown condition `{condition}`. Result for unknown conditions is always false.", LogLevel.Warn);
             
             return false;
