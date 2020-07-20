@@ -53,7 +53,7 @@ namespace QuestFramework
             this.QuestManager = new QuestManager(this.Monitor);
             this.QuestStateStore = new QuestStateStore(helper.Data, this.Monitor);
             this.StatsManager = new StatsManager(helper.Multiplayer, helper.Data);
-            this.HookManager = new HookManager();
+            this.HookManager = new HookManager(this.Monitor);
             this.QuestOfferManager = new QuestOfferManager(this.HookManager, this.QuestManager);
             this.ContentPackLoader = new Loader(this.Monitor, this.QuestManager, this.QuestOfferManager);
             this.QuestController = new QuestController(this.QuestManager, this.Monitor);

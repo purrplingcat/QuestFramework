@@ -7,8 +7,6 @@ using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QuestFramework.Framework.Hooks
 {
@@ -33,10 +31,16 @@ namespace QuestFramework.Framework.Hooks
                 ["DaysPlayed"] = (valueToCheck, _) => Game1.Date.TotalDays == Convert.ToInt32(valueToCheck),
                 ["IsPlayerMarried"] = (valueToCheck, _) => ParseBool(valueToCheck) == Game1.player.isMarried(),
                 ["QuestAcceptedInPeriod"] = (valueToCheck, managedQuest) => IsQuestAcceptedInPeriod(valueToCheck, managedQuest),
+                ["QuestAcceptedDate"] = (valueToCheck, managedQuest) => IsQuestAcceptedDate(valueToCheck, managedQuest),
                 ["KnownCraftingRecipe"] = (valueToCheck, _) => Game1.player.craftingRecipes.ContainsKey(valueToCheck),
                 ["KnownCookingRecipe"] = (valueToCheck, _) => Game1.player.cookingRecipes.ContainsKey(valueToCheck),
                 ["Random"] = (valueToCheck, _) => Game1.random.NextDouble() < Convert.ToDouble(valueToCheck) / 100, // Chance is in %
             };
+        }
+
+        private static bool IsQuestAcceptedDate(string valueToCheck, CustomQuest managedQuest)
+        {
+            return GetQuestStats(managedQuest).LastAccepted == Utils.ParseDate(valueToCheck);
         }
 
         private static bool IsQuestAcceptedInPeriod(string valueToCheck, CustomQuest managedQuest)
@@ -57,19 +61,39 @@ namespace QuestFramework.Framework.Hooks
             bool flag = true;
             foreach (string part in parts)
             {
-                switch (part)
+                string[] period = part.Split('=');
+                string type = period.ElementAtOrDefault(0);
+                string value = period.ElementAtOrDefault(1);
+
+                switch (type)
                 {
+                    case "y":
                     case "year":
-                        flag &= acceptDate.Year == now.Year;
+                        flag &= acceptDate.Year == (
+                            int.TryParse(value, out var year) 
+                                ? year 
+                                : now.Year
+                            );
                         break;
+                    case "s":
                     case "season":
-                        flag &= acceptDate.Season == now.Season;
+                        flag &= acceptDate.Season == (value ?? now.Season);
                         break;
+                    case "wd":
                     case "weekday":
-                        flag &= acceptDate.DayOfWeek == now.DayOfWeek;
+                        flag &= acceptDate.DayOfWeek == (
+                            Enum.TryParse<DayOfWeek>(value, out var dayOfWeek) 
+                                ? dayOfWeek 
+                                : now.DayOfWeek
+                            );
                         break;
+                    case "d":
                     case "day":
-                        flag &= acceptDate.Day == now.Day;
+                        flag &= acceptDate.Day == (
+                            int.TryParse(value, out var day) 
+                                ? day
+                                : now.Day
+                            );
                         break;
                     default:
                         flag &= false;
