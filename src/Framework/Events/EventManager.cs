@@ -15,6 +15,7 @@ namespace QuestFramework.Framework.Events
         public ManagedEvent<QuestEventArgs> QuestRemoved { get; }
         public ManagedEvent<EventArgs> QuestLogMenuOpen { get; }
         public ManagedEvent<EventArgs> QuestLogMenuClosed { get; }
+        public ManagedEvent<EventArgs> Refreshed { get; }
 
         public EventManager(IMonitor monitor)
         {
@@ -39,6 +40,7 @@ namespace QuestFramework.Framework.Events
             this.QuestRemoved = ManageEvent<QuestEventArgs>(nameof(IQuestFrameworkEvents.QuestRemoved));
             this.QuestLogMenuOpen = ManageEvent<EventArgs>(nameof(IQuestFrameworkEvents.QuestLogMenuOpen));
             this.QuestLogMenuClosed = ManageEvent<EventArgs>(nameof(IQuestFrameworkEvents.QuestLogMenuClosed));
+            this.Refreshed = ManageEvent<EventArgs>(nameof(IQuestFrameworkEvents.Refreshed));
         }
     }
 }

@@ -4,6 +4,7 @@
 
 ### Common changes
 
+- Improved Bulletinboard quest offer
 - Added `not:` prefix for negate result of checked condition (can be used in hooks and offers and in both programatic and content pack usage)
 - Added new conditions for check known recipes: `KnownCraftingRecipe` and `KnownCookingRecipe`
 - Added new condition `Random` with random chance in % to offer or execute hook
@@ -14,8 +15,9 @@
 
 ### For SMAPI modders
 
+- Added API method `ForceRefresh()`
 - Improved accept quest API which allows add quest quietly (without popup alert message and without "new" flag in questlog)
-- Added new global quest events: `QuestCompleted`, `QuestAccepted`, `QuestRemoved`, `QuestLogMenuOpen` and `QuestLogMenuClosed`.
+- Added new global quest events: `QuestCompleted`, `QuestAccepted`, `QuestRemoved`, `QuestLogMenuOpen`, `QuestLogMenuClosed` and `Refreshed`.
 - Added new managed API: `ExposeGlobalCondition` for expose global condition(s) for using in quest offers or hooks.
 - Added extensions for `CustomQuest` class (use namespace `QuestFramework.Extensions` for apply)
 

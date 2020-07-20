@@ -1,5 +1,4 @@
-﻿
-← [README](../README.md)
+﻿← [README](../README.md)
 
 # Advanced API guide
 
@@ -10,7 +9,7 @@ aka mod api for use in SMAPI mods (written in C#)
 1. Download Quest Framework from [Nexusmods](todo)
 2. Copy contents of ZIP file to the mods folder in StardewValley folder
 3. Create new SMAPI mod with VisualStudio
-4. Reference QuestFramework dll in your project references
+4. Reference QuestFramework dll in your project references (from the SDV mods folder)
 
 ### How to use
 
@@ -58,6 +57,11 @@ public interface IQuestApi
     IManagedQuestApi GetManagedApi(IManifest manifest);
 
     /// <summary>
+    /// Force refresh cache, managed questlog and bulletinboard quest offer
+    /// </summary>
+    void ForceRefresh();
+
+    /// <summary>
     /// Provide Quest Framework events
     /// </summary>
     IQuestFrameworkEvents Events { get; }
@@ -73,12 +77,12 @@ public interface IQuestApi
 
 ```csharp
 public interface IManagedQuestApi
-    {
+{
     /// <summary>
     /// Add custom quest to player's questlog and mark then accepted and new.
-´   /// </summary>
+    /// </summary>
     /// <param name="questName">Name without @ has resolved in your mod scope</param>
-    void AcceptQuest(string questName);
+    void AcceptQuest(string questName, bool silent = false);
 
     /// <summary>
     /// Resolve game quest id and returns custom quest
@@ -130,6 +134,13 @@ public interface IManagedQuestApi
     ///     Throws when this method is called outside of loaded game
     /// </exception>
     IEnumerable<QuestOffer<TAttributes>> GetTodayQuestOffers<TAttributes>(string source);
+
+    /// <summary>
+    /// Exposes global condition for usage in offers or hooks.
+    /// </summary>
+    /// <param name="conditionName">Name of condition</param>
+    /// <param name="conditionHandler">Handler for this condition</param>
+    void ExposeGlobalCondition(string conditionName, Func<string, CustomQuest, bool> conditionHandler);
 }
 ```
 
@@ -138,18 +149,64 @@ public interface IManagedQuestApi
 ```csharp
 namespace QuestFramework.Events
 {
+    /// <summary>
+    /// Events of Quest Framework
+    /// </summary>
     public interface IQuestFrameworkEvents
     {
+        /// <summary>
+        /// Quest Framework lifecycle state changed event.
+        /// </summary>
         event EventHandler<ChangeStateEventArgs> ChangeState;
+
+        /// <summary>
+        /// Quest Framework getting ready.
+        /// Place for register quests, hooks and etc.
+        /// </summary>
         event EventHandler<GettingReadyEventArgs> GettingReady;
+
+        /// <summary>
+        /// Quest Framework is ready.
+        /// Here you can't to do anything with quest registry, hooks and etc.
+        /// </summary>
         event EventHandler<ReadyEventArgs> Ready;
+
+        /// <summary>
+        /// A quest was completed
+        /// </summary>
+        event EventHandler<QuestEventArgs> QuestCompleted;
+
+        /// <summary>
+        /// A quest was accepted and added to quest log
+        /// </summary>
+        event EventHandler<QuestEventArgs> QuestAccepted;
+
+        /// <summary>
+        /// A quest was removed from log
+        /// </summary>
+        event EventHandler<QuestEventArgs> QuestRemoved;
+
+        /// <summary>
+        /// Quest log menu was open
+        /// </summary>
+        event EventHandler<EventArgs> QuestLogMenuOpen;
+
+        /// <summary>
+        /// Quest log menu was closed
+        /// </summary>
+        event EventHandler<EventArgs> QuestLogMenuClosed;
+        
+        /// <summary>
+        /// Managed questlog and/or offers was refreshed
+        /// </summary>
+        event EventHandler<EventArgs> Refreshed;
     }
 }
 ```
 
 ## Lifecycle
 
-1. `DISABLED `
+1. `DISABLED`
 Before onGameLaunched and when QF's Entry() method called
 2. `STANDBY`
 After onGameLaunched
@@ -167,14 +224,40 @@ Returning to title screen. Next state is *STANDBY*.
 
 ## Events
 
-TODO
+Event              | Summary                           
+------------------ | ---------------------------------
+ChangeState        | Raised when Quest Framework's lifecycle state changed.
+GettingReady       | Raised when Quest Framework is in state `Launching` at least before QF is going to state `Launched`. **Best place for register your custom quests.**
+Ready              | Raised when lifecycle state is `Launched` and all important Quest Framework systems are ready.
+QuestCompleted     | Raised when any quest (managed or unmanaged) completed.
+QuestAccepted      | Raised when any quest (managed or unmanaged) accepted and added to questlog.
+QuestRemoved       | Raised when any quest (managed or unmanaged) removed from questlog.
+QuestLogMenuOpen   | Raised when questlog menu was open.
+QuestLogMenuClosed | Raised when questlog menu was closed.
+Refreshed          | Raised when new day started or `IApi.ForceRefresh()` was called.
 
 ## Work with quests
 
 ### Add custom quest
 
-TODO
- 
+```cs
+var quest = new CustomQuest();
+
+quest.Name = "meet_marlon"; // This is important!
+quest.BaseType = QuestType.Location
+quest.Title = "Meet with Marlon";
+quest.Description = "Enter the Adventurer Guild east of mines and meet with Marlon.";
+quest.Objective = "Go to Adventurer Guild";
+quest.Trigger = "AdventureGuild";
+quest.Cancelable = true; // Set this if you want this quest cancelable
+quest.Reward = 500; // Set this if you want to set money reward (50g in this example quest)
+
+// If you want to set next quests which will be added after this quest was completed
+// These quests must be registered too in Quest Framework quest manager!
+quest.NextQuests.Add("slay_bats");
+quest.NextQuests.Add("bat_wing_trophy");
+```
+
 ### Use quest offers
 
 TODO

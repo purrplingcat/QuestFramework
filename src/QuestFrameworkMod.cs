@@ -14,6 +14,7 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -29,7 +30,6 @@ namespace QuestFramework
         internal State Status { get; private set; }
         internal Bridge Bridge { get; private set; }
         internal QuestManager QuestManager { get; private set; }
-        internal QuestApi Api { get; private set; }
         internal QuestStateStore QuestStateStore { get; private set; }
         internal StatsManager StatsManager { get; private set; }
         internal HookManager HookManager { get; private set; }
@@ -56,7 +56,7 @@ namespace QuestFramework
             this.HookManager = new HookManager(this.Monitor);
             this.QuestOfferManager = new QuestOfferManager(this.HookManager, this.QuestManager);
             this.ContentPackLoader = new Loader(this.Monitor, this.QuestManager, this.QuestOfferManager);
-            this.QuestController = new QuestController(this.QuestManager, this.Monitor);
+            this.QuestController = new QuestController(this.QuestManager, this.QuestOfferManager, this.Monitor);
             this.MailController = new MailController(this.QuestManager, this.QuestOfferManager, this.Monitor);
             this.NetworkOperator = new NetworkOperator(
                 helper: helper.Multiplayer,
@@ -118,12 +118,16 @@ namespace QuestFramework
             }
         }
 
+        [EventPriority(EventPriority.Low - 100)]
         private void OnDayStarted(object sender, DayStartedEventArgs e)
         {
             this.QuestController.RefreshAllManagedQuestsInQuestLog();
+            this.QuestController.RefreshBulletinboardQuestOffer();
             this.MailController.ReceiveQuestLetterToMailbox();
+            this.EventManager.Refreshed.Fire(new EventArgs(), this);
         }
 
+        [EventPriority(EventPriority.Low - 100)]
         private void OnDayEnding(object sender, DayEndingEventArgs e)
         {
             this.QuestController.SanitizeAllManagedQuestsInQuestLog(this.Helper.Translation);
@@ -131,12 +135,7 @@ namespace QuestFramework
 
         public override object GetApi()
         {
-            if (this.Api == null)
-            {
-                this.Api = new QuestApi(this.QuestManager, this.EventManager, this.QuestOfferManager, this.HookManager, this.Monitor);
-            }
-
-            return this.Api;
+            return new QuestApi(this);
         }
 
         /// <summary>
@@ -216,12 +215,14 @@ namespace QuestFramework
 
             this.RestoreStatefullQuests();
             this.HookManager.CollectHooks(this.QuestManager.Quests);
+            Game1.player.questLog.OnElementChanged += this.OnQuestLogChanged;
+            InvalidateCache();
+
             this.hasInitialized = true;
             this.EventManager.Ready.Fire(new Events.ReadyEventArgs(), this);
-            
-            InvalidateCache();
-            Game1.RefreshQuestOfTheDay();
-            Game1.player.questLog.OnElementChanged += this.OnQuestLogChanged;
+
+            // Post-ready executions
+            this.QuestController.RefreshBulletinboardQuestOffer();
             this.MailController.ReceiveQuestLetterToMailbox();
 
             this.Monitor.Log($"Quest framework sucessfully initialized all stuff for this loaded save game and it's ready!", LogLevel.Info);

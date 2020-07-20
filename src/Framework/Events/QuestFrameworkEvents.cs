@@ -7,6 +7,12 @@ namespace QuestFramework.Framework.Events
     {
         private readonly EventManager eventManager;
 
+        public event EventHandler<EventArgs> Refreshed
+        {
+            add => this.eventManager.Refreshed.Add(value);
+            remove => this.eventManager.Refreshed.Remove(value);
+        }
+
         public event EventHandler<QuestEventArgs> QuestCompleted
         {
             add => this.eventManager.QuestCompleted.Add(value);

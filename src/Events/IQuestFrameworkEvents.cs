@@ -48,5 +48,10 @@ namespace QuestFramework.Events
         /// Quest log menu was closed
         /// </summary>
         event EventHandler<EventArgs> QuestLogMenuClosed;
+
+        /// <summary>
+        /// Managed questlog and/or offers was refreshed
+        /// </summary>
+        event EventHandler<EventArgs> Refreshed;
     }
 }
