@@ -7,12 +7,14 @@
 - Added `not:` prefix for negate result of checked condition (can be used in hooks and offers and in both programatic and content pack usage)
 - Added new condition `Random` with random chance in % to offer or execute hook
 - Added new conditions for check known recipes: `KnownCraftingRecipe` and `KnownCookingRecipe`
-- Added new conditions for check if quest was current season: `QuestAcceptedThisYear`, `QuestAcceptedThisSeason`, `QuestAcceptedThisDay` and `QuestAcceptedThisWeekDay`
+- Added new conditions for check if quest was current season, day, year and other time periods: `QuestAcceptedInTimePeriod`
 - Added stats support
 - Improved some minor refactors
 
 ### For SMAPI modders
 
+- Improved accept quest API which allows add quest quietly (without popup alert message and without "new" flag in questlog)
+- Added new global quest events: `QuestCompleted`, `QuestAccepted`, `QuestRemoved`, `QuestLogMenuOpen` and `QuestLogMenuClosed`.
 - Added new managed API: `ExposeGlobalCondition` for expose global condition(s) for using in quest offers or hooks.
 - Added extensions for `CustomQuest` class (use namespace `QuestFramework.Extensions` for apply)
 
