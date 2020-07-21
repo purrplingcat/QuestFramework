@@ -44,7 +44,7 @@ namespace QuestFramework.Framework
             }
 
             this.Quests.Add(quest);
-            this.monitor.Log($"Added quest `{quest.Name}` #{quest.id} to quest manager");
+            this.monitor.Log($"Added quest `{quest.Name}` to quest manager");
         }
 
         public void AcceptQuest(string fullQuestName, bool silent = false)

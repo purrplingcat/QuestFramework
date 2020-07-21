@@ -10,6 +10,7 @@ using QuestFramework.Framework.Hooks;
 using QuestFramework.Framework.Networing;
 using QuestFramework.Framework.Stats;
 using QuestFramework.Framework.Store;
+using QuestFramework.Framework.Watchdogs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -37,6 +38,7 @@ namespace QuestFramework
         internal Loader ContentPackLoader { get; private set; }
         internal QuestController QuestController { get; private set; }
         internal MailController MailController { get; private set; }
+        internal QuestLogWatchdog QuestLogWatchdog { get; private set; }
         internal NetworkOperator NetworkOperator { get; private set; }
         internal EventManager EventManager { get; private set; }
 
@@ -58,6 +60,7 @@ namespace QuestFramework
             this.ContentPackLoader = new Loader(this.Monitor, this.QuestManager, this.QuestOfferManager);
             this.QuestController = new QuestController(this.QuestManager, this.QuestOfferManager, this.Monitor);
             this.MailController = new MailController(this.QuestManager, this.QuestOfferManager, this.Monitor);
+            this.QuestLogWatchdog = new QuestLogWatchdog(helper.Events, this.EventManager, this.StatsManager, this.Monitor);
             this.NetworkOperator = new NetworkOperator(
                 helper: helper.Multiplayer,
                 events: helper.Events.Multiplayer,
@@ -215,7 +218,7 @@ namespace QuestFramework
 
             this.RestoreStatefullQuests();
             this.HookManager.CollectHooks(this.QuestManager.Quests);
-            Game1.player.questLog.OnElementChanged += this.OnQuestLogChanged;
+            this.QuestLogWatchdog.Initialize();
             InvalidateCache();
 
             this.hasInitialized = true;
@@ -226,31 +229,6 @@ namespace QuestFramework
             this.MailController.ReceiveQuestLetterToMailbox();
 
             this.Monitor.Log($"Quest framework sucessfully initialized all stuff for this loaded save game and it's ready!", LogLevel.Info);
-        }
-
-        private void OnQuestLogChanged(Netcode.NetList<StardewValley.Quests.Quest, Netcode.NetRef<StardewValley.Quests.Quest>> list, int index, StardewValley.Quests.Quest oldValue, StardewValley.Quests.Quest newValue)
-        {
-            if (oldValue == null && newValue != null && newValue.IsManaged())
-            {
-                var managedQuest = newValue.AsManagedQuest();
-
-                this.StatsManager.AddAcceptedQuest(managedQuest.GetFullName());
-                this.Monitor.Log($"Managed quest `{managedQuest.GetFullName()}` added to player's quest log");
-            }
-
-            if (newValue == null && oldValue != null && oldValue.IsManaged())
-            {
-                var managedQuest = oldValue.AsManagedQuest();
-
-                this.StatsManager.AddRemovedQuest(managedQuest.GetFullName());
-                this.Monitor.Log($"Managed quest `{managedQuest.GetFullName()}` removed from player's quest log");
-            }
-
-            if (oldValue == null && newValue != null)
-                this.EventManager.QuestAccepted.Fire(new Events.QuestEventArgs(newValue), this);
-
-            if (newValue == null && oldValue != null)
-                this.EventManager.QuestRemoved.Fire(new Events.QuestEventArgs(oldValue), this);
         }
 
         private void OnQuestLogMenuChanged(object sender, MenuChangedEventArgs e)

@@ -46,7 +46,7 @@ namespace QuestFramework.Framework.Controllers
                 this.monitor.VerboseLog($"Injected quest #{questKv.id} aka `{questKv.Name}` to `Data\\Quests`");
             }
 
-            this.monitor.Log($"Injected {this.QuestManager.Quests.Count} quests.");
+            this.monitor.Log($"Injected {this.QuestManager.Quests.Count} managed quests into Data\\Quests");
         }
 
         public void RefreshAllManagedQuestsInQuestLog()

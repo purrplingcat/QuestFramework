@@ -1,5 +1,12 @@
 ﻿# Changelog
 
+## 1.0.0-beta.3
+
+### Common changes
+
+- Fixed problematic issues with Android
+- Added Portuguese translation (thx Randy)
+
 ## 1.0.0-beta.2
 
 ### Common changes
