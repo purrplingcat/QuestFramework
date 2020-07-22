@@ -1,4 +1,4 @@
-﻿using PurrplingCore;
+using PurrplingCore;
 using QuestFramework.Extensions;
 using QuestFramework.Framework.Stats;
 using QuestFramework.Quests;
@@ -18,13 +18,14 @@ namespace QuestFramework.Framework.Hooks
         {
             return new Dictionary<string, Func<string, CustomQuest, bool>>()
             {
-                ["Weather"] = (valueToCheck, _) => GetCurrentWeatherName() == valueToCheck,
+                ["Weather"] = (valueToCheck, _) => GetCurrentWeatherName() == valueToCheck.ToLower(),
                 ["Date"] = (valueToCheck, _) => SDate.Now() == Utils.ParseDate(valueToCheck),
                 ["Days"] = (valueToCheck, _) => Utility.parseStringToIntArray(valueToCheck).Any(d => d == SDate.Now().Day),
-                ["Seasons"] = (valueToCheck, _) => valueToCheck.Split(' ').Any(s => s == SDate.Now().Season),
+                ["Seasons"] = (valueToCheck, _) => valueToCheck.ToLower().Split(' ').Any(s => s == SDate.Now().Season),
                 ["DaysOfWeek"] = (valueToCheck, _) => valueToCheck.Split(' ').Any(
                         d => d.ToLower() == SDate.Now().DayOfWeek.ToString().ToLower()),
-                ["Friendship"] = (valueToCheck, _) => CheckFriendshipCondition(valueToCheck),
+                ["FriendshipLevel"] = (valueToCheck, _) => CheckFriendshipLevel(valueToCheck), // Emily 7
+                ["FriendshipStatus"] = (valueToCheck, _) => CheckFriendshipStatus(valueToCheck), // Shane Dating
                 ["MailReceived"] = (valueToCheck, _) => CheckReceivedMailCondition(valueToCheck),
                 ["EventSeen"] = (valueToCheck, _) => CheckEventSeenCondition(valueToCheck),
                 ["MinDaysPlayed"] = (valueToCheck, _) => Game1.Date.TotalDays >= Convert.ToInt32(valueToCheck),
@@ -40,6 +41,8 @@ namespace QuestFramework.Framework.Hooks
                 ["QuestNeverCompleted"] = (valueToCheck, managedQuest) => managedQuest.IsNeverCompleted() == ParseBool(valueToCheck),
                 ["KnownCraftingRecipe"] = (valueToCheck, _) => Game1.player.craftingRecipes.ContainsKey(valueToCheck),
                 ["KnownCookingRecipe"] = (valueToCheck, _) => Game1.player.cookingRecipes.ContainsKey(valueToCheck),
+                ["ConstructedBuilding"] = (valueToCheck, _) => Game1.getFarm().isBuildingConstructed(valueToCheck), // Barn
+                ["SkillLevel"] = (valueToCheck, _) => CheckSkillLevel(valueToCheck), // Farming 1 Foraging 2
                 ["Random"] = (valueToCheck, _) => Game1.random.NextDouble() < Convert.ToDouble(valueToCheck) / 100, // Chance is in %
             };
         }
@@ -157,27 +160,86 @@ namespace QuestFramework.Framework.Hooks
             return flag;
         }
 
-        public static bool CheckFriendshipCondition(string friendshipDefinition)
+        public static bool CheckFriendshipLevel(string friendshipLevel)
         {
-            string[] fships = friendshipDefinition.Split(' ');
+            string[] flevel = friendshipLevel.Split(' ');
             bool flag = true;
 
-            if (fships.Length < 2)
+            if (flevel.Length < 2)
                 return false;
 
-            for (int i = 0; i < fships.Length; i += 2)
+            for (int i = 0; i < flevel.Length; i += 2)
             {
-                string who = fships[i];
-                int currentLevel = Game1.player.getFriendshipHeartLevelForNPC(who);
-                int expectedLevel = Convert.ToInt32(fships[i + 1]);
+                string whoLevel = flevel[i];
+                int currentFriendshipLevel = Game1.player.getFriendshipHeartLevelForNPC(whoLevel);
+                int expectedFriendshipLevel = Convert.ToInt32(flevel[i + 1]);
 
-                flag &= currentLevel >= expectedLevel;
-                
+                flag &= currentFriendshipLevel >= expectedFriendshipLevel;
+
                 if (Monitor.IsVerbose)
                     Monitor.Log(
-                        $"Checked friendship level for `{who}`, " +
-                        $"current level: {currentLevel}, " +
-                        $"expected: {expectedLevel}, " +
+                        $"Checked friendship level for `{whoLevel}`, " +
+                        $"current level: {currentFriendshipLevel}, " +
+                        $"expected: {expectedFriendshipLevel}, " +
+                        $"current flag: {flag}");
+            }
+
+            return flag;
+        }
+
+        public static bool CheckFriendshipStatus(string friendshipStatus) //available status: Friendly Dating Engaged Married Divorced//
+        {
+            string[] fstatus = friendshipStatus.Split(' ');
+            bool flag = true;
+
+            if (fstatus.Length < 2)
+                return false;
+
+
+
+            for (int i = 0; i < fstatus.Length; i += 2)
+            {
+                string whoStatus = fstatus[i];
+                string currentStatus = Game1.player.friendshipData[whoStatus].Status.ToString();
+                string expectedStatus = fstatus[i + 1];
+
+                flag &= currentStatus == expectedStatus;
+
+                if (Monitor.IsVerbose)
+                    Monitor.Log(
+                        $"Checked friendship status for `{whoStatus}`, " +
+                        $"current status: {currentStatus}, " +
+                        $"expected status: {expectedStatus}, " +
+                        $"current flag: {flag}");
+            }
+
+            return flag;
+        }
+
+        public static bool CheckSkillLevel(string skillLevel) //Can use all coded skills in the vanilla game, including Luck. Can't use custom skills//
+        {
+            string[] slevel = skillLevel.Split(' ');
+            bool flag = true;
+
+            if (slevel.Length < 2)
+                return false;
+
+            for (int i = 0; i < slevel.Length; i += 2)
+            {
+                string[] skillList = { "Farming", "Fishing", "Foraging", "Mining", "Combat", "Luck"};
+                string skillName = slevel[i];
+                int skillId = Array.IndexOf(skillList, slevel[i]);
+                int currentSkillLevel = Game1.player.getEffectiveSkillLevel(skillId);
+                int expectedSkillLevel = Convert.ToInt32(slevel[i + 1]);
+
+                flag &= currentSkillLevel >= expectedSkillLevel;
+
+                if (Monitor.IsVerbose)
+                    Monitor.Log(
+                        $"Checked skill level for `{skillName}`, " +
+                        $"with skill id: {skillId}, " +
+                        $"current level: {currentSkillLevel}, " +
+                        $"expected level: {expectedSkillLevel}, " +
                         $"current flag: {flag}");
             }
 
