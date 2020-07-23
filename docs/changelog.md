@@ -1,5 +1,16 @@
 ﻿# Changelog
 
+## Upcoming changes
+
+### Common changes
+
+- Fixed removing quests marked as destroy from questlog
+- Added new conditions: `QuestCompletedDate`, `QuestAcceptedToday`, `QuestCompletedToday`, `QuestNeverAccepted` and `QuestNeverCompleted`
+
+### For SMAPI modders
+
+- Added new extensions for class `CustomQuest`: `IsNeverAccepted` and `IsNeverCompleted`
+
 ## 1.0.0-beta.3
 
 ### Common changes

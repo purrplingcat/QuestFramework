@@ -62,5 +62,29 @@ namespace QuestFramework.Extensions
         {
             return Context.IsWorldReady && Game1.player.hasQuest(customQuest.id);
         }
+
+        public static bool IsNeverAccepted(this CustomQuest customQuest)
+        {
+            if (!Context.IsWorldReady)
+                return false;
+
+            var stats = QuestFrameworkMod.Instance.
+                StatsManager
+                .GetStats(Game1.player.UniqueMultiplayerID);
+
+            return stats.GetQuestStatSummary(customQuest.GetFullName()).LastAccepted == null;
+        }
+
+        public static bool IsNeverCompleted(this CustomQuest customQuest)
+        {
+            if (!Context.IsWorldReady)
+                return false;
+
+            var stats = QuestFrameworkMod.Instance.
+                StatsManager
+                .GetStats(Game1.player.UniqueMultiplayerID);
+
+            return stats.GetQuestStatSummary(customQuest.GetFullName()).LastCompleted == null;
+        }
     }
 }

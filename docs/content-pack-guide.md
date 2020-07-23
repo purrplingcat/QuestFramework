@@ -1,6 +1,7 @@
 ﻿
 
 
+
 ← [README](../README.md)
 
 # Content pack guide
@@ -277,7 +278,12 @@ MaxDaysPlayed            | `51`                       | Maximum played days from
 DaysPlayed               | `19`                       | Total played days from start of new game (from 1 spring year 1)
 IsPlayerMarried          | `yes` or `no`              | Is player married?
 QuestAcceptedInPeriod    | `season` or `season year` or `today` or `season year weekday` | Checks if this quest was accepted in current specified time period. Consumes combinations of: `day`, `weekday`, `season`, `year`, `date`. Value `season year` means quest was accepted in this year in current season and in any day; `season` means quest was accepted in current season in any year and any day; `today` means quest was accepted just today.
-QuestAcceptedDate        | `17 spring`, `5 summer Y2` | Checks if this quest was accepted in specified date. Game date in format `<day> <season>` or `<day> <season> Y<year>`
+QuestAcceptedDate        | `17 spring`, `5 summer Y2` | Checks if this quest was **accepted** in specified date. Game date in format `<day> <season>` or `<day> <season> Y<year>`
+QuestCompletedDate       | `17 spring`, `5 summer Y2` | Check if this qeust was **completed** in specified date. Game date in format `<day> <season>` or `<day>`
+QuestAcceptedToday       | `yes` or `no`              | Check if this quest was (or wasn't) **accepted today**
+QuestCompletedToday      | `yes` or `no`              | Check if this quest was (or wasn't) **completed today**
+QuestNeverAccepted       | `yes` or `no`              | Check if this quest was (or wasn't) **never accepted yet**
+QuestNeverCompleted      | `yes` or `no`              | Check if this quest was (or wasn't) **never completed yet**
 KnownCraftingRecipe      | `Furance`                  | Player knows specified crafting recipe.
 KnownCookingRecipe       | `Fried Egg`                | Player knows specified cooking recipe.
 Random                   | `52` or `22.272`           | A random chance in % (0 - 100). Number `52` means 52% of chance, number `22.272` means 22.272% of chance.

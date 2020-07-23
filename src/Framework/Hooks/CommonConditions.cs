@@ -1,4 +1,5 @@
 ﻿using PurrplingCore;
+using QuestFramework.Extensions;
 using QuestFramework.Framework.Stats;
 using QuestFramework.Quests;
 using StardewModdingAPI;
@@ -31,16 +32,26 @@ namespace QuestFramework.Framework.Hooks
                 ["DaysPlayed"] = (valueToCheck, _) => Game1.Date.TotalDays == Convert.ToInt32(valueToCheck),
                 ["IsPlayerMarried"] = (valueToCheck, _) => ParseBool(valueToCheck) == Game1.player.isMarried(),
                 ["QuestAcceptedInPeriod"] = (valueToCheck, managedQuest) => IsQuestAcceptedInPeriod(valueToCheck, managedQuest),
-                ["QuestAcceptedDate"] = (valueToCheck, managedQuest) => IsQuestAcceptedDate(valueToCheck, managedQuest),
+                ["QuestAcceptedDate"] = (valueToCheck, managedQuest) => IsQuestAcceptedDate(Utils.ParseDate(valueToCheck), managedQuest),
+                ["QuestCompletedDate"] = (valueToCheck, managedQuest) => IsQuestCompletedDate(Utils.ParseDate(valueToCheck), managedQuest),
+                ["QuestAcceptedToday"] = (valueToCheck, managedQuest) => IsQuestAcceptedDate(SDate.Now(), managedQuest) == ParseBool(valueToCheck),
+                ["QuestCompletedToday"] = (valueToCheck, managedQuest) => IsQuestCompletedDate(SDate.Now(), managedQuest) == ParseBool(valueToCheck),
+                ["QuestNeverAccepted"] = (valueToCheck, managedQuest) => managedQuest.IsNeverAccepted() == ParseBool(valueToCheck),
+                ["QuestNeverCompleted"] = (valueToCheck, managedQuest) => managedQuest.IsNeverCompleted() == ParseBool(valueToCheck),
                 ["KnownCraftingRecipe"] = (valueToCheck, _) => Game1.player.craftingRecipes.ContainsKey(valueToCheck),
                 ["KnownCookingRecipe"] = (valueToCheck, _) => Game1.player.cookingRecipes.ContainsKey(valueToCheck),
                 ["Random"] = (valueToCheck, _) => Game1.random.NextDouble() < Convert.ToDouble(valueToCheck) / 100, // Chance is in %
             };
         }
 
-        private static bool IsQuestAcceptedDate(string valueToCheck, CustomQuest managedQuest)
+        private static bool IsQuestAcceptedDate(SDate dateToCheck, CustomQuest managedQuest)
         {
-            return GetQuestStats(managedQuest).LastAccepted == Utils.ParseDate(valueToCheck);
+            return GetQuestStats(managedQuest).LastAccepted == dateToCheck;
+        }
+
+        private static bool IsQuestCompletedDate(SDate dateToCheck, CustomQuest managedQuest)
+        {
+            return GetQuestStats(managedQuest).LastCompleted == dateToCheck;
         }
 
         private static bool IsQuestAcceptedInPeriod(string valueToCheck, CustomQuest managedQuest)
