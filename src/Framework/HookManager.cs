@@ -82,6 +82,9 @@ namespace QuestFramework.Framework
             bool isNot = false;
             string realConditionName = condition;
 
+            if (condition == null || value == null)
+                return true;
+
             if (condition.StartsWith("not:"))
             {
                 condition = condition.Substring(4);
@@ -90,8 +93,11 @@ namespace QuestFramework.Framework
 
             if (this.Conditions.TryGetValue(condition, out var conditionFunc))
             {
-                bool result = conditionFunc(value, context);
-                
+                bool result = false;
+
+                foreach (string valuePart in value.Split('|'))
+                    result |= conditionFunc(valuePart.Trim(), context);
+
                 if (this.monitor.IsVerbose)
                     this.monitor.Log(
                         $"Checked condition `{realConditionName}` for `{value}` " +

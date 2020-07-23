@@ -288,8 +288,19 @@ KnownCraftingRecipe      | `Furance`                  | Player knows specified c
 KnownCookingRecipe       | `Fried Egg`                | Player knows specified cooking recipe.
 Random                   | `52` or `22.272`           | A random chance in % (0 - 100). Number `52` means 52% of chance, number `22.272` means 22.272% of chance.
 
-Every condition enlisted in this common conditions list you can prefix with `not:` for negate condition result. 
-For example: `not:EventSeen` means event with specified id was not seen by player.
+Every condition name enlisted in this common conditions list you can prefix with `not:` for negate condition result.
+For example: `not:EventSeen` means event with specified id was not seen by player;
+
+Also you can chain condition values with `OR` logic function with character separator `|`:
+
+```js
+{
+  "Weather": "rainy | snowy", // Means current weather is 'rainy' OR 'snowy'
+  "Date": "6 summer Y1 | 19 fall Y1 | 24 spring Y3", // Means current date is '6th summer year 1' OR '19th fall year 1' OR '24th spring year 3'
+  "EventSeen": "335478 | 44125", // Means player seen event ID 335478 OR event ID 44125
+  "not:MailReceived": "ccComplete | jojaMember" // Player NOT received mail 'ccComplete' OR 'jojaMember'
+}
+```
 
 ## Offers
 

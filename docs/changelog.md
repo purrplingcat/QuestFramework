@@ -7,6 +7,10 @@
 - Fixed removing quests marked as destroy from questlog
 - Added new conditions: `QuestCompletedDate`, `QuestAcceptedToday`, `QuestCompletedToday`, `QuestNeverAccepted` and `QuestNeverCompleted`
 
+### For Content Pack modders
+
+- Added support for `OR` logical function between values in conditions (with `|` separator)
+
 ### For SMAPI modders
 
 - Added new extensions for class `CustomQuest`: `IsNeverAccepted` and `IsNeverCompleted`
