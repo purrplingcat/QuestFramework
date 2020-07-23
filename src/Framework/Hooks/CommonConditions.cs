@@ -163,20 +163,20 @@ namespace QuestFramework.Framework.Hooks
 
         public static bool CheckFriendshipLevel(string friendshipLevel)
         {
-            string[] flevel = friendshipLevel.Split(' ');
+            string[] friendshipLevelParts = friendshipLevel.Split(' ');
             bool flag = true;
 
-            if (flevel.Length%2 != 0)
+            if (friendshipLevelParts.Length%2 != 0)
                 return false;
 
-            if (flevel.Length < 2)
+            if (friendshipLevelParts.Length < 2)
                 return false;
 
-            for (int i = 0; i < flevel.Length; i += 2)
+            for (int i = 0; i < friendshipLevelParts.Length; i += 2)
             {
-                string whoLevel = flevel[i];
+                string whoLevel = friendshipLevelParts[i];
                 int currentFriendshipLevel = Game1.player.getFriendshipHeartLevelForNPC(whoLevel);
-                int expectedFriendshipLevel = Convert.ToInt32(flevel[i + 1]);
+                int expectedFriendshipLevel = Convert.ToInt32(friendshipLevelParts[i + 1]);
 
                 flag &= currentFriendshipLevel >= expectedFriendshipLevel;
 
@@ -193,25 +193,25 @@ namespace QuestFramework.Framework.Hooks
 
         public static bool CheckFriendshipStatus(string friendshipStatus) 
         {
-            string[] fstatus = friendshipStatus.Split(' ');
+            string[] friendshipStatusParts = friendshipStatus.Split(' ');
             bool flag = true;
 
-            if (fstatus.Length%2 != 0)
+            if (friendshipStatusParts.Length%2 != 0)
                 return false;
 
-            if (fstatus.Length < 2)
+            if (friendshipStatusParts.Length < 2)
                 return false;
 
-            for (int i = 0; i < fstatus.Length; i += 2)
+            for (int i = 0; i < friendshipStatusParts.Length; i += 2)
             {
-                string whoStatus = fstatus[i];
+                string whoStatus = friendshipStatusParts[i];
                 if (!Game1.player.friendshipData.ContainsKey(whoStatus))
                 {
                     flag &= false;
                     continue;
                 }
                 string currentStatus = Game1.player.friendshipData[whoStatus].Status.ToString();
-                string expectedStatus = fstatus[i + 1];
+                string expectedStatus = friendshipStatusParts[i + 1];
 
                 flag &= currentStatus == expectedStatus;
 
@@ -228,19 +228,19 @@ namespace QuestFramework.Framework.Hooks
 
         public static bool CheckSkillLevel(string skillLevel) 
         {
-            string[] slevel = skillLevel.Split(' ');
+            string[] skillLevelParts = skillLevel.Split(' ');
             bool flag = true;
 
-            if (slevel.Length < 2)
+            if (skillLevelParts.Length < 2)
                 return false;
 
-            for (int i = 0; i < slevel.Length; i += 2)
+            for (int i = 0; i < skillLevelParts.Length; i += 2)
             {
                 string[] skillList = { "Farming", "Fishing", "Foraging", "Mining", "Combat", "Luck" };
-                string skillName = slevel[i];
-                int skillId = Array.IndexOf(skillList, slevel[i]);
+                string skillName = skillLevelParts[i];
+                int skillId = Array.IndexOf(skillList, skillLevelParts[i]);
                 int currentSkillLevel = Game1.player.getEffectiveSkillLevel(skillId);
-                int expectedSkillLevel = Convert.ToInt32(slevel[i + 1]);
+                int expectedSkillLevel = Convert.ToInt32(skillLevelParts[i + 1]);
 
                 flag &= currentSkillLevel >= expectedSkillLevel;
 
