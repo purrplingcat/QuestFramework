@@ -61,11 +61,10 @@ namespace QuestFramework.Framework.Hooks
         {
             if (!Context.IsWorldReady)
                 return false;
-
             var parts = valueToCheck.Split(' ');
             var acceptDate = GetQuestStats(managedQuest).LastAccepted;
             SDate now = SDate.Now();
-            
+
             Monitor.VerboseLog(
                 $"Checking quest accept date `{acceptDate}` matches current `{now}` by `{valueToCheck}`");
 
@@ -84,8 +83,8 @@ namespace QuestFramework.Framework.Hooks
                     case "y":
                     case "year":
                         flag &= acceptDate.Year == (
-                            int.TryParse(value, out var year) 
-                                ? year 
+                            int.TryParse(value, out var year)
+                                ? year
                                 : now.Year
                             );
                         break;
@@ -96,15 +95,15 @@ namespace QuestFramework.Framework.Hooks
                     case "wd":
                     case "weekday":
                         flag &= acceptDate.DayOfWeek == (
-                            Enum.TryParse<DayOfWeek>(value, out var dayOfWeek) 
-                                ? dayOfWeek 
+                            Enum.TryParse<DayOfWeek>(value, out var dayOfWeek)
+                                ? dayOfWeek
                                 : now.DayOfWeek
                             );
                         break;
                     case "d":
                     case "day":
                         flag &= acceptDate.Day == (
-                            int.TryParse(value, out var day) 
+                            int.TryParse(value, out var day)
                                 ? day
                                 : now.Day
                             );
@@ -187,15 +186,13 @@ namespace QuestFramework.Framework.Hooks
             return flag;
         }
 
-        public static bool CheckFriendshipStatus(string friendshipStatus) //available status: Friendly Dating Engaged Married Divorced//
+        public static bool CheckFriendshipStatus(string friendshipStatus) 
         {
             string[] fstatus = friendshipStatus.Split(' ');
             bool flag = true;
 
             if (fstatus.Length < 2)
                 return false;
-
-
 
             for (int i = 0; i < fstatus.Length; i += 2)
             {
@@ -212,11 +209,11 @@ namespace QuestFramework.Framework.Hooks
                         $"expected status: {expectedStatus}, " +
                         $"current flag: {flag}");
             }
-
+            
             return flag;
         }
 
-        public static bool CheckSkillLevel(string skillLevel) //Can use all coded skills in the vanilla game, including Luck. Can't use custom skills//
+        public static bool CheckSkillLevel(string skillLevel) 
         {
             string[] slevel = skillLevel.Split(' ');
             bool flag = true;
@@ -240,6 +237,27 @@ namespace QuestFramework.Framework.Hooks
                         $"with skill id: {skillId}, " +
                         $"current level: {currentSkillLevel}, " +
                         $"expected level: {expectedSkillLevel}, " +
+                        $"current flag: {flag}");
+            }
+
+            return flag;
+        }
+
+        public static bool CheckBuilding(string checkedBuilding)
+        {
+            checkedBuilding = checkedBuilding.Replace(", ", "|");
+            string[] building = checkedBuilding.Split('|');
+
+            bool flag = true;
+            for (int i = 0; i < building.Length; i += 1)
+            {
+                string buildingName = building[i];
+                bool isBuildingConstructed = Game1.getFarm().isBuildingConstructed(building[i]);
+                flag &= isBuildingConstructed;
+
+                if (Monitor.IsVerbose)
+                    Monitor.Log(
+                        $"Checked `{buildingName}` is built in farm" +
                         $"current flag: {flag}");
             }
 
