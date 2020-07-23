@@ -41,6 +41,7 @@ namespace QuestFramework.Framework.Hooks
                 ["QuestNeverCompleted"] = (valueToCheck, managedQuest) => managedQuest.IsNeverCompleted() == ParseBool(valueToCheck),
                 ["KnownCraftingRecipe"] = (valueToCheck, _) => Game1.player.craftingRecipes.ContainsKey(valueToCheck),
                 ["KnownCookingRecipe"] = (valueToCheck, _) => Game1.player.cookingRecipes.ContainsKey(valueToCheck),
+                ["CompletedCommunityCenter"] = (valueToCheck, _) => ParseBool(valueToCheck) == Game1.player.hasCompletedCommunityCenter(),
                 ["ConstructedBuilding"] = (valueToCheck, _) => Game1.getFarm().isBuildingConstructed(valueToCheck), // Barn
                 ["SkillLevel"] = (valueToCheck, _) => CheckSkillLevel(valueToCheck), // Farming 1 Foraging 2
                 ["Random"] = (valueToCheck, _) => Game1.random.NextDouble() < Convert.ToDouble(valueToCheck) / 100, // Chance is in %
@@ -223,7 +224,7 @@ namespace QuestFramework.Framework.Hooks
 
             for (int i = 0; i < slevel.Length; i += 2)
             {
-                string[] skillList = { "Farming", "Fishing", "Foraging", "Mining", "Combat", "Luck"};
+                string[] skillList = { "Farming", "Fishing", "Foraging", "Mining", "Combat", "Luck" };
                 string skillName = slevel[i];
                 int skillId = Array.IndexOf(skillList, slevel[i]);
                 int currentSkillLevel = Game1.player.getEffectiveSkillLevel(skillId);
