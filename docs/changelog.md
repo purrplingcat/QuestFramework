@@ -5,7 +5,8 @@
 ### Common changes
 
 - Fixed removing quests marked as destroy from questlog
-- Added new conditions: `QuestCompletedDate`, `QuestAcceptedToday`, `QuestCompletedToday`, `QuestNeverAccepted` and `QuestNeverCompleted`
+- Added new conditions: `QuestCompletedDate`, `QuestAcceptedToday`, `QuestCompletedToday`, `QuestNeverAccepted`, `QuestNeverCompleted`, `SkillLevel`, `BuildingConstructed`, `CommunityCenterCompleted`
+- Rename conditions: `Friendship` to `FriendshipLevel` to distinguish from `FriendshipStatus`
 
 ### For Content Pack modders
 
