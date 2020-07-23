@@ -236,7 +236,19 @@ namespace QuestFramework
             if (e.NewMenu is QuestLog && !(e.OldMenu is QuestLog))
                 this.EventManager.QuestLogMenuOpen.Fire(new System.EventArgs(), this);
             if (!(e.NewMenu is QuestLog) && e.OldMenu is QuestLog)
+            {
                 this.EventManager.QuestLogMenuClosed.Fire(new System.EventArgs(), this);
+
+                // Remove quests marked for destroy from questlog
+                int i = 0;
+                while(i < Game1.player.questLog.Count)
+                {
+                    if (Game1.player.questLog[i].destroy.Value == true)
+                        Game1.player.questLog.RemoveAt(i);
+                    else
+                        i++;
+                }
+            }
         }
 
         private void RegisterDefaultHooks()
