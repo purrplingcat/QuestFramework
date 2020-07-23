@@ -24,6 +24,7 @@ namespace QuestFramework.Framework.Hooks
                 ["Seasons"] = (valueToCheck, _) => valueToCheck.ToLower().Split(' ').Any(s => s == SDate.Now().Season),
                 ["DaysOfWeek"] = (valueToCheck, _) => valueToCheck.Split(' ').Any(
                         d => d.ToLower() == SDate.Now().DayOfWeek.ToString().ToLower()),
+                ["Friendship"] = (valueToCheck, _) => DeprecatedCondition(() => CheckFriendshipLevel(valueToCheck)),
                 ["FriendshipLevel"] = (valueToCheck, _) => CheckFriendshipLevel(valueToCheck), // Emily 7
                 ["FriendshipStatus"] = (valueToCheck, _) => CheckFriendshipStatus(valueToCheck), // Shane Dating
                 ["MailReceived"] = (valueToCheck, _) => CheckReceivedMailCondition(valueToCheck),
@@ -165,6 +166,9 @@ namespace QuestFramework.Framework.Hooks
             string[] flevel = friendshipLevel.Split(' ');
             bool flag = true;
 
+            if (flevel.Length%2 == 0)
+                return false;
+
             if (flevel.Length < 2)
                 return false;
 
@@ -192,12 +196,20 @@ namespace QuestFramework.Framework.Hooks
             string[] fstatus = friendshipStatus.Split(' ');
             bool flag = true;
 
+            if (fstatus.Length%2 == 0)
+                return false;
+
             if (fstatus.Length < 2)
                 return false;
 
             for (int i = 0; i < fstatus.Length; i += 2)
             {
                 string whoStatus = fstatus[i];
+                if (!Game1.player.friendshipData.ContainsKey(whoStatus))
+                {
+                    flag &= false;
+                    continue;
+                }
                 string currentStatus = Game1.player.friendshipData[whoStatus].Status.ToString();
                 string expectedStatus = fstatus[i + 1];
 
@@ -234,7 +246,7 @@ namespace QuestFramework.Framework.Hooks
 
                 if (Monitor.IsVerbose)
                     Monitor.Log(
-                        $"Checked skill level for `{skillName}`, " +
+                        $"Checked skill level for `{skillName}` " +
                         $"with skill id: {skillId}, " +
                         $"current level: {currentSkillLevel}, " +
                         $"expected level: {expectedSkillLevel}, " +
@@ -246,14 +258,13 @@ namespace QuestFramework.Framework.Hooks
 
         public static bool CheckBuilding(string checkedBuilding)
         {
-            checkedBuilding = checkedBuilding.Replace(", ", "|");
-            string[] building = checkedBuilding.Split('|');
-
+            string[] building = checkedBuilding.Split(' ');
             bool flag = true;
+
             for (int i = 0; i < building.Length; i += 1)
             {
-                string buildingName = building[i];
-                bool isBuildingConstructed = Game1.getFarm().isBuildingConstructed(building[i]);
+                string buildingName = building[i].Replace('_', ' ');
+                bool isBuildingConstructed = Game1.getFarm().isBuildingConstructed(buildingName);
                 flag &= isBuildingConstructed;
 
                 if (Monitor.IsVerbose)
@@ -292,6 +303,12 @@ namespace QuestFramework.Framework.Hooks
                 return "cloudy";
 
             return "sunny";
+        }
+
+        private static bool DeprecatedCondition(Func<bool> conditionCallback)
+        {
+            Monitor.Log("Friendship is deprecated, use FriendshipLevel instead", LogLevel.Warn);
+            return conditionCallback();
         }
     }
 }
