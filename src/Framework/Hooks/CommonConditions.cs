@@ -1,4 +1,4 @@
-﻿using PurrplingCore;
+using PurrplingCore;
 using QuestFramework.Extensions;
 using QuestFramework.Framework.Stats;
 using QuestFramework.Quests;
@@ -18,14 +18,14 @@ namespace QuestFramework.Framework.Hooks
         {
             return new Dictionary<string, Func<string, CustomQuest, bool>>()
             {
-                ["Weather"] = (valueToCheck, _) => valueToCheck.ToLower().GetCurrentWeatherName() == valueToCheck,
+                ["Weather"] = (valueToCheck, _) => GetCurrentWeatherName() == valueToCheck.ToLower(),
                 ["Date"] = (valueToCheck, _) => SDate.Now() == Utils.ParseDate(valueToCheck),
                 ["Days"] = (valueToCheck, _) => Utility.parseStringToIntArray(valueToCheck).Any(d => d == SDate.Now().Day),
                 ["Seasons"] = (valueToCheck, _) => valueToCheck.ToLower().Split(' ').Any(s => s == SDate.Now().Season),
                 ["DaysOfWeek"] = (valueToCheck, _) => valueToCheck.Split(' ').Any(
                         d => d.ToLower() == SDate.Now().DayOfWeek.ToString().ToLower()),
-                ["FriendshipLevel"] = (valueToCheck, _) => CheckFriendshipLevel(valueToCheck),
-                ["FriendshipStatus"] = (valueToCheck, _) => CheckFriendshipStatus(valueToCheck),
+                ["FriendshipLevel"] = (valueToCheck, _) => CheckFriendshipLevel(valueToCheck), // Emily 7
+                ["FriendshipStatus"] = (valueToCheck, _) => CheckFriendshipStatus(valueToCheck), // Shane Dating
                 ["MailReceived"] = (valueToCheck, _) => CheckReceivedMailCondition(valueToCheck),
                 ["EventSeen"] = (valueToCheck, _) => CheckEventSeenCondition(valueToCheck),
                 ["MinDaysPlayed"] = (valueToCheck, _) => Game1.Date.TotalDays >= Convert.ToInt32(valueToCheck),
@@ -39,11 +39,11 @@ namespace QuestFramework.Framework.Hooks
                 ["QuestCompletedToday"] = (valueToCheck, managedQuest) => IsQuestCompletedDate(SDate.Now(), managedQuest) == ParseBool(valueToCheck),
                 ["QuestNeverAccepted"] = (valueToCheck, managedQuest) => managedQuest.IsNeverAccepted() == ParseBool(valueToCheck),
                 ["QuestNeverCompleted"] = (valueToCheck, managedQuest) => managedQuest.IsNeverCompleted() == ParseBool(valueToCheck),
-                ["SkillLevel"] = (valueToCheck, _) => CheckSkillLevel(valueToCheck),
                 ["KnownCraftingRecipe"] = (valueToCheck, _) => Game1.player.craftingRecipes.ContainsKey(valueToCheck),
                 ["KnownCookingRecipe"] = (valueToCheck, _) => Game1.player.cookingRecipes.ContainsKey(valueToCheck),
                 ["CompletedCommunityCenter"] = (valueToCheck, _) => ParseBool(valueToCheck) == Game1.player.hasCompletedCommunityCenter(),
-                ["ConstructedBuilding"] = (valueToCheck, _) => CheckBuilding(valueToCheck),
+                ["ConstructedBuilding"] = (valueToCheck, _) => Game1.getFarm().isBuildingConstructed(valueToCheck), // Barn
+                ["SkillLevel"] = (valueToCheck, _) => CheckSkillLevel(valueToCheck), // Farming 1 Foraging 2
                 ["Random"] = (valueToCheck, _) => Game1.random.NextDouble() < Convert.ToDouble(valueToCheck) / 100, // Chance is in %
             };
         }
@@ -62,11 +62,10 @@ namespace QuestFramework.Framework.Hooks
         {
             if (!Context.IsWorldReady)
                 return false;
-
             var parts = valueToCheck.Split(' ');
             var acceptDate = GetQuestStats(managedQuest).LastAccepted;
             SDate now = SDate.Now();
-            
+
             Monitor.VerboseLog(
                 $"Checking quest accept date `{acceptDate}` matches current `{now}` by `{valueToCheck}`");
 
@@ -85,8 +84,8 @@ namespace QuestFramework.Framework.Hooks
                     case "y":
                     case "year":
                         flag &= acceptDate.Year == (
-                            int.TryParse(value, out var year) 
-                                ? year 
+                            int.TryParse(value, out var year)
+                                ? year
                                 : now.Year
                             );
                         break;
@@ -97,15 +96,15 @@ namespace QuestFramework.Framework.Hooks
                     case "wd":
                     case "weekday":
                         flag &= acceptDate.DayOfWeek == (
-                            Enum.TryParse<DayOfWeek>(value, out var dayOfWeek) 
-                                ? dayOfWeek 
+                            Enum.TryParse<DayOfWeek>(value, out var dayOfWeek)
+                                ? dayOfWeek
                                 : now.DayOfWeek
                             );
                         break;
                     case "d":
                     case "day":
                         flag &= acceptDate.Day == (
-                            int.TryParse(value, out var day) 
+                            int.TryParse(value, out var day)
                                 ? day
                                 : now.Day
                             );
@@ -188,7 +187,7 @@ namespace QuestFramework.Framework.Hooks
             return flag;
         }
 
-        public static bool CheckFriendshipStatus(string friendshipStatus)
+        public static bool CheckFriendshipStatus(string friendshipStatus) 
         {
             string[] fstatus = friendshipStatus.Split(' ');
             bool flag = true;
@@ -211,11 +210,11 @@ namespace QuestFramework.Framework.Hooks
                         $"expected status: {expectedStatus}, " +
                         $"current flag: {flag}");
             }
-
+            
             return flag;
         }
 
-        public static bool CheckSkillLevel(string skillLevel)
+        public static bool CheckSkillLevel(string skillLevel) 
         {
             string[] slevel = skillLevel.Split(' ');
             bool flag = true;
