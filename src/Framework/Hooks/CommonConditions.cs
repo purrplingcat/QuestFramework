@@ -166,7 +166,7 @@ namespace QuestFramework.Framework.Hooks
             string[] flevel = friendshipLevel.Split(' ');
             bool flag = true;
 
-            if (flevel.Length%2 == 0)
+            if (flevel.Length%2 != 0)
                 return false;
 
             if (flevel.Length < 2)
@@ -196,7 +196,7 @@ namespace QuestFramework.Framework.Hooks
             string[] fstatus = friendshipStatus.Split(' ');
             bool flag = true;
 
-            if (fstatus.Length%2 == 0)
+            if (fstatus.Length%2 != 0)
                 return false;
 
             if (fstatus.Length < 2)
