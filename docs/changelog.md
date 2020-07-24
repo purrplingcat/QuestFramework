@@ -10,7 +10,6 @@
 - Added new condition `BuildingConstructed` to check if specified building is present on farm 
 - Added new condition `CommunityCenterCompleted` to check whether community center completed or not
 - Added new condition `FriendshipStatus` to check friendship status of specified character (Married, Engaged, Dating, Friendly)
-
 - Rename conditions: `Friendship` to `FriendshipLevel` to distinguish from `FriendshipStatus`
 
 ### For Content Pack modders
