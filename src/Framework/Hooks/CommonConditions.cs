@@ -24,7 +24,7 @@ namespace QuestFramework.Framework.Hooks
                 ["Seasons"] = (valueToCheck, _) => valueToCheck.ToLower().Split(' ').Any(s => s == SDate.Now().Season),
                 ["DaysOfWeek"] = (valueToCheck, _) => valueToCheck.Split(' ').Any(
                         d => d.ToLower() == SDate.Now().DayOfWeek.ToString().ToLower()),
-                ["Friendship"] = (valueToCheck, _) => DeprecatedCondition(() => CheckFriendshipLevel(valueToCheck)),
+                ["Friendship"] = (valueToCheck, _) => DeprecatedCondition(() => CheckFriendshipLevel(valueToCheck), "Friendship", "FriendshipLevel"),
                 ["FriendshipLevel"] = (valueToCheck, _) => CheckFriendshipLevel(valueToCheck), // Emily 7
                 ["FriendshipStatus"] = (valueToCheck, _) => CheckFriendshipStatus(valueToCheck), // Shane Dating
                 ["MailReceived"] = (valueToCheck, _) => CheckReceivedMailCondition(valueToCheck),
@@ -42,8 +42,8 @@ namespace QuestFramework.Framework.Hooks
                 ["QuestNeverCompleted"] = (valueToCheck, managedQuest) => managedQuest.IsNeverCompleted() == ParseBool(valueToCheck),
                 ["KnownCraftingRecipe"] = (valueToCheck, _) => Game1.player.craftingRecipes.ContainsKey(valueToCheck),
                 ["KnownCookingRecipe"] = (valueToCheck, _) => Game1.player.cookingRecipes.ContainsKey(valueToCheck),
-                ["CompletedCommunityCenter"] = (valueToCheck, _) => ParseBool(valueToCheck) == Game1.player.hasCompletedCommunityCenter(),
-                ["ConstructedBuilding"] = (valueToCheck, _) => Game1.getFarm().isBuildingConstructed(valueToCheck), // Barn
+                ["IsCommunityCenterCompleted"] = (valueToCheck, _) => ParseBool(valueToCheck) == Game1.player.hasCompletedCommunityCenter(),
+                ["BuildingConstructed"] = (valueToCheck, _) => Game1.getFarm().isBuildingConstructed(valueToCheck), // Barn
                 ["SkillLevel"] = (valueToCheck, _) => CheckSkillLevel(valueToCheck), // Farming 1 Foraging 2
                 ["Random"] = (valueToCheck, _) => Game1.random.NextDouble() < Convert.ToDouble(valueToCheck) / 100, // Chance is in %
             };
@@ -305,10 +305,8 @@ namespace QuestFramework.Framework.Hooks
             return "sunny";
         }
 
-        private static bool DeprecatedCondition(Func<bool> conditionCallback)
+        private static bool DeprecatedCondition(Func<bool> conditionCallback, string oldConditionName, string newConditionName)
         {
-            string oldConditionName = "Friendship";
-            string newConditionName = "FriendshipLevel";
             Monitor.Log($"`{oldConditionName}` is deprecated, use `{newConditionName}` instead", LogLevel.Warn);
             return conditionCallback();
         }
