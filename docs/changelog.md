@@ -11,7 +11,8 @@
 
 - Added new condition `CommunityCenterCompleted` to check whether community center completed or not
 
-- Added new conditions `FriendshipStatus` to check friendship status of specified character (Married, Engaged, Dating, Friendly)
+- Added new condition `FriendshipStatus` to check friendship status of specified character (Married, Engaged, Dating, Friendly)
+
 - Rename conditions: `Friendship` to `FriendshipLevel` to distinguish from `FriendshipStatus`
 
 ### For Content Pack modders
