@@ -43,6 +43,7 @@ namespace QuestFramework
         internal EventManager EventManager { get; private set; }
 
         internal static QuestFrameworkMod Instance { get; private set; }
+        internal GamePatcher Patcher { get; private set; }
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
@@ -82,9 +83,9 @@ namespace QuestFramework
             helper.Events.Display.MenuChanged += this.OnQuestLogMenuChanged;
             this.NetworkOperator.InitReceived += this.OnNetworkInitMessageReceived;
 
-            GamePatcher patcher = new GamePatcher(this.ModManifest.UniqueID, this.Monitor);
+            this.Patcher = new GamePatcher(this.ModManifest.UniqueID, this.Monitor, false);
 
-            patcher.Apply(
+            this.Patcher.Apply(
                 new Patches.QuestPatch(this.QuestManager, this.EventManager),
                 new Patches.LocationPatch(this.HookManager),
                 new Patches.Game1Patch(this.QuestManager, this.QuestOfferManager),
@@ -109,6 +110,7 @@ namespace QuestFramework
         private void OnGameStarted(object sender, GameLaunchedEventArgs e)
         {
             this.Bridge.Init();
+            this.Patcher.CheckPatches();
             this.ChangeState(State.STANDBY);
             this.RegisterDefaultHooks();
             this.Monitor.Log("Quest framework established their internal systems");
@@ -176,6 +178,7 @@ namespace QuestFramework
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
             this.hasSaveLoaded = true;
+            this.Patcher.CheckPatches();
             this.Initialize();
         }
 

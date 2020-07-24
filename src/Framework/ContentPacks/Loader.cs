@@ -30,19 +30,26 @@ namespace QuestFramework.Framework.ContentPacks
 
         public void LoadPacks(IEnumerable<IContentPack> contentPacks)
         {
-            int count = 0;
+            List<IManifest> manifests = new List<IManifest>();
+
             foreach (var contentPack in contentPacks)
             {
+                this.Monitor.Log($"Loading content pack {contentPack.Manifest.UniqueID} ...");
+
                 var content = this.LoadContentPack(contentPack);
 
                 if (content != null && this.Validate(content))
                 {
                     this.ValidContents.Add(content);
-                    ++count;
+                    manifests.Add(contentPack.Manifest);
                 }
             }
 
-            this.Monitor.Log($"Loaded {count} content packs.", LogLevel.Info); 
+            if (manifests.Count > 0)
+            {
+                this.Monitor.Log($"Loaded {manifests.Count} content packs:", LogLevel.Info);
+                manifests.ForEach((m) => this.Monitor.Log($"   {m.Name} {m.Version} by {m.Author} ({m.UniqueID})", LogLevel.Info));
+            }
         }
 
         private void Prepare(Content content)
