@@ -286,8 +286,8 @@ QuestCompletedToday      | `yes` or `no`              | Check if this quest was 
 QuestNeverAccepted       | `yes` or `no`              | Check if this quest was (or wasn't) **never accepted yet**
 QuestNeverCompleted      | `yes` or `no`              | Check if this quest was (or wasn't) **never completed yet**
 SkillLevel               | `Farming 1`, `Foraging 2 Fishing 3 Mining 2`   | Check if player skill level equal or higher than what is defined. Allowed skill values: `Farming`, `Fishing`, `Foraging`, `Mining`, `Combat`, `Luck`
-CompletedCommunityCenter | `yes` or `no`              | Check if community center is already completed.
-ConstructedBuilding      | `Coop` or `Deluxe_Coop Well Coop` | Check if specified building is currently present in farm.
+IsCommunityCenterCompleted | `yes` or `no`              | Check if community center is already completed.
+BuildingConstructed      | `Coop` or `Deluxe_Coop Well Coop` | Check if specified building is currently present in farm.
 KnownCraftingRecipe      | `Furnace`                  | Player knows specified crafting recipe.
 KnownCookingRecipe       | `Fried Egg`                | Player knows specified cooking recipe.
 Random                   | `52` or `22.272`           | A random chance in % (0 - 100). Number `52` means 52% of chance, number `22.272` means 22.272% of chance.
