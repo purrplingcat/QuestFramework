@@ -166,7 +166,7 @@ namespace QuestFramework.Framework.Hooks
             string[] friendshipLevelParts = friendshipLevel.Split(' ');
             bool flag = true;
 
-            if (friendshipLevelParts.Length%2 != 0)
+            if (friendshipLevelParts.Length % 2 != 0)
                 return false;
 
             if (friendshipLevelParts.Length < 2)
@@ -196,7 +196,7 @@ namespace QuestFramework.Framework.Hooks
             string[] friendshipStatusParts = friendshipStatus.Split(' ');
             bool flag = true;
 
-            if (friendshipStatusParts.Length%2 != 0)
+            if (friendshipStatusParts.Length % 2 != 0)
                 return false;
 
             if (friendshipStatusParts.Length < 2)
@@ -209,7 +209,7 @@ namespace QuestFramework.Framework.Hooks
                 {
                     flag &= false;
                     continue;
-                }
+                };
                 string currentStatus = Game1.player.friendshipData[whoStatus].Status.ToString();
                 string expectedStatus = friendshipStatusParts[i + 1];
 
@@ -307,7 +307,9 @@ namespace QuestFramework.Framework.Hooks
 
         private static bool DeprecatedCondition(Func<bool> conditionCallback)
         {
-            Monitor.Log("Friendship is deprecated, use FriendshipLevel instead", LogLevel.Warn);
+            string oldConditionName = "Friendship";
+            string newConditionName = "FriendshipLevel";
+            Monitor.Log($"`{oldConditionName}` is deprecated, use `{newConditionName}` instead", LogLevel.Warn);
             return conditionCallback();
         }
     }
