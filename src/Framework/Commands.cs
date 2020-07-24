@@ -138,6 +138,82 @@ namespace QuestFramework.Framework
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Styl", "IDE0060", Justification = "Command handler")]
+        internal static void AcceptQuest(string name, string[] args)
+        {
+            if (!Context.IsWorldReady)
+            {
+                Monitor.Log("Can't accept quest if the game is not loaded", LogLevel.Info);
+                return;
+            }
+
+            if (args.Length < 1)
+            {
+                Monitor.Log("Enter valid fullqualified quest name (<quest_name>@<mod_uid>).", LogLevel.Info);
+                return;
+            }
+
+            if (QuestManager.Fetch(args[0]) == null)
+            {
+                Monitor.Log($"Unable to accept unknown quest `{args[0]}`.", LogLevel.Info);
+                return;
+            }
+
+            QuestManager.AcceptQuest(args[0]);
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Styl", "IDE0060", Justification = "Command handler")]
+        internal static void CompleteQuest(string name, string[] args)
+        {
+            if (!Context.IsWorldReady)
+            {
+                Monitor.Log("Can't complete quest if the game is not loaded", LogLevel.Info);
+                return;
+            }
+
+            if (args.Length < 1)
+            {
+                Monitor.Log("Enter valid fullqualified quest name (<quest_name>@<mod_uid>).", LogLevel.Info);
+                return;
+            }
+
+            var customQuest = QuestManager.Fetch(args[0]);
+
+            if (customQuest == null || !customQuest.IsInQuestLog())
+            {
+                Monitor.Log($"Unable to complete quest `{args[0]}` which is not accepted in player's questlog.", LogLevel.Info);
+                return;
+            }
+
+            customQuest.Complete();
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Styl", "IDE0060", Justification = "Command handler")]
+        internal static void RemoveQuest(string name, string[] args)
+        {
+            if (!Context.IsWorldReady)
+            {
+                Monitor.Log("Can't remove quest from questlog if the game is not loaded", LogLevel.Info);
+                return;
+            }
+
+            if (args.Length < 1)
+            {
+                Monitor.Log("Enter valid fullqualified quest name (<quest_name>@<mod_uid>).", LogLevel.Info);
+                return;
+            }
+
+            var customQuest = QuestManager.Fetch(args[0]);
+
+            if (customQuest == null || !customQuest.IsInQuestLog())
+            {
+                Monitor.Log($"Unable to remove quest `{args[0]}` which is not accepted in player's questlog.", LogLevel.Info);
+                return;
+            }
+
+            customQuest.RemoveFromQuestLog();
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Styl", "IDE0060", Justification = "Command handler")]
         internal static void InvalidateCache(string name, string[] args)
         {
             QuestFrameworkMod.InvalidateCache();

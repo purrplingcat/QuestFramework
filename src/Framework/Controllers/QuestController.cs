@@ -43,7 +43,9 @@ namespace QuestFramework.Framework.Controllers
                     this.monitor.Log($"Assign quest `{questKv.GetFullName()}` to existing quest id #{questKv.id} in quest registry. Original quest overwritten.", LogLevel.Warn);
 
                 questRegistry.Data[questKv.id] = this.ToQuestString(questKv);
+
                 this.monitor.VerboseLog($"Injected quest #{questKv.id} aka `{questKv.Name}` to `Data\\Quests`");
+                this.monitor.VerboseLog($"   {questRegistry.Data[questKv.id]}");
             }
 
             this.monitor.Log($"Injected {this.QuestManager.Quests.Count} managed quests into Data\\Quests");

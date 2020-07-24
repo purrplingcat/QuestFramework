@@ -96,6 +96,9 @@ namespace QuestFramework
             helper.ConsoleCommands.Add("quests_log", "List all managed quests which are in player's quest log", Commands.ListLog);
             helper.ConsoleCommands.Add("quests_stats", "Show quest statistics", Commands.QuestStats);
             helper.ConsoleCommands.Add("quests_invalidate", "Invalidate quest assets cache", Commands.InvalidateCache);
+            helper.ConsoleCommands.Add("quests_accept", "Accept managed quest and add it to questlog", Commands.AcceptQuest);
+            helper.ConsoleCommands.Add("quests_complete", "Complete managed quest in questlog", Commands.CompleteQuest);
+            helper.ConsoleCommands.Add("quests_remove", "Remove managed quest from questlog", Commands.RemoveQuest);
 
             var packs = helper.ContentPacks.GetOwned();
             if (packs.Any())

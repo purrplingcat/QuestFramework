@@ -4,6 +4,8 @@
 
 ### Common changes
 
+- Added new debug commands: `quests_accept`, `quests_complete` and `quests_remove`.
+- Fixed wrong quest type binding in asset editor for `Data/Quests`
 - Fixed removing quests marked as destroy from questlog
 - Added new conditions: `QuestCompletedDate`, `QuestAcceptedToday`, `QuestCompletedToday`, `QuestNeverAccepted` and `QuestNeverCompleted`
 
