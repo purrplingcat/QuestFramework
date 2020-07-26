@@ -1,6 +1,6 @@
 ﻿# Changelog
 
-## Upcoming changes
+## 1.0.0
 
 ### Common changes
 
