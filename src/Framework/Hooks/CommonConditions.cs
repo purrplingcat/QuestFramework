@@ -1,4 +1,4 @@
-﻿using PurrplingCore;
+using PurrplingCore;
 using QuestFramework.Extensions;
 using QuestFramework.Framework.Stats;
 using QuestFramework.Quests;
@@ -18,13 +18,15 @@ namespace QuestFramework.Framework.Hooks
         {
             return new Dictionary<string, Func<string, CustomQuest, bool>>()
             {
-                ["Weather"] = (valueToCheck, _) => GetCurrentWeatherName() == valueToCheck,
+                ["Weather"] = (valueToCheck, _) => GetCurrentWeatherName() == valueToCheck.ToLower(),
                 ["Date"] = (valueToCheck, _) => SDate.Now() == Utils.ParseDate(valueToCheck),
                 ["Days"] = (valueToCheck, _) => Utility.parseStringToIntArray(valueToCheck).Any(d => d == SDate.Now().Day),
-                ["Seasons"] = (valueToCheck, _) => valueToCheck.Split(' ').Any(s => s == SDate.Now().Season),
+                ["Seasons"] = (valueToCheck, _) => valueToCheck.ToLower().Split(' ').Any(s => s == SDate.Now().Season),
                 ["DaysOfWeek"] = (valueToCheck, _) => valueToCheck.Split(' ').Any(
                         d => d.ToLower() == SDate.Now().DayOfWeek.ToString().ToLower()),
-                ["Friendship"] = (valueToCheck, _) => CheckFriendshipCondition(valueToCheck),
+                ["Friendship"] = (valueToCheck, _) => DeprecatedCondition(() => CheckFriendshipLevel(valueToCheck), "Friendship", "FriendshipLevel"),
+                ["FriendshipLevel"] = (valueToCheck, _) => CheckFriendshipLevel(valueToCheck), // Emily 7
+                ["FriendshipStatus"] = (valueToCheck, _) => CheckFriendshipStatus(valueToCheck), // Shane Dating
                 ["MailReceived"] = (valueToCheck, _) => CheckReceivedMailCondition(valueToCheck),
                 ["EventSeen"] = (valueToCheck, _) => CheckEventSeenCondition(valueToCheck),
                 ["MinDaysPlayed"] = (valueToCheck, _) => Game1.Date.TotalDays >= Convert.ToInt32(valueToCheck),
@@ -40,6 +42,9 @@ namespace QuestFramework.Framework.Hooks
                 ["QuestNeverCompleted"] = (valueToCheck, managedQuest) => managedQuest.IsNeverCompleted() == ParseBool(valueToCheck),
                 ["KnownCraftingRecipe"] = (valueToCheck, _) => Game1.player.craftingRecipes.ContainsKey(valueToCheck),
                 ["KnownCookingRecipe"] = (valueToCheck, _) => Game1.player.cookingRecipes.ContainsKey(valueToCheck),
+                ["IsCommunityCenterCompleted"] = (valueToCheck, _) => ParseBool(valueToCheck) == Game1.player.hasCompletedCommunityCenter(),
+                ["BuildingConstructed"] = (valueToCheck, _) => Game1.getFarm().isBuildingConstructed(valueToCheck), // Barn
+                ["SkillLevel"] = (valueToCheck, _) => CheckSkillLevel(valueToCheck), // Farming 1 Foraging 2
                 ["Random"] = (valueToCheck, _) => Game1.random.NextDouble() < Convert.ToDouble(valueToCheck) / 100, // Chance is in %
             };
         }
@@ -58,11 +63,10 @@ namespace QuestFramework.Framework.Hooks
         {
             if (!Context.IsWorldReady)
                 return false;
-
             var parts = valueToCheck.Split(' ');
             var acceptDate = GetQuestStats(managedQuest).LastAccepted;
             SDate now = SDate.Now();
-            
+
             Monitor.VerboseLog(
                 $"Checking quest accept date `{acceptDate}` matches current `{now}` by `{valueToCheck}`");
 
@@ -81,8 +85,8 @@ namespace QuestFramework.Framework.Hooks
                     case "y":
                     case "year":
                         flag &= acceptDate.Year == (
-                            int.TryParse(value, out var year) 
-                                ? year 
+                            int.TryParse(value, out var year)
+                                ? year
                                 : now.Year
                             );
                         break;
@@ -93,15 +97,15 @@ namespace QuestFramework.Framework.Hooks
                     case "wd":
                     case "weekday":
                         flag &= acceptDate.DayOfWeek == (
-                            Enum.TryParse<DayOfWeek>(value, out var dayOfWeek) 
-                                ? dayOfWeek 
+                            Enum.TryParse<DayOfWeek>(value, out var dayOfWeek)
+                                ? dayOfWeek
                                 : now.DayOfWeek
                             );
                         break;
                     case "d":
                     case "day":
                         flag &= acceptDate.Day == (
-                            int.TryParse(value, out var day) 
+                            int.TryParse(value, out var day)
                                 ? day
                                 : now.Day
                             );
@@ -157,27 +161,115 @@ namespace QuestFramework.Framework.Hooks
             return flag;
         }
 
-        public static bool CheckFriendshipCondition(string friendshipDefinition)
+        public static bool CheckFriendshipLevel(string friendshipLevel)
         {
-            string[] fships = friendshipDefinition.Split(' ');
+            string[] friendshipLevelParts = friendshipLevel.Split(' ');
             bool flag = true;
 
-            if (fships.Length < 2)
+            if (friendshipLevelParts.Length % 2 != 0)
                 return false;
 
-            for (int i = 0; i < fships.Length; i += 2)
-            {
-                string who = fships[i];
-                int currentLevel = Game1.player.getFriendshipHeartLevelForNPC(who);
-                int expectedLevel = Convert.ToInt32(fships[i + 1]);
+            if (friendshipLevelParts.Length < 2)
+                return false;
 
-                flag &= currentLevel >= expectedLevel;
-                
+            for (int i = 0; i < friendshipLevelParts.Length; i += 2)
+            {
+                string whoLevel = friendshipLevelParts[i];
+                int currentFriendshipLevel = Game1.player.getFriendshipHeartLevelForNPC(whoLevel);
+                int expectedFriendshipLevel = Convert.ToInt32(friendshipLevelParts[i + 1]);
+
+                flag &= currentFriendshipLevel >= expectedFriendshipLevel;
+
                 if (Monitor.IsVerbose)
                     Monitor.Log(
-                        $"Checked friendship level for `{who}`, " +
-                        $"current level: {currentLevel}, " +
-                        $"expected: {expectedLevel}, " +
+                        $"Checked friendship level for `{whoLevel}`, " +
+                        $"current level: {currentFriendshipLevel}, " +
+                        $"expected: {expectedFriendshipLevel}, " +
+                        $"current flag: {flag}");
+            }
+
+            return flag;
+        }
+
+        public static bool CheckFriendshipStatus(string friendshipStatus) 
+        {
+            string[] friendshipStatusParts = friendshipStatus.Split(' ');
+            bool flag = true;
+
+            if (friendshipStatusParts.Length % 2 != 0)
+                return false;
+
+            if (friendshipStatusParts.Length < 2)
+                return false;
+
+            for (int i = 0; i < friendshipStatusParts.Length; i += 2)
+            {
+                string whoStatus = friendshipStatusParts[i];
+                if (!Game1.player.friendshipData.ContainsKey(whoStatus))
+                {
+                    flag &= false;
+                    continue;
+                };
+                string currentStatus = Game1.player.friendshipData[whoStatus].Status.ToString();
+                string expectedStatus = friendshipStatusParts[i + 1];
+
+                flag &= currentStatus == expectedStatus;
+
+                if (Monitor.IsVerbose)
+                    Monitor.Log(
+                        $"Checked friendship status for `{whoStatus}`, " +
+                        $"current status: {currentStatus}, " +
+                        $"expected status: {expectedStatus}, " +
+                        $"current flag: {flag}");
+            }
+            
+            return flag;
+        }
+
+        public static bool CheckSkillLevel(string skillLevel) 
+        {
+            string[] skillLevelParts = skillLevel.Split(' ');
+            bool flag = true;
+
+            if (skillLevelParts.Length < 2)
+                return false;
+
+            for (int i = 0; i < skillLevelParts.Length; i += 2)
+            {
+                string[] skillList = { "Farming", "Fishing", "Foraging", "Mining", "Combat", "Luck" };
+                string skillName = skillLevelParts[i];
+                int skillId = Array.IndexOf(skillList, skillLevelParts[i]);
+                int currentSkillLevel = Game1.player.getEffectiveSkillLevel(skillId);
+                int expectedSkillLevel = Convert.ToInt32(skillLevelParts[i + 1]);
+
+                flag &= currentSkillLevel >= expectedSkillLevel;
+
+                if (Monitor.IsVerbose)
+                    Monitor.Log(
+                        $"Checked skill level for `{skillName}` " +
+                        $"with skill id: {skillId}, " +
+                        $"current level: {currentSkillLevel}, " +
+                        $"expected level: {expectedSkillLevel}, " +
+                        $"current flag: {flag}");
+            }
+
+            return flag;
+        }
+
+        public static bool CheckBuilding(string checkedBuilding)
+        {
+            string[] building = checkedBuilding.Split(' ');
+            bool flag = true;
+
+            for (int i = 0; i < building.Length; i += 1)
+            {
+                string buildingName = building[i].Replace('_', ' ');
+                bool isBuildingConstructed = Game1.getFarm().isBuildingConstructed(buildingName);
+                flag &= isBuildingConstructed;
+
+                if (Monitor.IsVerbose)
+                    Monitor.Log(
+                        $"Checked `{buildingName}` is built in farm" +
                         $"current flag: {flag}");
             }
 
@@ -211,6 +303,12 @@ namespace QuestFramework.Framework.Hooks
                 return "cloudy";
 
             return "sunny";
+        }
+
+        private static bool DeprecatedCondition(Func<bool> conditionCallback, string oldConditionName, string newConditionName)
+        {
+            Monitor.Log($"`{oldConditionName}` is deprecated, use `{newConditionName}` instead", LogLevel.Warn);
+            return conditionCallback();
         }
     }
 }

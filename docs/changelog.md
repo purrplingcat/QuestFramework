@@ -7,7 +7,16 @@
 - Added new debug commands: `quests_accept`, `quests_complete` and `quests_remove`.
 - Fixed wrong quest type binding in asset editor for `Data/Quests`
 - Fixed removing quests marked as destroy from questlog
-- Added new conditions: `QuestCompletedDate`, `QuestAcceptedToday`, `QuestCompletedToday`, `QuestNeverAccepted` and `QuestNeverCompleted`
+- Added new conditions: `QuestCompletedDate`, `QuestAcceptedToday`, `QuestCompletedToday`, `QuestNeverAccepted`, `QuestNeverCompleted`, 
+- Added new condition `SkillLevel` to check if the skill level met the minimum requirement 
+- Added new condition `BuildingConstructed` to check if specified building is present on farm 
+- Added new condition `IsCommunityCenterCompleted` to check whether community center completed or not
+- Added new condition `FriendshipStatus` to check friendship status of specified character (Married, Engaged, Dating, Friendly)
+- Rename conditions: `Friendship` to `FriendshipLevel` to distinguish from `FriendshipStatus`
+
+### For Content Pack modders
+
+- Added support for `OR` logical function between values in conditions (with `|` separator)
 
 ### For Content Pack modders
 
