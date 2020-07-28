@@ -43,7 +43,7 @@ namespace QuestFramework.Framework.Hooks
                 ["KnownCraftingRecipe"] = (valueToCheck, _) => Game1.player.craftingRecipes.ContainsKey(valueToCheck),
                 ["KnownCookingRecipe"] = (valueToCheck, _) => Game1.player.cookingRecipes.ContainsKey(valueToCheck),
                 ["IsCommunityCenterCompleted"] = (valueToCheck, _) => ParseBool(valueToCheck) == Game1.player.hasCompletedCommunityCenter(),
-                ["BuildingConstructed"] = (valueToCheck, _) => Game1.getFarm().isBuildingConstructed(valueToCheck), // Barn
+                ["BuildingConstructed"] = (valueToCheck, _) => CheckBuilding(valueToCheck), // Barn
                 ["SkillLevel"] = (valueToCheck, _) => CheckSkillLevel(valueToCheck), // Farming 1 Foraging 2
                 ["HasMod"] = (valueToCheck, _) => QuestFrameworkMod.Instance.Helper.ModRegistry.IsLoaded(valueToCheck),
                 ["Random"] = (valueToCheck, _) => Game1.random.NextDouble() < Convert.ToDouble(valueToCheck) / 100, // Chance is in %
