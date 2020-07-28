@@ -5,9 +5,12 @@ namespace QuestFramework.Framework.Bridges
 {
     internal class Bridge
     {
-        public Bridge(IModRegistry modRegistry)
+        private readonly bool debugMode;
+
+        public Bridge(IModRegistry modRegistry, bool debugMode)
         {
             this.ModRegistry = modRegistry;
+            this.debugMode = debugMode;
         }
 
         private IModRegistry ModRegistry { get; }
@@ -26,7 +29,7 @@ namespace QuestFramework.Framework.Bridges
             this.JsonAssets = this.LoadApi<IJsonAssetsApi>(ApiIdentifiers.JSON_ASSETS);
             this.EPU = this.LoadApi<IConditionsChecker>(ApiIdentifiers.EPU);
 
-            this.EPU?.Initialize(true, this.ModRegistry.ModID);
+            this.EPU?.Initialize(this.debugMode, this.ModRegistry.ModID);
         }
     }
 }

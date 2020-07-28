@@ -89,7 +89,12 @@ namespace QuestFramework.Framework.Watchdogs
                 this.EventManager.QuestAccepted.Fire(new QuestEventArgs(newValue), this);
 
             if (newValue == null && oldValue != null)
+            {
                 this.EventManager.QuestRemoved.Fire(new QuestEventArgs(oldValue), this);
+
+                if (oldValue.IsManaged())
+                    oldValue.AsManagedQuest().Reset();
+            }
         }
 
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)

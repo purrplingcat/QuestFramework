@@ -43,12 +43,27 @@ namespace QuestFramework.Framework.Hooks
                 ["KnownCraftingRecipe"] = (valueToCheck, _) => Game1.player.craftingRecipes.ContainsKey(valueToCheck),
                 ["KnownCookingRecipe"] = (valueToCheck, _) => Game1.player.cookingRecipes.ContainsKey(valueToCheck),
                 ["IsCommunityCenterCompleted"] = (valueToCheck, _) => ParseBool(valueToCheck) == Game1.player.hasCompletedCommunityCenter(),
-                ["BuildingConstructed"] = (valueToCheck, _) => Game1.getFarm().isBuildingConstructed(valueToCheck), // Barn
+                ["BuildingConstructed"] = (valueToCheck, _) => CheckBuilding(valueToCheck), // Barn
                 ["SkillLevel"] = (valueToCheck, _) => CheckSkillLevel(valueToCheck), // Farming 1 Foraging 2
-                ["HasMod"] = (valueToCheck, _) => QuestFrameworkMod.Instance.Helper.ModRegistry.IsLoaded(valueToCheck),
+                ["HasMod"] = (valueToCheck, _) => CheckHasModCondition(valueToCheck),
                 ["Random"] = (valueToCheck, _) => Game1.random.NextDouble() < Convert.ToDouble(valueToCheck) / 100, // Chance is in %
                 ["EPU"] = (valueToCheck, _) => CheckEpuCondition(valueToCheck), // For compatibility with EPU conditions
             };
+        }
+
+        private static bool CheckHasModCondition(string valueToCheck)
+        {
+            foreach (string modUid in valueToCheck.Split(' '))
+            {
+                Monitor.VerboseLog($"Checking if mod `{modUid}` is loaded ...");
+                if (!QuestFrameworkMod.Instance.Helper.ModRegistry.IsLoaded(modUid))
+                {
+                    Monitor.VerboseLog($"Mod `{modUid}` is not loaded! Returns false");
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private static bool CheckEpuCondition(string valueToCheck)

@@ -29,6 +29,7 @@ namespace QuestFramework
         private bool hasInitMessageArrived = false;
 
         internal State Status { get; private set; }
+        internal Config Config { get; private set; }
         internal Bridge Bridge { get; private set; }
         internal QuestManager QuestManager { get; private set; }
         internal QuestStateStore QuestStateStore { get; private set; }
@@ -51,7 +52,8 @@ namespace QuestFramework
         {
             Instance = this;
 
-            this.Bridge = new Bridge(helper.ModRegistry);
+            this.Config = helper.ReadConfig<Config>();
+            this.Bridge = new Bridge(helper.ModRegistry, this.Config.DebugMode);
             this.EventManager = new EventManager(this.Monitor);
             this.QuestManager = new QuestManager(this.Monitor);
             this.QuestStateStore = new QuestStateStore(helper.Data, this.Monitor);
@@ -139,6 +141,11 @@ namespace QuestFramework
         private void OnDayEnding(object sender, DayEndingEventArgs e)
         {
             this.QuestController.SanitizeAllManagedQuestsInQuestLog(this.Helper.Translation);
+
+            if (this.Config.EnableStateVerification)
+                this.QuestStateStore.Verify(
+                    Game1.player.UniqueMultiplayerID, 
+                    this.QuestManager.Quests.Where(q => q is IStateRestorable));
         }
 
         public override object GetApi()
@@ -205,7 +212,6 @@ namespace QuestFramework
             this.StatsManager.LoadStats();
             this.ContentPackLoader.RegisterQuestsFromPacks();
 
-            // TODO: fire 'GettingReady' event on this line
             this.EventManager.GettingReady.Fire(new Events.GettingReadyEventArgs(), this);
             this.ChangeState(State.LAUNCHED);
 

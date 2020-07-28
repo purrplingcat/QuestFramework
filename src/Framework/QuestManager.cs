@@ -62,9 +62,6 @@ namespace QuestFramework.Framework
             }
 
             if (!Game1.player.hasQuest(id)) {
-                if (this.Quests.Any(q => q.id == id) && this.GetById(id) is IStatefull statefullQuest)
-                    statefullQuest.ResetState();
-
                 if (silent)
                     Game1.player.AddQuestQuiet(id);
                 else
@@ -81,9 +78,6 @@ namespace QuestFramework.Framework
         {
             if (!Game1.player.hasQuest(id))
             {
-                if (this.Quests.Any(q => q.id == id) && this.GetById(id) is IStatefull statefullQuest)
-                    statefullQuest.ResetState();
-
                 Game1.player.addQuest(id);
             }
             else
