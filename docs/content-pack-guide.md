@@ -2,6 +2,7 @@
 
 
 
+
 ← [README](../README.md)
 
 # Content pack guide
@@ -259,7 +260,7 @@ Position        | Standing tile position (X, Y). Example `13 10`
 Area            | Specified standing area (X, Y, Width, Height) Example: `2038 5573 326 245`
 TouchAction     | Touch action property value must be this defined value for trig hook's action.
 
-### Common environment conditions
+## Common global conditions
 
 These global conditions can be used in hooks or in the quest offers.
 
@@ -291,6 +292,7 @@ BuildingConstructed      | `Coop` or `Deluxe_Coop Well Coop` | Check if specifie
 KnownCraftingRecipe      | `Furnace`                  | Player knows specified crafting recipe.
 KnownCookingRecipe       | `Fried Egg`                | Player knows specified cooking recipe.
 Random                   | `52` or `22.272`           | A random chance in % (0 - 100). Number `52` means 52% of chance, number `22.272` means 22.272% of chance.
+EPU                      | EPU string like `!z spring/t 600 1000` | Condition processed by [Expanded Preconditions Utility](https://www.nexusmods.com/stardewvalley/mods/6529). For use this condition, EPU must be installed in SDV mods folder. See [EPU docs](https://github.com/ChroniclerCherry/stardew-valley-mods/blob/master/ExpandedPreconditionsUtility/README.md) for more information.
 
 Every condition name enlisted in this common conditions list you can prefix with `not:` for negate condition result.
 For example: `not:EventSeen` means event with specified id was not seen by player;

@@ -1,4 +1,4 @@
-﻿using PurrplingCore.Bridges;
+﻿using QuestFramework.Framework.Bridges.APIs;
 using StardewModdingAPI;
 
 namespace QuestFramework.Framework.Bridges
@@ -12,6 +12,7 @@ namespace QuestFramework.Framework.Bridges
 
         private IModRegistry ModRegistry { get; }
         public IJsonAssetsApi JsonAssets { get; private set; }
+        public IConditionsChecker EPU { get; private set; }
 
         private TApi LoadApi<TApi>(string modUid) where TApi : class
         {
@@ -23,6 +24,9 @@ namespace QuestFramework.Framework.Bridges
         public void Init()
         {
             this.JsonAssets = this.LoadApi<IJsonAssetsApi>(ApiIdentifiers.JSON_ASSETS);
+            this.EPU = this.LoadApi<IConditionsChecker>(ApiIdentifiers.EPU);
+
+            this.EPU?.Initialize(true, this.ModRegistry.ModID);
         }
     }
 }

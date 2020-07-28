@@ -9,5 +9,6 @@ namespace QuestFramework.Framework.Bridges
     internal static class ApiIdentifiers
     {
         public const string JSON_ASSETS = "spacechase0.JsonAssets";
+        public const string EPU = "Cherry.ExpandedPreconditionsUtility";
     }
 }

@@ -1,5 +1,11 @@
 ﻿# Changelog
 
+## Upcoming version
+
+### Common changes
+
+- Added comptibility with Expanded Preconditions Utility (`EPU` was added to common conditions)
+
 ## 1.0.0
 
 ### Common changes

@@ -46,7 +46,21 @@ namespace QuestFramework.Framework.Hooks
                 ["BuildingConstructed"] = (valueToCheck, _) => Game1.getFarm().isBuildingConstructed(valueToCheck), // Barn
                 ["SkillLevel"] = (valueToCheck, _) => CheckSkillLevel(valueToCheck), // Farming 1 Foraging 2
                 ["Random"] = (valueToCheck, _) => Game1.random.NextDouble() < Convert.ToDouble(valueToCheck) / 100, // Chance is in %
+                ["EPU"] = (valueToCheck, _) => CheckEpuCondition(valueToCheck), // For compatibility with EPU conditions
             };
+        }
+
+        private static bool CheckEpuCondition(string valueToCheck)
+        {
+            var epu = QuestFrameworkMod.Instance.Bridge.EPU;
+
+            if (epu == null)
+            {
+                Monitor.Log("Unable to check EPU condition. Expanded Preconditions Utility is not loaded. Do you have this mod installed in mods folder?", LogLevel.Error);
+                return false;
+            }
+
+            return epu.CheckConditions(valueToCheck);
         }
 
         private static bool IsQuestAcceptedDate(SDate dateToCheck, CustomQuest managedQuest)
