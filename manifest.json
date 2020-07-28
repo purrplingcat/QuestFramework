@@ -14,6 +14,10 @@
       "UniqueID": "spacechase0.JsonAssets",
       "MinimumVersion": "1.6.2",
       "IsRequired": false
+    },
+    {
+      "UniqueID": "Cherry.ExpandedPreconditionsUtility",
+      "IsRequired": false
     }
   ]
 }
