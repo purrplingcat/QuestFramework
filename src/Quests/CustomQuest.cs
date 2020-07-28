@@ -31,7 +31,9 @@ namespace QuestFramework.Quests
         public string ReactionText { get; set; }
         public int DaysLeft { get; set; } = 0;
         public List<Hook> Hooks { get; set; }
-
+        public string AddConversationTopicAccept { get; set; }
+        public string AddConversationTopicCompleted { get; set; }
+        public string RemoveConversationTopicCompleted { get; set; }
         public event EventHandler<IQuestInfo> Completed;
         
         public string Trigger 

@@ -194,6 +194,9 @@ namespace QuestFramework.Framework.ContentPacks
                 Cancelable = quest.Cancelable,
                 Trigger = this.ApplyTokens(trigger),
                 NextQuests = quest.NextQuests,
+                AddConversationTopicAccept = quest.AddConversationTopicAccept,
+                AddConversationTopicCompleted = quest.AddConversationTopicCompleted,
+                RemoveConversationTopicCompleted = quest.RemoveConversationTopicCompleted,
                 OwnedByModUid = content.owner.Manifest.UniqueID,
             };
 

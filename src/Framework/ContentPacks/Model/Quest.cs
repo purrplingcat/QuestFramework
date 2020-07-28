@@ -24,5 +24,8 @@ namespace QuestFramework.Framework.ContentPacks.Model
         public string ReactionText { get; set; }
         public JToken Trigger { get; set; }
         public List<Hook> Hooks { get; set; }
+        public string AddConversationTopicAccept { get; set; }
+        public string AddConversationTopicCompleted { get; set; }
+        public string RemoveConversationTopicCompleted { get; set; }
     }
 }
