@@ -4,6 +4,7 @@
 
 ### Common changes
 
+- Added `HasMod` condition for check if mod with specified mod UID is loaded in SMAPI
 - Added comptibility with Expanded Preconditions Utility (`EPU` was added to common conditions)
 
 ## 1.0.0

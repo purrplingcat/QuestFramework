@@ -3,6 +3,7 @@
 
 
 
+
 ← [README](../README.md)
 
 # Content pack guide
@@ -291,6 +292,7 @@ IsCommunityCenterCompleted | `yes` or `no`              | Check if community cen
 BuildingConstructed      | `Coop` or `Deluxe_Coop Well Coop` | Check if specified building is currently present in farm.
 KnownCraftingRecipe      | `Furnace`                  | Player knows specified crafting recipe.
 KnownCookingRecipe       | `Fried Egg`                | Player knows specified cooking recipe.
+HasMod                   | `PurrplingCat.NpcAdventure` | Checks if mod with specified mod UID is loaded in SMAPI
 Random                   | `52` or `22.272`           | A random chance in % (0 - 100). Number `52` means 52% of chance, number `22.272` means 22.272% of chance.
 EPU                      | EPU string like `!z spring/t 600 1000` | Condition processed by [Expanded Preconditions Utility](https://www.nexusmods.com/stardewvalley/mods/6529). For use this condition, EPU must be installed in SDV mods folder. See [EPU docs](https://github.com/ChroniclerCherry/stardew-valley-mods/blob/master/ExpandedPreconditionsUtility/README.md) for more information.
 
