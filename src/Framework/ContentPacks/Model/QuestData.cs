@@ -1,14 +1,12 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using QuestFramework.Hooks;
-using System;
+using QuestFramework.Quests;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QuestFramework.Framework.ContentPacks.Model
 {
-    class Quest
+    class QuestData
     {
         public string Name { get; set; }
         public QuestType Type { get; set; } = QuestType.Basic;
@@ -24,5 +22,14 @@ namespace QuestFramework.Framework.ContentPacks.Model
         public string ReactionText { get; set; }
         public JToken Trigger { get; set; }
         public List<Hook> Hooks { get; set; }
+
+        [JsonExtensionData]
+        public JObject ExtendedData { get; set; }
+
+        public void PopulateExtendedData(CustomQuest customQuest)
+        {
+            if (this.ExtendedData != null)
+                JsonConvert.PopulateObject(this.ExtendedData.ToString(), customQuest);
+        }
     }
 }

@@ -43,7 +43,6 @@ namespace QuestFramework.Hooks
                         return;
                     
                     Game1.player.removeQuest(questId);
-                    this.ManagedQuest.AsStatefull().ResetState();
                     break;
             }
         }

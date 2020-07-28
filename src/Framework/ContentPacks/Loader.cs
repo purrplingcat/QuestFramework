@@ -177,30 +177,32 @@ namespace QuestFramework.Framework.ContentPacks
             return string.Join("", parts);
         }
 
-        private CustomQuest MapQuest(Content content, Quest quest)
+        private CustomQuest MapQuest(Content content, QuestData questData)
         {
-            string trigger = quest.Trigger?.ToString();
+            string trigger = questData.Trigger?.ToString();
 
-            var managedQuest = new CustomQuest(quest.Name)
+            var managedQuest = new CustomQuest(questData.Name)
             {
-                Title = quest.Title,
-                Description = quest.Description,
-                BaseType = quest.Type,
-                Objective = quest.Objective,
-                DaysLeft = quest.DaysLeft,
-                Reward = quest.Reward,
-                RewardDescription = quest.RewardDescription,
-                ReactionText = quest.ReactionText,
-                Cancelable = quest.Cancelable,
+                Title = questData.Title,
+                Description = questData.Description,
+                BaseType = questData.Type,
+                Objective = questData.Objective,
+                DaysLeft = questData.DaysLeft,
+                Reward = questData.Reward,
+                RewardDescription = questData.RewardDescription,
+                ReactionText = questData.ReactionText,
+                Cancelable = questData.Cancelable,
                 Trigger = this.ApplyTokens(trigger),
-                NextQuests = quest.NextQuests,
+                NextQuests = questData.NextQuests,
                 OwnedByModUid = content.owner.Manifest.UniqueID,
             };
 
-            if (quest.CustomTypeId != -1)
+            if (questData.CustomTypeId != -1)
             {
-                managedQuest.CustomTypeId = quest.CustomTypeId;
+                managedQuest.CustomTypeId = questData.CustomTypeId;
             }
+
+            questData.PopulateExtendedData(managedQuest);
 
             return managedQuest;
         }

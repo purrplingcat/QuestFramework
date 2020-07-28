@@ -4,6 +4,7 @@ using QuestFramework.Framework;
 using QuestFramework.Framework.Events;
 using QuestFramework.Framework.Quests;
 using QuestFramework.Quests;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Quests;
 using System;
@@ -31,8 +32,7 @@ namespace QuestFramework.Patches
         {
             try
             {
-                var manager = QuestFrameworkMod.Instance.QuestManager;
-                var customQuest = manager.GetById(id);
+                var customQuest = Instance.QuestManager.GetById(id);
 
                 if (__result != null && customQuest != null)
                 {
@@ -41,6 +41,9 @@ namespace QuestFramework.Patches
                         // This is fix for use custom dialogue text for slay monster quest type
                         (__result as SlayMonsterQuest).dialogueparts.Clear();
                     }
+
+                    if (!Game1.player.hasQuest(id))
+                        customQuest.Reset();
 
                     __result.dailyQuest.Value = customQuest.IsDailyQuest();
                     __result.daysLeft.Value = customQuest.DaysLeft;
@@ -110,12 +113,6 @@ namespace QuestFramework.Patches
                 }
 
                 managedQuest.Complete(new QuestInfo(__instance, Game1.player));
-
-                if (managedQuest is IStatefull statefullManagedQuest)
-                {
-                    // Reset to the inital state if the quest is completed
-                    statefullManagedQuest.ResetState();
-                }
 
                 if (managedQuest.NextQuests?.Count > 0)
                 {

@@ -1,4 +1,5 @@
-﻿using StardewModdingAPI;
+﻿using QuestFramework.Quests;
+using StardewModdingAPI;
 using StardewValley;
 using System;
 using System.Collections.Generic;
@@ -45,6 +46,18 @@ namespace QuestFramework.Framework.Store
 
                 this.Store = data;
                 this.Monitor.Log("Quests store data was restored from savefile.");
+            }
+        }
+
+        public void Verify(long farmerUid, IEnumerable<CustomQuest> customQuests)
+        {
+            var payloadList = this.GetPayloadList(farmerUid);
+            foreach (var customQuest in customQuests)
+            {
+                StatePayload payload = payloadList[customQuest.Name];
+                if (customQuest is IStateRestorable restorable && !restorable.VerifyState(payload))
+                    this.Monitor.Log($"State for quest `{customQuest.Name}` for farmer UID {farmerUid} mismatch! " +
+                        $"Did you call Sync() in your CustomQuest type?", LogLevel.Warn);
             }
         }
 

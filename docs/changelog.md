@@ -6,6 +6,16 @@
 
 - Added `HasMod` condition for check if mod with specified mod UID is loaded in SMAPI
 - Added comptibility with Expanded Preconditions Utility (`EPU` was added to common conditions)
+- Added state verifier (disabled by default)
+- Added configuration model for config.json
+
+## For Content Pack modders
+
+- Added support for custom properties for `CustomQuest` from content packs
+
+## For SMAPI modders
+
+- Added new APIs for `CustomQuest` and statefull `CustomQuest<TState>`
 
 ## 1.0.0
 
