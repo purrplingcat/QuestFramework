@@ -75,6 +75,14 @@ namespace QuestFramework.Framework.Watchdogs
 
                 this.StatsManager.AddAcceptedQuest(managedQuest.GetFullName());
                 this.Monitor.Log($"Managed quest `{managedQuest.GetFullName()}` added to player's quest log");
+                if (managedQuest.AddConversationTopicWhenQuestAccepted != null)
+                {
+                    ConversationTopic.AddConversationTopic(managedQuest.AddConversationTopicWhenQuestAccepted);
+                }
+                if (managedQuest.RemoveConversationTopicWhenQuestAccepted != null)
+                {
+                    ConversationTopic.RemoveConversationTopic(managedQuest.RemoveConversationTopicWhenQuestAccepted);
+                }
             }
 
             if (newValue == null && oldValue != null && oldValue.IsManaged())
@@ -83,6 +91,16 @@ namespace QuestFramework.Framework.Watchdogs
 
                 this.StatsManager.AddRemovedQuest(managedQuest.GetFullName());
                 this.Monitor.Log($"Managed quest `{managedQuest.GetFullName()}` removed from player's quest log");
+                if (managedQuest.AddConversationTopicWhenQuestRemoved != null)
+                {
+                    ConversationTopic.AddConversationTopic(managedQuest.AddConversationTopicWhenQuestRemoved);
+                }
+
+                if (managedQuest.RemoveConversationTopicWhenQuestRemoved != null)
+                {
+                    ConversationTopic.RemoveConversationTopic(managedQuest.RemoveConversationTopicWhenQuestRemoved);
+                }
+
             }
 
             if (oldValue == null && newValue != null)

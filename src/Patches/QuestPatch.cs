@@ -19,7 +19,7 @@ namespace QuestFramework.Patches
         QuestManager QuestManager { get; }
         EventManager EventManager { get; }
         HashSet<Quest> QuestCheckerLock { get; }
-
+        ConversationTopic Conversation { get; }
         public QuestPatch(QuestManager questManager, EventManager eventManager)
         {
             this.QuestManager = questManager;
@@ -125,42 +125,14 @@ namespace QuestFramework.Patches
                 Instance.EventManager.QuestCompleted.Fire(new Events.QuestEventArgs(__instance), Instance);
                 Instance.Monitor.Log($"Quest `{managedQuest.GetFullName()}` #{__instance.id.Value} completed!");
                 
-                if (managedQuest.AddConversationTopicCompleted != null)
+                if (managedQuest.AddConversationTopicWhenQuestCompleted != null)
                 {
-                    string[] convTopicCompletedParts = managedQuest.AddConversationTopicCompleted.Split(' ');
-
-                    if (convTopicCompletedParts.Length % 2 == 0 && convTopicCompletedParts.Length >= 2)
-                    {
-                        for (int i = 0; i < convTopicCompletedParts.Length; i += 2)
-                        {
-                            string convTopicCompleted = convTopicCompletedParts[i];
-                            int daysActive = Convert.ToInt32(convTopicCompletedParts[i + 1]);
-
-                            Game1.player.activeDialogueEvents.Add(convTopicCompleted, daysActive);
-                            Instance.Monitor.Log($"Added conversation topic with the key: `{convTopicCompleted}`" +
-                                $"the conversation topic will be active for `{convTopicCompletedParts[i+1]}");
-                        }
-                    }
-
+                    ConversationTopic.AddConversationTopic(managedQuest.AddConversationTopicWhenQuestCompleted);
                 }
 
-                if (managedQuest.RemoveConversationTopicCompleted != null)
+                if (managedQuest.RemoveConversationTopicWhenQuestCompleted != null)
                 {
-                    string[] convTopicCompleted = managedQuest.RemoveConversationTopicCompleted.Split(' ');
-
-                    for (int i = 0; i < convTopicCompleted.Length; i += 1)
-                    {
-                        string convTopic = convTopicCompleted[i];
-                        if (Game1.player.activeDialogueEvents.ContainsKey(convTopic) == true)
-                        {
-                            Game1.player.activeDialogueEvents.Remove(convTopic);
-                            Instance.Monitor.Log($"Removed conversation topic: `{convTopic}`");
-                        }
-                        else Instance.Monitor.Log($"Fail to remove conversation topic, the key already inactive: `{convTopic}`");
-
-
-                    }
-
+                    ConversationTopic.RemoveConversationTopic(managedQuest.RemoveConversationTopicWhenQuestCompleted);
                 }
 
             }
