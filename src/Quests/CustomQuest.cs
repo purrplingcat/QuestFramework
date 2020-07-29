@@ -34,7 +34,12 @@ namespace QuestFramework.Quests
         public string ReactionText { get; set; }
         public int DaysLeft { get; set; } = 0;
         public List<Hook> Hooks { get; set; }
-
+        public string AddConversationTopicWhenQuestAccepted { get; set; }
+        public string AddConversationTopicWhenQuestRemoved { get; set; }
+        public string AddConversationTopicWhenQuestCompleted { get; set; }
+        public string RemoveConversationTopicWhenQuestCompleted { get; set; }
+        public string RemoveConversationTopicWhenQuestRemoved { get; set; }
+        public string RemoveConversationTopicWhenQuestAccepted { get; set; }
         public string Name
         {
             get => this.name;
