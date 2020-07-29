@@ -28,11 +28,8 @@ namespace QuestFramework
         }
         static public void RemoveConversationTopic(string removeConversationTopicInput)
         {
-            string[] convTopicToRemoveParts = removeConversationTopicInput.Split(' ');
-
-            for (int i = 0; i < convTopicToRemoveParts.Length; i += 1)
+            foreach (string convTopicToRemove in removeConversationTopicInput.Split(' ') )
             {
-                string convTopicToRemove = convTopicToRemoveParts[i];
                 if (Game1.player.activeDialogueEvents.ContainsKey(convTopicToRemove))
                 {
                     Game1.player.activeDialogueEvents.Remove(convTopicToRemove);
