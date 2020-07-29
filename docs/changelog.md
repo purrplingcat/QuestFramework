@@ -4,7 +4,8 @@
 
 ### Common changes
 
-- Fixed `BuildingConstructed` condition.
+- Fixed `BuildingConstructed` condition
+- Avoid renaming already named custom quests
 - Added `HasMod` condition for check if mod with specified mod UID is loaded in SMAPI
 - Added comptibility with Expanded Preconditions Utility (`EPU` was added to common conditions)
 - Added state verifier (disabled by default)

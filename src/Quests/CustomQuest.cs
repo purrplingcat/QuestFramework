@@ -16,9 +16,12 @@ namespace QuestFramework.Quests
     {
         private int customTypeId;
         private string trigger;
+        private string name;
 
         internal int id = -1;
-        public string Name { get; set; }
+
+        public event EventHandler<IQuestInfo> Completed;
+
         public string OwnedByModUid { get; internal set; }
         public QuestType BaseType { get; set; } = QuestType.Basic;
         public string Title { get; set; }
@@ -31,14 +34,19 @@ namespace QuestFramework.Quests
         public string ReactionText { get; set; }
         public int DaysLeft { get; set; } = 0;
         public List<Hook> Hooks { get; set; }
-        public string AddConversationTopicWhenQuestAccepted { get; set; }
-        public string AddConversationTopicWhenQuestRemoved { get; set; }
-        public string AddConversationTopicWhenQuestCompleted { get; set; }
-        public string RemoveConversationTopicWhenQuestCompleted { get; set; }
-        public string RemoveConversationTopicWhenQuestRemoved { get; set; }
-        public string RemoveConversationTopicWhenQuestAccepted { get; set; }
-        public event EventHandler<IQuestInfo> Completed;
-        
+
+        public string Name
+        {
+            get => this.name;
+            set
+            {
+                if (this.name != null)
+                    throw new InvalidOperationException("Quest name can't be changed!");
+
+                this.name = value;
+            }
+        }
+
         public string Trigger 
         {
             get => this.trigger;
