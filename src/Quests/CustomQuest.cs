@@ -2,6 +2,7 @@
 using QuestFramework.Framework.Stats;
 using QuestFramework.Framework.Store;
 using QuestFramework.Hooks;
+using QuestFramework.Framework;
 using StardewModdingAPI;
 using StardewValley;
 using System;
@@ -21,6 +22,8 @@ namespace QuestFramework.Quests
         internal int id = -1;
 
         public event EventHandler<IQuestInfo> Completed;
+        public event EventHandler<IQuestInfo> Accepted;
+        public event EventHandler<IQuestInfo> Removed;
 
         public string OwnedByModUid { get; internal set; }
         public QuestType BaseType { get; set; } = QuestType.Basic;
@@ -34,12 +37,8 @@ namespace QuestFramework.Quests
         public string ReactionText { get; set; }
         public int DaysLeft { get; set; } = 0;
         public List<Hook> Hooks { get; set; }
-        public string AddConversationTopicWhenQuestAccepted { get; set; }
-        public string AddConversationTopicWhenQuestRemoved { get; set; }
-        public string AddConversationTopicWhenQuestCompleted { get; set; }
-        public string RemoveConversationTopicWhenQuestCompleted { get; set; }
-        public string RemoveConversationTopicWhenQuestRemoved { get; set; }
-        public string RemoveConversationTopicWhenQuestAccepted { get; set; }
+        public ConversationTopicOptions ConversationTopic { get; set; }
+
         public string Name
         {
             get => this.name;
@@ -75,6 +74,18 @@ namespace QuestFramework.Quests
         {
             StatsManager.AddCompletedQuest(this.GetFullName());
             this.Completed?.Invoke(this, questInfo);
+        }
+
+        internal void Accept(IQuestInfo questInfo)
+        {
+            StatsManager.AddAcceptedQuest(this.GetFullName());
+            this.Accepted?.Invoke(this, questInfo);
+        }
+
+        internal void Remove(IQuestInfo questInfo)
+        {
+            StatsManager.AddRemovedQuest(this.GetFullName());
+            this.Removed?.Invoke(this, questInfo);
         }
 
         public int CustomTypeId 

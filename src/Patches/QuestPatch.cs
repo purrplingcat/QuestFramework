@@ -19,7 +19,7 @@ namespace QuestFramework.Patches
         QuestManager QuestManager { get; }
         EventManager EventManager { get; }
         HashSet<Quest> QuestCheckerLock { get; }
-        ConversationTopic Conversation { get; }
+        ConversationTopicMethods Conversation { get; }
         public QuestPatch(QuestManager questManager, EventManager eventManager)
         {
             this.QuestManager = questManager;
@@ -125,14 +125,14 @@ namespace QuestFramework.Patches
                 Instance.EventManager.QuestCompleted.Fire(new Events.QuestEventArgs(__instance), Instance);
                 Instance.Monitor.Log($"Quest `{managedQuest.GetFullName()}` #{__instance.id.Value} completed!");
                 
-                if (managedQuest.AddConversationTopicWhenQuestCompleted != null)
+                if (managedQuest.ConversationTopic != null && managedQuest.ConversationTopic.AddWhenQuestCompleted != null)
                 {
-                    ConversationTopic.AddConversationTopic(managedQuest.AddConversationTopicWhenQuestCompleted);
+                    ConversationTopicMethods.AddConversationTopic(managedQuest.ConversationTopic.AddWhenQuestCompleted);
                 }
 
-                if (managedQuest.RemoveConversationTopicWhenQuestCompleted != null)
+                if (managedQuest.ConversationTopic != null && managedQuest.ConversationTopic.RemoveWhenQuestCompleted != null)
                 {
-                    ConversationTopic.RemoveConversationTopic(managedQuest.RemoveConversationTopicWhenQuestCompleted);
+                    ConversationTopicMethods.RemoveConversationTopic(managedQuest.ConversationTopic.RemoveWhenQuestCompleted);
                 }
 
             }

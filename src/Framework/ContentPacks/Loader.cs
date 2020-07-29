@@ -194,12 +194,7 @@ namespace QuestFramework.Framework.ContentPacks
                 Cancelable = questData.Cancelable,
                 Trigger = this.ApplyTokens(trigger),
                 NextQuests = questData.NextQuests,
-                AddConversationTopicWhenQuestAccepted = questData.AddConversationTopicWhenQuestAccepted,
-                AddConversationTopicWhenQuestCompleted = questData.AddConversationTopicWhenQuestCompleted,
-                AddConversationTopicWhenQuestRemoved = questData.AddConversationTopicWhenQuestRemoved,
-                RemoveConversationTopicWhenQuestCompleted = questData.RemoveConversationTopicWhenQuestCompleted,
-                RemoveConversationTopicWhenQuestRemoved = questData.RemoveConversationTopicWhenQuestRemoved,
-                RemoveConversationTopicWhenQuestAccepted = questData.RemoveConversationTopicWhenQuestAccepted,
+                ConversationTopic = questData.ConversationTopic,
                 OwnedByModUid = content.owner.Manifest.UniqueID,
             };
 

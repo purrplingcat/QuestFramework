@@ -3,9 +3,19 @@ using StardewModdingAPI;
 using StardewValley;
 
 
-namespace QuestFramework
+namespace QuestFramework.Framework
 {
-    class ConversationTopic
+    public class ConversationTopicOptions
+    {
+        internal string AddWhenQuestAccepted { get; set; }
+        internal string AddWhenQuestRemoved { get; set; }
+        internal string AddWhenQuestCompleted { get; set; }
+        internal string RemoveWhenQuestCompleted { get; set; }
+        internal string RemoveWhenQuestRemoved { get; set; }
+        internal string RemoveWhenQuestAccepted { get; set; }
+    }
+
+    internal class ConversationTopicMethods
     {
         internal protected static IMonitor Monitor => QuestFrameworkMod.Instance.Monitor;
         static public void AddConversationTopic(string addConversationTopicInput)
@@ -40,6 +50,5 @@ namespace QuestFramework
 
             }
         }
-
     }
 }

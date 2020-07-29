@@ -22,15 +22,10 @@ namespace QuestFramework.Framework.ContentPacks.Model
         public string ReactionText { get; set; }
         public JToken Trigger { get; set; }
         public List<Hook> Hooks { get; set; }
+        public ConversationTopicOptions ConversationTopic { get; set; }
 
         [JsonExtensionData]
         public JObject ExtendedData { get; set; }
-        public string AddConversationTopicWhenQuestAccepted { get; set; }
-        public string AddConversationTopicWhenQuestRemoved { get; set; }
-        public string AddConversationTopicWhenQuestCompleted { get; set; }
-        public string RemoveConversationTopicWhenQuestCompleted { get; set; }
-        public string RemoveConversationTopicWhenQuestRemoved { get; set; }
-        public string RemoveConversationTopicWhenQuestAccepted { get; set; }
         public void PopulateExtendedData(CustomQuest customQuest)
         {
             if (this.ExtendedData != null)

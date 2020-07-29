@@ -75,13 +75,13 @@ namespace QuestFramework.Framework.Watchdogs
 
                 this.StatsManager.AddAcceptedQuest(managedQuest.GetFullName());
                 this.Monitor.Log($"Managed quest `{managedQuest.GetFullName()}` added to player's quest log");
-                if (managedQuest.AddConversationTopicWhenQuestAccepted != null)
+                if (managedQuest.ConversationTopic != null && managedQuest.ConversationTopic.AddWhenQuestAccepted != null)
                 {
-                    ConversationTopic.AddConversationTopic(managedQuest.AddConversationTopicWhenQuestAccepted);
+                    ConversationTopicMethods.AddConversationTopic(managedQuest.ConversationTopic.AddWhenQuestAccepted);
                 }
-                if (managedQuest.RemoveConversationTopicWhenQuestAccepted != null)
+                if (managedQuest.ConversationTopic != null && managedQuest.ConversationTopic.RemoveWhenQuestAccepted != null)
                 {
-                    ConversationTopic.RemoveConversationTopic(managedQuest.RemoveConversationTopicWhenQuestAccepted);
+                    ConversationTopicMethods.RemoveConversationTopic(managedQuest.ConversationTopic.RemoveWhenQuestAccepted);
                 }
             }
 
@@ -91,14 +91,14 @@ namespace QuestFramework.Framework.Watchdogs
 
                 this.StatsManager.AddRemovedQuest(managedQuest.GetFullName());
                 this.Monitor.Log($"Managed quest `{managedQuest.GetFullName()}` removed from player's quest log");
-                if (managedQuest.AddConversationTopicWhenQuestRemoved != null)
+                if (managedQuest.ConversationTopic != null && managedQuest.ConversationTopic.AddWhenQuestRemoved != null)
                 {
-                    ConversationTopic.AddConversationTopic(managedQuest.AddConversationTopicWhenQuestRemoved);
+                    ConversationTopicMethods.AddConversationTopic(managedQuest.ConversationTopic.AddWhenQuestRemoved);
                 }
 
-                if (managedQuest.RemoveConversationTopicWhenQuestRemoved != null)
+                if (managedQuest.ConversationTopic != null && managedQuest.ConversationTopic.RemoveWhenQuestRemoved != null)
                 {
-                    ConversationTopic.RemoveConversationTopic(managedQuest.RemoveConversationTopicWhenQuestRemoved);
+                    ConversationTopicMethods.RemoveConversationTopic(managedQuest.ConversationTopic.RemoveWhenQuestRemoved);
                 }
 
             }
