@@ -3,19 +3,9 @@ using StardewModdingAPI;
 using StardewValley;
 
 
-namespace QuestFramework.Framework
+namespace QuestFramework.Framework.Helpers
 {
-    public class ConversationTopicOptions
-    {
-        internal string AddWhenQuestAccepted { get; set; }
-        internal string AddWhenQuestRemoved { get; set; }
-        internal string AddWhenQuestCompleted { get; set; }
-        internal string RemoveWhenQuestCompleted { get; set; }
-        internal string RemoveWhenQuestRemoved { get; set; }
-        internal string RemoveWhenQuestAccepted { get; set; }
-    }
-
-    internal class ConversationTopicMethods
+    internal class ConversationTopicHelper
     {
         internal protected static IMonitor Monitor => QuestFrameworkMod.Instance.Monitor;
         static public void AddConversationTopic(string addConversationTopicInput)
@@ -29,6 +19,9 @@ namespace QuestFramework.Framework
                     string convTopicToAdd = convTopicToAddParts[i];
                     int convTopicCompletedDaysActive = Convert.ToInt32(convTopicToAddParts[i + 1]);
 
+                    if (Game1.player.activeDialogueEvents.ContainsKey(convTopicToAdd))
+                        continue;
+
                     Game1.player.activeDialogueEvents.Add(convTopicToAdd, convTopicCompletedDaysActive);
                     Monitor.Log($"Added conversation topic with the key: `{convTopicToAdd}`" +
                         $"the conversation topic will be active for `{convTopicCompletedDaysActive}` days");
@@ -40,14 +33,11 @@ namespace QuestFramework.Framework
         {
             foreach (string convTopicToRemove in removeConversationTopicInput.Split(' ') )
             {
-                if (Game1.player.activeDialogueEvents.ContainsKey(convTopicToRemove))
-                {
-                    Game1.player.activeDialogueEvents.Remove(convTopicToRemove);
-                    Monitor.Log($"Removed conversation topic with the key: `{convTopicToRemove}`");
-                }
-                else Monitor.Log($"Failed to remove conversation topic, the key`{convTopicToRemove}` already inactive");
+                if (!Game1.player.activeDialogueEvents.ContainsKey(convTopicToRemove))
+                    continue;
 
-
+                Game1.player.activeDialogueEvents.Remove(convTopicToRemove);
+                Monitor.Log($"Removed conversation topic with the key: `{convTopicToRemove}`");        
             }
         }
     }

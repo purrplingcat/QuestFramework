@@ -37,7 +37,6 @@ namespace QuestFramework.Quests
         public string ReactionText { get; set; }
         public int DaysLeft { get; set; } = 0;
         public List<Hook> Hooks { get; set; }
-        public ConversationTopicOptions ConversationTopic { get; set; }
 
         public string Name
         {
@@ -70,19 +69,19 @@ namespace QuestFramework.Quests
             return this.DaysLeft > 0;
         }
 
-        internal void Complete(IQuestInfo questInfo)
+        internal void ConfirmComplete(IQuestInfo questInfo)
         {
             StatsManager.AddCompletedQuest(this.GetFullName());
             this.Completed?.Invoke(this, questInfo);
         }
 
-        internal void Accept(IQuestInfo questInfo)
+        internal void ConfirmAccept(IQuestInfo questInfo)
         {
             StatsManager.AddAcceptedQuest(this.GetFullName());
             this.Accepted?.Invoke(this, questInfo);
         }
 
-        internal void Remove(IQuestInfo questInfo)
+        internal void ConfirmRemove(IQuestInfo questInfo)
         {
             StatsManager.AddRemovedQuest(this.GetFullName());
             this.Removed?.Invoke(this, questInfo);
