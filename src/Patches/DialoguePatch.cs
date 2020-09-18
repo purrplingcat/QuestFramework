@@ -14,7 +14,7 @@ namespace QuestFramework.Patches
 {
     class DialoguePatch : Patch<DialoguePatch>
     {
-        private const string PATTERN = @"\[quest:([^\]]+?) ([^\]]+?)\]";
+        private const string PATTERN = @"\[quest:([^\]]+?)( ([^\]]+?))?\]";
         public override string Name => nameof(DialoguePatch);
 
         QuestManager QuestManager { get; }
@@ -31,9 +31,9 @@ namespace QuestFramework.Patches
             {
                 Match match = Regex.Match(input, PATTERN);
                 string name = match.Groups[1].Value;
-                string modUid = match.Groups[2].Value;
+                string modUid = match.Groups[3].Value;
 
-                questName = $"{name}@{modUid}";
+                questName = string.IsNullOrEmpty(modUid) ? name : $"{name}@{modUid}";
 
                 return true;
             }
