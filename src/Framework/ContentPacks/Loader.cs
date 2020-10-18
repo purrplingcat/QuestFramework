@@ -1,6 +1,7 @@
 ﻿using PurrplingCore.Lexing;
 using PurrplingCore.Lexing.LexTokens;
 using QuestFramework.Framework.ContentPacks.Model;
+using QuestFramework.Framework.Helpers;
 using QuestFramework.Quests;
 using StardewModdingAPI;
 using System;
@@ -85,15 +86,16 @@ namespace QuestFramework.Framework.ContentPacks
         private void Apply(Content content)
         {
             // Register quests
-            foreach (var quest in content.Quests)
+            foreach (var questData in content.Quests)
             {
-                CustomQuest managedQuest = this.MapQuest(content, quest);
+                CustomQuest managedQuest = this.MapQuest(content, questData);
 
-                if (quest.Hooks != null)
+                if (questData.Hooks != null)
                 {
-                    managedQuest.Hooks.AddRange(quest.Hooks);
+                    managedQuest.Hooks.AddRange(questData.Hooks);
                 }
 
+                this.ApplyHandlers(managedQuest, questData);
                 this.Manager.RegisterQuest(managedQuest);
             }
 
@@ -102,6 +104,43 @@ namespace QuestFramework.Framework.ContentPacks
             {
                 this.ScheduleManager.AddOffer(offer);
             }
+        }
+
+        private void ApplyHandlers(CustomQuest managedQuest, QuestData questData)
+        {
+            managedQuest.Accepted += (_sender, _info) =>
+            {
+                if (_info.VanillaQuest.completed.Value)
+                    return;
+
+                // Add/Remove conversation topic(s) when quest was ACCEPTED
+                if (!string.IsNullOrEmpty(questData.ConversationTopic?.AddWhenQuestAccepted))
+                    ConversationTopicHelper.AddConversationTopic(questData.ConversationTopic.AddWhenQuestAccepted);
+                if (!string.IsNullOrEmpty(questData.ConversationTopic?.RemoveWhenQuestAccepted))
+                    ConversationTopicHelper.RemoveConversationTopic(questData.ConversationTopic.RemoveWhenQuestAccepted);
+            };
+            managedQuest.Completed += (_sender, _info) =>
+            {
+                if (!_info.VanillaQuest.completed.Value)
+                    return;
+
+                // Add/Remove conversation topic(s) when quest was COMPLETED
+                if (!string.IsNullOrEmpty(questData.ConversationTopic?.AddWhenQuestCompleted))
+                    ConversationTopicHelper.AddConversationTopic(questData.ConversationTopic.AddWhenQuestCompleted);
+                if (!string.IsNullOrEmpty(questData.ConversationTopic?.RemoveWhenQuestCompleted))
+                    ConversationTopicHelper.RemoveConversationTopic(questData.ConversationTopic.RemoveWhenQuestCompleted);
+            };
+            managedQuest.Removed += (_sender, _info) =>
+            {
+                if (_info.VanillaQuest.completed.Value)
+                    return;
+
+                // Add/Remove conversation topic(s) when quest was REMOVED
+                if (!string.IsNullOrEmpty(questData.ConversationTopic?.AddWhenQuestRemoved))
+                    ConversationTopicHelper.AddConversationTopic(questData.ConversationTopic.AddWhenQuestRemoved);
+                if (!string.IsNullOrEmpty(questData.ConversationTopic?.RemoveWhenQuestRemoved))
+                    ConversationTopicHelper.RemoveConversationTopic(questData.ConversationTopic.RemoveWhenQuestRemoved);
+            };
         }
 
         public void RegisterQuestsFromPacks()
@@ -194,7 +233,6 @@ namespace QuestFramework.Framework.ContentPacks
                 Cancelable = questData.Cancelable,
                 Trigger = this.ApplyTokens(trigger),
                 NextQuests = questData.NextQuests,
-                ConversationTopic = questData.ConversationTopic,
                 OwnedByModUid = content.owner.Manifest.UniqueID,
             };
 

@@ -108,7 +108,7 @@ namespace QuestFramework.Framework
             }
 
             this.monitor.Log(
-                $"Checked unknown condition `{condition}`. Result for unknown conditions is always false.", LogLevel.Warn);
+                $"Checked unknown condition `{condition}` in quest context `{context.GetFullName()}`. Result for unknown conditions is always false.", LogLevel.Warn);
             
             return false;
         }

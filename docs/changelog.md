@@ -4,6 +4,7 @@
 
 ### Common changes
 
+- Improved check condition logging.
 - Fixed `BuildingConstructed` condition
 - Avoid renaming already named custom quests
 - Added `HasMod` condition for check if mod with specified mod UID is loaded in SMAPI
