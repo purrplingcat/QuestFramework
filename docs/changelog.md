@@ -4,6 +4,9 @@
 
 ### Common changes
 
+
+=======
+- Fixed red alert caused by wrong quest dialogue pattern (Thx @Jonquora for help, issue #16)
 - Improved check condition logging.
 - Fixed `BuildingConstructed` condition
 - Avoid renaming already named custom quests
