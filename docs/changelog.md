@@ -18,6 +18,7 @@
 ## For Content Pack modders
 
 - Added support for custom properties for `CustomQuest` from content packs
+- Added option of ConversationTopic to add or remove conversation topic when quest accepted, removed, or completed.
 
 ## For SMAPI modders
 
