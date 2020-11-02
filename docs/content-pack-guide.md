@@ -1,10 +1,4 @@
-﻿
-
-
-
-
-
-← [README](../README.md)
+﻿← [README](../README.md)
 
 # Content pack guide
 
@@ -295,15 +289,15 @@ RemoveWhenQuestCompleted | `AbigailLookingForward`    | The key of the conversat
       "Trigger": "Abigail 66", // Bring amethyst to Abby
       "ReactionText": "Oh, it's looks delicious. I am really hungry.",
       "ConversationTopic": {
-				"AddWhenQuestAccepted": "add_abigail_amethyst_accepted 7", 
-				"AddWhenQuestRemoved": "add_abigail_amethyst_removed 7",
+        "AddWhenQuestAccepted": "add_abigail_amethyst_accepted 7", 
+		"AddWhenQuestRemoved": "add_abigail_amethyst_removed 7",
         "AddWhenQuestCompleted": "add_abigail_amethyst_completed 7",
         "RemoveWhenQuestAccepted":"remove_abigail_amethyst_accepted", 
-				"RemoveWhenQuestRemoved": "remove_abigail_amethyst_removed",
+		"RemoveWhenQuestRemoved": "remove_abigail_amethyst_removed",
         "RemoveWhenQuestCompleted": "remove_abigail_amethyst_completed",
         // Use only what is needed. The field explain itself.
         // Any string is fine as long as it is unique. You'll need to add the same key to respective character dialogue using content patcher.
-			},
+	  }
     }
   ]
 }
