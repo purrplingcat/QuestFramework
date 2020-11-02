@@ -38,7 +38,7 @@ Create your `manifest.json` file which must contains these minimum contents:
   "UpdateKeys": [],
   "ContentPackFor": {
     "UniqueID": "PurrplingCat.QuestFramework", // Quest Framework unique id must be here
-    "MinimumVersion": "1.0.0-alpha" // optional
+    "MinimumVersion": "1.1.0" // optional
   }
 }
 ```
