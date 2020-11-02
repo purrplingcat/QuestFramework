@@ -21,6 +21,8 @@
 ## For SMAPI modders
 
 - Added new APIs for `CustomQuest` and statefull `CustomQuest<TState>`
+- Added `GetQuestByName` to Managed mod API.
+- Added `GetQuestById` as replacement for `GetbyId` (old API method is deprecated and will be removed in one of next versions)
 
 ## 1.0.0
 

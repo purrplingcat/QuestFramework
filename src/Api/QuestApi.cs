@@ -1,12 +1,7 @@
 ﻿using QuestFramework.Events;
-using QuestFramework.Framework;
 using QuestFramework.Framework.Events;
 using StardewModdingAPI;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QuestFramework.Api
 {
@@ -58,8 +53,10 @@ namespace QuestFramework.Api
             return new ManagedQuestApi(
                 modUid: manifest.UniqueID,
                 questManager: this.mod.QuestManager,
-                scheduleManager: this.mod.QuestOfferManager,
-                hookManager: this.mod.HookManager);
+                questOfferManager: this.mod.QuestOfferManager,
+                hookManager: this.mod.HookManager,
+                monitor: this.monitor
+            );
         }
 
         public void ForceRefresh()
