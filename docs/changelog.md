@@ -17,6 +17,7 @@
 
 - Added support for custom properties for `CustomQuest` from content packs
 - Added option of ConversationTopic to add or remove conversation topic when quest accepted, removed, or completed. (thx itsbenter)
+- Added support for i18n translations (provided by SMAPI)
 
 ## For SMAPI modders
 

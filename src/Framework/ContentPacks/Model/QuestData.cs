@@ -2,11 +2,13 @@
 using Newtonsoft.Json.Linq;
 using QuestFramework.Hooks;
 using QuestFramework.Quests;
+using QuestFramework.src.Framework.ContentPacks;
+using StardewModdingAPI;
 using System.Collections.Generic;
 
 namespace QuestFramework.Framework.ContentPacks.Model
 {
-    class QuestData
+    internal class QuestData : ITranslatable<QuestData>
     {
         public string Name { get; set; }
         public QuestType Type { get; set; } = QuestType.Basic;
@@ -30,6 +32,14 @@ namespace QuestFramework.Framework.ContentPacks.Model
         {
             if (this.ExtendedData != null)
                 JsonConvert.PopulateObject(this.ExtendedData.ToString(), customQuest);
+        }
+
+        public QuestData Translate(ITranslationHelper translation)
+        {
+            var toTranslate = JObject.FromObject(this);
+
+            return TranslationUtils.Translate(translation, toTranslate)
+                .ToObject<QuestData>();
         }
     }
 }

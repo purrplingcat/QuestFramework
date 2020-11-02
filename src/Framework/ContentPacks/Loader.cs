@@ -1,14 +1,13 @@
-﻿using PurrplingCore.Lexing;
+﻿using Newtonsoft.Json.Linq;
+using PurrplingCore.Lexing;
 using PurrplingCore.Lexing.LexTokens;
 using QuestFramework.Framework.ContentPacks.Model;
 using QuestFramework.Framework.Helpers;
+using QuestFramework.Offers;
 using QuestFramework.Quests;
 using StardewModdingAPI;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QuestFramework.Framework.ContentPacks
 {
@@ -31,8 +30,6 @@ namespace QuestFramework.Framework.ContentPacks
 
         public void LoadPacks(IEnumerable<IContentPack> contentPacks)
         {
-            List<IManifest> manifests = new List<IManifest>();
-
             foreach (var contentPack in contentPacks)
             {
                 this.Monitor.Log($"Loading content pack {contentPack.Manifest.UniqueID} ...");
@@ -42,15 +39,22 @@ namespace QuestFramework.Framework.ContentPacks
                 if (content != null && this.Validate(content))
                 {
                     this.ValidContents.Add(content);
-                    manifests.Add(contentPack.Manifest);
                 }
             }
 
-            if (manifests.Count > 0)
+            if (this.ValidContents.Count > 0)
             {
-                this.Monitor.Log($"Loaded {manifests.Count} content packs:", LogLevel.Info);
-                manifests.ForEach((m) => this.Monitor.Log($"   {m.Name} {m.Version} by {m.Author} ({m.UniqueID})", LogLevel.Info));
+                this.PrintContentPackListSummary();
             }
+        }
+
+        private void PrintContentPackListSummary()
+        {
+            this.Monitor.Log($"Loaded {this.ValidContents.Count} content packs:", LogLevel.Info);
+            this.ValidContents.Select(c => c.Owner.Manifest)
+                .ToList()
+                .ForEach(
+                    (m) => this.Monitor.Log($"   {m.Name} {m.Version} by {m.Author} ({m.UniqueID})", LogLevel.Info));
         }
 
         private void Prepare(Content content)
@@ -59,7 +63,7 @@ namespace QuestFramework.Framework.ContentPacks
             {
                 if (!schedule.QuestName.Contains('@'))
                 {
-                    schedule.QuestName = $"{schedule.QuestName}@{content.owner.Manifest.UniqueID}";
+                    schedule.QuestName = $"{schedule.QuestName}@{content.Owner.Manifest.UniqueID}";
                 }
             }
         }
@@ -70,13 +74,13 @@ namespace QuestFramework.Framework.ContentPacks
 
             if (content.Format == null || content.Format.IsOlderThan("1.0"))
             {
-                this.Monitor.Log($"Content pack `{content.owner.Manifest.Name}` has unsupported format version {content.Format}.", LogLevel.Error);
+                this.Monitor.Log($"Content pack `{content.Owner.Manifest.Name}` has unsupported format version {content.Format}.", LogLevel.Error);
                 isValid = false;
             }
 
             if (content.Quests == null || !content.Quests.Any())
             {
-                this.Monitor.Log($"Content pack `{content.owner.Manifest.Name}` contains no quests.", LogLevel.Error);
+                this.Monitor.Log($"Content pack `{content.Owner.Manifest.Name}` contains no quests.", LogLevel.Error);
                 isValid = false;
             }
 
@@ -145,7 +149,7 @@ namespace QuestFramework.Framework.ContentPacks
 
         public void RegisterQuestsFromPacks()
         {
-            this.ValidContents.ForEach(content => this.Apply(content));
+            this.ValidContents.ForEach(content => this.Apply(content.Translate(content.Owner.Translation)));
 
         }
 
@@ -233,7 +237,7 @@ namespace QuestFramework.Framework.ContentPacks
                 Cancelable = questData.Cancelable,
                 Trigger = this.ApplyTokens(trigger),
                 NextQuests = questData.NextQuests,
-                OwnedByModUid = content.owner.Manifest.UniqueID,
+                OwnedByModUid = content.Owner.Manifest.UniqueID,
             };
 
             if (questData.CustomTypeId != -1)
@@ -256,7 +260,7 @@ namespace QuestFramework.Framework.ContentPacks
 
             var content = contentPack.ReadJsonFile<Content>("quests.json");
 
-            content.owner = contentPack;
+            content.Owner = contentPack;
             this.Prepare(content);
 
             return content;
