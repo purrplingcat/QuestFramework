@@ -22,10 +22,10 @@ namespace QuestFramework.Framework.ContentPacks.Model
         public string ReactionText { get; set; }
         public JToken Trigger { get; set; }
         public List<Hook> Hooks { get; set; }
+        public ConversationTopicData ConversationTopic { get; set; }
 
         [JsonExtensionData]
         public JObject ExtendedData { get; set; }
-
         public void PopulateExtendedData(CustomQuest customQuest)
         {
             if (this.ExtendedData != null)

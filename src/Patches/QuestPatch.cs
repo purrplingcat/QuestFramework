@@ -112,7 +112,7 @@ namespace QuestFramework.Patches
                     return; // Only fire global uest completed event if quest is unmanaged
                 }
 
-                managedQuest.Complete(new QuestInfo(__instance, Game1.player));
+                managedQuest.ConfirmComplete(new QuestInfo(__instance, Game1.player));
 
                 if (managedQuest.NextQuests?.Count > 0)
                 {

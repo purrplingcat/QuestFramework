@@ -4,6 +4,8 @@
 
 ### Common changes
 
+
+=======
 - Fixed red alert caused by wrong quest dialogue pattern (Thx @Jonquora for help, issue #16)
 - Improved check condition logging.
 - Fixed `BuildingConstructed` condition
@@ -16,6 +18,7 @@
 ## For Content Pack modders
 
 - Added support for custom properties for `CustomQuest` from content packs
+- Added option of ConversationTopic to add or remove conversation topic when quest accepted, removed, or completed.
 
 ## For SMAPI modders
 
