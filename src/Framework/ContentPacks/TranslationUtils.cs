@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QuestFramework.src.Framework.ContentPacks
+namespace QuestFramework.Framework.ContentPacks
 {
     internal static class TranslationUtils
     {

@@ -2,7 +2,6 @@
 using Newtonsoft.Json.Linq;
 using QuestFramework.Hooks;
 using QuestFramework.Quests;
-using QuestFramework.src.Framework.ContentPacks;
 using StardewModdingAPI;
 using System.Collections.Generic;
 

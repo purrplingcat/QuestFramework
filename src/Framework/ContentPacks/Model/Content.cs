@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
 using QuestFramework.Offers;
-using QuestFramework.src.Framework.ContentPacks;
 using StardewModdingAPI;
 using System;
 using System.Collections.Generic;
