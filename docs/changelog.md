@@ -1,5 +1,13 @@
 ﻿# Changelog
 
+## Upcoming version
+
+### Common changes
+
+- Fixed vanilla SDV quest type id resolving (this fixes problem with item harvest quest completion)
+- Fixed item harvest quest current objective
+- Added command for list raw content from `Data\Quests` (command `quests_list raw`)
+
 ## 1.1.0
 
 ### Common changes
