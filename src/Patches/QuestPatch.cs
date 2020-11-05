@@ -50,7 +50,7 @@ namespace QuestFramework.Patches
                     __result.canBeCancelled.Value = customQuest.Cancelable;
                     __result.questType.Value = customQuest.CustomTypeId != -1
                             ? customQuest.CustomTypeId
-                            : (int)customQuest.BaseType;
+                            : customQuest.BaseType.ToVanillaTypeId();
                 }
             } catch (Exception e)
             {
