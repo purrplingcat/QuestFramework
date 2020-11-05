@@ -7,6 +7,7 @@
 - Fixed vanilla SDV quest type id resolving (this fixes problem with item harvest quest completion)
 - Fixed item harvest quest current objective
 - Added command for list raw content from `Data\Quests` (command `quests_list raw`)
+- Added korean translation (thx KAYA)
 
 ## 1.1.0
 
