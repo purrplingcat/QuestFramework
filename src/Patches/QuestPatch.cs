@@ -1,4 +1,5 @@
 ﻿using Harmony;
+using PurrplingCore;
 using PurrplingCore.Patching;
 using QuestFramework.Framework;
 using QuestFramework.Framework.Events;
@@ -64,6 +65,23 @@ namespace QuestFramework.Patches
             {
                 var managedQuest = Instance.QuestManager.GetById(__instance.id.Value);
 
+                // Fix item harvest quest type objective (like 'x/y item harvested', affects only managed harvest quests)
+                if (managedQuest != null && __instance is ItemHarvestQuest harvestQuest)
+                {
+                    string[] triggerTokens = managedQuest.Trigger.Split(' ');
+                    int startNumber = triggerTokens.Length > 1 ? int.Parse(triggerTokens[1]) : 1;
+
+                    if (harvestQuest.number.Value < startNumber)
+                    {
+                        harvestQuest._currentObjective = QuestFrameworkMod.Instance.Helper.Translation.Get("quest.itemHarvest.objective", new {
+                            harvested = startNumber - harvestQuest.number.Value,
+                            total = startNumber,
+                            itemName = Game1.objectInformation[harvestQuest.itemIndex.Value].Split('/')[4]
+                        });
+                    }
+                }
+
+                // Call observer objective updater (if this managed quest is observed)
                 if (managedQuest is IQuestObserver observer)
                 {
                     observer.UpdateObjective(
