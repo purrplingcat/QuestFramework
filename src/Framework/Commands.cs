@@ -37,7 +37,7 @@ namespace QuestFramework.Framework
             foreach (var quest in QuestManager.Quests)
             {
                 builder.AppendLine(quest.GetFullName())
-                    .AppendLine($"    Type: {quest.BaseType}")
+                    .AppendLine($"    Type: {quest.BaseType} ({quest.GetType().FullName})")
                     .AppendLine($"    Custom type: {quest.CustomTypeId}")
                     .AppendLine($"    Name: {quest.Name}")
                     .AppendLine($"    Owned by: {quest.OwnedByModUid}")
@@ -70,8 +70,10 @@ namespace QuestFramework.Framework
 
             foreach(var quest in managedLog)
             {
+                var vanillaQuest = quest.GetInQuestLog();
+
                 builder.AppendLine(quest.GetFullName())
-                    .AppendLine($"    Type: {quest.BaseType}")
+                    .AppendLine($"    Type: {quest.BaseType} ({quest.GetType().FullName}, {vanillaQuest.GetType().FullName})")
                     .AppendLine($"    Custom type: {quest.CustomTypeId}")
                     .AppendLine($"    Name: {quest.Name}")
                     .AppendLine($"    Owned by: {quest.OwnedByModUid}")
@@ -79,7 +81,7 @@ namespace QuestFramework.Framework
                     .AppendLine($"    Trigger: {quest.Trigger ?? "null"}")
                     .AppendLine($"    Reward: {quest.Reward}g")
                     .AppendLine($"    Cancelable: {(quest.Cancelable ? "Yes" : "No")}")
-                    .AppendLine($"    Completed: {(quest.GetInQuestLog().completed.Value ? "Yes" : "No")}")
+                    .AppendLine($"    Completed: {(vanillaQuest.completed.Value ? "Yes" : "No")}")
                     .AppendLine($"    Next quests: {string.Join(", ", quest.NextQuests ?? new List<string>())}");
             }
 
