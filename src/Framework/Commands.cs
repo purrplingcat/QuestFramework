@@ -232,5 +232,23 @@ namespace QuestFramework.Framework
             QuestFrameworkMod.InvalidateCache();
             Monitor.Log("Quest assets cache invalidated.", LogLevel.Info);
         }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Styl", "IDE0060", Justification = "Command handler")]
+        internal static void ListTypeFactories(string name, string[] args)
+        {
+            StringBuilder builder = new StringBuilder();
+
+            builder.AppendLine($"There are exposed {QuestManager.Factories.Count} custom quest types:");
+
+            foreach (var factory in QuestManager.Factories)
+            {
+                var factoryType = factory.Value.GetType();
+                var questType = factoryType.GetGenericArguments().ElementAtOrDefault(0);
+
+                builder.AppendLine($"    - {factory.Key} ({questType?.FullName ?? "unknown"})");
+            }
+
+            Monitor.Log(builder.ToString(), LogLevel.Info);
+        }
     }
 }

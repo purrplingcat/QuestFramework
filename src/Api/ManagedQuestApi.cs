@@ -6,13 +6,13 @@ using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace QuestFramework.Api
 {
     internal class ManagedQuestApi : IManagedQuestApi
     {
-        private readonly IMonitor monitor;
-
+        private readonly Regex allowedChars = new Regex("^[a-zA-Z0-9_-]*$");
         public string ModUid { get; }
         public QuestManager QuestManager { get; }
         public QuestOfferManager QuestOfferManager { get; }
@@ -20,13 +20,12 @@ namespace QuestFramework.Api
 
         private static IMonitor Monitor => QuestFrameworkMod.Instance.Monitor;
 
-        public ManagedQuestApi(string modUid, QuestManager questManager, QuestOfferManager questOfferManager, HookManager hookManager, IMonitor monitor)
+        public ManagedQuestApi(string modUid, QuestManager questManager, QuestOfferManager questOfferManager, HookManager hookManager)
         {
             this.ModUid = modUid;
             this.QuestManager = questManager;
             this.QuestOfferManager = questOfferManager;
             this.HookManager = hookManager;
-            this.monitor = monitor;
         }
 
         public void AcceptQuest(string fullQuestName, bool silent = false)
@@ -50,7 +49,7 @@ namespace QuestFramework.Api
             var managedQuest = this.QuestManager.GetById(id);
 
             if (managedQuest?.OwnedByModUid != this.ModUid)
-                this.monitor.LogOnce($"Mod {this.ModUid} accessed to quest `{managedQuest.Name}` managed by mod `{managedQuest.OwnedByModUid}`");
+                Monitor.LogOnce($"Mod {this.ModUid} accessed to quest `{managedQuest.Name}` managed by mod `{managedQuest.OwnedByModUid}`");
 
             return managedQuest;
         }
@@ -67,6 +66,9 @@ namespace QuestFramework.Api
 
         public void RegisterQuest(CustomQuest quest)
         {
+            if (!this.allowedChars.IsMatch(quest.Name))
+                throw new InvalidQuestException("Quest name contains unallowed characters.");
+
             quest.OwnedByModUid = this.ModUid;
 
             this.QuestManager.RegisterQuest(quest);
@@ -108,10 +110,34 @@ namespace QuestFramework.Api
 
         public void ExposeGlobalCondition(string conditionName, Func<string, CustomQuest, bool> conditionHandler)
         {
+            if (!this.allowedChars.IsMatch(conditionName))
+                throw new ArgumentException("Condition name contains unallowed characters.", nameof(conditionName));
+
             string fullConditionName = $"{this.ModUid}/{conditionName}";
 
             this.HookManager.Conditions[fullConditionName] = conditionHandler;
             Monitor.Log($"Exposed custom global condition `{fullConditionName}`");
+        }
+
+        public void ExposeQuestType<TQuest>(string type, Func<TQuest> factory) where TQuest : CustomQuest
+        {
+            if (!this.allowedChars.IsMatch(type))
+                throw new ArgumentException("Quest type name contains unallowed characters.", nameof(type));
+
+            this.QuestManager.RegisterQuestFactory($"{this.ModUid}/{type}", factory);
+        }
+
+        public void ExposeQuestType<TQuest>(string type) where TQuest : CustomQuest, new()
+        {
+            this.ExposeQuestType(type, () => new TQuest());
+        }
+
+        public bool HasQuestType(string type)
+        {
+            if (!type.Contains('/'))
+                type = $"{this.ModUid}/{type}";
+
+            return this.QuestManager.Factories.ContainsKey(type);
         }
     }
 }

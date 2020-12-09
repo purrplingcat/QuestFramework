@@ -14,11 +14,13 @@ namespace QuestFramework.Framework
         private readonly IMonitor monitor;
 
         public List<CustomQuest> Quests { get; }
+        public Dictionary<string, Func<CustomQuest>> Factories { get; }
 
         public QuestManager(IMonitor monitor)
         {
             this.monitor = monitor;
             this.Quests = new List<CustomQuest>();
+            this.Factories = new Dictionary<string, Func<CustomQuest>>();
         }
 
         public void RegisterQuest(CustomQuest quest)
@@ -86,6 +88,14 @@ namespace QuestFramework.Framework
             }
         }
 
+        public void RegisterQuestFactory<T>(string name, Func<T> factory) where T : CustomQuest
+        {
+            if (this.Factories.ContainsKey(name))
+                throw new InvalidOperationException($"Quest factory {name} is already registered!");
+
+            this.Factories.Add(name, factory);
+        }
+
         public bool IsManaged(int id)
         {
             if (id < 0)
@@ -122,6 +132,19 @@ namespace QuestFramework.Framework
                 return null;
 
             return quests.First();
+        }
+
+        internal CustomQuest CreateQuestOfType(string type)
+        {
+            if (!this.Factories.ContainsKey(type))
+                throw new InvalidQuestException($"Quest type factory {type} doesn't exist!");
+
+            CustomQuest quest = this.Factories[type]();
+
+            if (quest.Name != null)
+                throw new InvalidQuestException("Quest name is unexpectedly assigned by factory!");
+
+            return quest;
         }
     }
 }

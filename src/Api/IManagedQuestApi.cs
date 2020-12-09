@@ -86,5 +86,22 @@ namespace QuestFramework.Api
         /// <param name="conditionName">Name of condition</param>
         /// <param name="conditionHandler">Handler for this condition</param>
         void ExposeGlobalCondition(string conditionName, Func<string, CustomQuest, bool> conditionHandler);
+
+        /// <summary>
+        /// Exposes a quest type for content packs and other mods based on QF.
+        /// </summary>
+        /// <typeparam name="TQuest">Quest class type</typeparam>
+        /// <param name="type">Name of quest type in registry</param>
+        /// <param name="factory">Factory of quest of declared type</param>
+        void ExposeQuestType<TQuest>(string type, Func<TQuest> factory) where TQuest : CustomQuest;
+
+        /// <summary>
+        /// Exposes a quest type for content packs and other mods based on QF.
+        /// </summary>
+        /// <typeparam name="TQuest">Quest class type</typeparam>
+        /// <param name="type">Name of quest type in registry</param>
+        void ExposeQuestType<TQuest>(string type) where TQuest : CustomQuest, new();
+
+        bool HasQuestType(string type);
     }
 }

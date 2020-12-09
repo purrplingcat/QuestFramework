@@ -6,13 +6,17 @@ using QuestFramework.Framework.Helpers;
 using QuestFramework.Offers;
 using QuestFramework.Quests;
 using StardewModdingAPI;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace QuestFramework.Framework.ContentPacks
 {
     class Loader
     {
+        private readonly Regex allowedChars = new Regex("^[a-zA-Z0-9_-]*$");
+
         public Loader(IMonitor monitor, QuestManager manager, QuestOfferManager scheduleManager)
         {
             this.Contents = new List<Content>();
@@ -92,15 +96,28 @@ namespace QuestFramework.Framework.ContentPacks
             // Register quests
             foreach (var questData in content.Quests)
             {
-                CustomQuest managedQuest = this.MapQuest(content, questData);
-
-                if (questData.Hooks != null)
+                try
                 {
-                    managedQuest.Hooks.AddRange(questData.Hooks);
-                }
+                    CustomQuest managedQuest = this.MapQuest(content, questData);
 
-                this.ApplyHandlers(managedQuest, questData);
-                this.Manager.RegisterQuest(managedQuest);
+                    if (questData.Hooks != null)
+                    {
+                        managedQuest.Hooks.AddRange(questData.Hooks);
+                    }
+
+                    if (!this.allowedChars.IsMatch(managedQuest.Name))
+                    {
+                        this.Monitor.Log($"Quest name `{managedQuest.Name}` contains unallowed characters in pack `{content.Owner.Manifest.UniqueID}`", LogLevel.Error);
+                        return;
+                    }
+
+                    this.ApplyHandlers(managedQuest, questData);
+                    this.Manager.RegisterQuest(managedQuest);
+                } 
+                catch (InvalidQuestException ex)
+                {
+                    this.Monitor.Log($"Error while creating quest `{questData.Name}` from pack `{content.Owner.Manifest.UniqueID}`: {ex.Message}", LogLevel.Error);
+                }
             }
 
             // Add quest schedules
@@ -220,25 +237,44 @@ namespace QuestFramework.Framework.ContentPacks
             return string.Join("", parts);
         }
 
+        private QuestType ParseBaseQuestType(QuestData questData, Content content)
+        {
+            if (questData.Type.Contains('/'))
+                return QuestType.Custom;
+
+            if (Enum.TryParse(questData.Type, out QuestType parsedType))
+                return parsedType;
+
+            this.Monitor.Log($"Invalid quest type `{questData.Type}` for `{questData.Name}` in pack `{content.Owner.Manifest.UniqueID}`", LogLevel.Error);
+
+            return QuestType.Basic;
+        }
+
+        private CustomQuest CreateQuest(string type)
+        {
+            return type.Contains('/')
+                ? this.Manager.CreateQuestOfType(type)
+                : new CustomQuest();
+        }
+
         private CustomQuest MapQuest(Content content, QuestData questData)
         {
             string trigger = questData.Trigger?.ToString();
+            var managedQuest = this.CreateQuest(questData.Type);
 
-            var managedQuest = new CustomQuest(questData.Name)
-            {
-                Title = questData.Title,
-                Description = questData.Description,
-                BaseType = questData.Type,
-                Objective = questData.Objective,
-                DaysLeft = questData.DaysLeft,
-                Reward = questData.Reward,
-                RewardDescription = questData.RewardDescription,
-                ReactionText = questData.ReactionText,
-                Cancelable = questData.Cancelable,
-                Trigger = this.ApplyTokens(trigger),
-                NextQuests = questData.NextQuests,
-                OwnedByModUid = content.Owner.Manifest.UniqueID,
-            };
+            managedQuest.Name = questData.Name;
+            managedQuest.BaseType = this.ParseBaseQuestType(questData, content);
+            managedQuest.Title = questData.Title;
+            managedQuest.Description = questData.Description;
+            managedQuest.Objective = questData.Objective;
+            managedQuest.DaysLeft = questData.DaysLeft;
+            managedQuest.Reward = questData.Reward;
+            managedQuest.RewardDescription = questData.RewardDescription;
+            managedQuest.ReactionText = questData.ReactionText;
+            managedQuest.Cancelable = questData.Cancelable;
+            managedQuest.Trigger = this.ApplyTokens(trigger);
+            managedQuest.NextQuests = questData.NextQuests;
+            managedQuest.OwnedByModUid = content.Owner.Manifest.UniqueID;
 
             if (questData.CustomTypeId != -1)
             {

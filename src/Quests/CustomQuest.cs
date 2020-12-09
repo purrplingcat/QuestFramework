@@ -20,6 +20,7 @@ namespace QuestFramework.Quests
         private string name;
 
         internal int id = -1;
+        
 
         public event EventHandler<IQuestInfo> Completed;
         public event EventHandler<IQuestInfo> Accepted;

@@ -1,5 +1,17 @@
 ﻿# Changelog
 
+## 1.2.0
+
+## For Content Pack modders
+
+- Added support for custom quest types in content packs (via `<modUid>/<questTypeName>` in `Type` field)
+- Better error messages
+
+## For SMAPI modders
+
+- Added new APIs for expose custom quest types (class)
+- Exposed `ITriggerLoader` interface
+
 ## 1.1.1
 
 ### Common changes

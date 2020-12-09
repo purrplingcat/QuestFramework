@@ -10,7 +10,7 @@ namespace QuestFramework.Framework.ContentPacks.Model
     internal class QuestData : ITranslatable<QuestData>
     {
         public string Name { get; set; }
-        public QuestType Type { get; set; } = QuestType.Basic;
+        public string Type { get; set; } = QuestType.Basic.ToString();
         public int CustomTypeId { get; set; } = -1;
         public string Title { get; set; }
         public string Description { get; set; }

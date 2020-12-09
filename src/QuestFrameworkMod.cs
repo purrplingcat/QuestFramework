@@ -102,6 +102,7 @@ namespace QuestFramework
             helper.ConsoleCommands.Add("quests_accept", "Accept managed quest and add it to questlog", Commands.AcceptQuest);
             helper.ConsoleCommands.Add("quests_complete", "Complete managed quest in questlog", Commands.CompleteQuest);
             helper.ConsoleCommands.Add("quests_remove", "Remove managed quest from questlog", Commands.RemoveQuest);
+            helper.ConsoleCommands.Add("quests_customtypes", "List of exposed custom quest types" ,Commands.ListTypeFactories);
 
             var packs = helper.ContentPacks.GetOwned();
             if (packs.Any())
