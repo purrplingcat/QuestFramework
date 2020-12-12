@@ -2,11 +2,14 @@
 using QuestFramework.Framework.Stats;
 using QuestFramework.Framework.Store;
 using QuestFramework.Hooks;
-using QuestFramework.Framework;
 using StardewModdingAPI;
 using StardewValley;
 using System;
 using System.Collections.Generic;
+using QuestFramework.Quests.State;
+using Newtonsoft.Json;
+using System.Linq;
+using System.Reflection;
 
 namespace QuestFramework.Quests
 {
@@ -21,11 +24,12 @@ namespace QuestFramework.Quests
 
         internal int id = -1;
         
-
         public event EventHandler<IQuestInfo> Completed;
         public event EventHandler<IQuestInfo> Accepted;
         public event EventHandler<IQuestInfo> Removed;
 
+        [JsonIgnore]
+        internal bool NeedsUpdate { get; set; }
         public string OwnedByModUid { get; internal set; }
         public QuestType BaseType { get; set; } = QuestType.Basic;
         public string Title { get; set; }
@@ -111,6 +115,14 @@ namespace QuestFramework.Quests
         }
 
         /// <summary>
+        /// Update quest when it needs update 
+        /// (NeedsUpdate field is set to TRUE)
+        /// </summary>
+        internal virtual void Update()
+        {
+        }
+
+        /// <summary>
         /// Reset this managed quest and their state.
         /// Primarily called before accept quest and after remove quest from quest log.
         /// If you override this method, be sure to call <code>base.Reset()</code>.
@@ -169,7 +181,7 @@ namespace QuestFramework.Quests
         /// </summary>
         public CustomQuest() : base()
         {
-            this.State = new TState();
+            this.State = this.PrepareState();
         }
 
         /// <summary>
@@ -192,7 +204,9 @@ namespace QuestFramework.Quests
             var payload = new StatePayload(
                 questName: this.GetFullName(),
                 farmerId: Game1.player.UniqueMultiplayerID,
-                stateData: JObject.FromObject(this.State)
+                stateData: this.State is ActiveState activeState 
+                    ? activeState.GetState() 
+                    : JObject.FromObject(this.State)
              );
 
             if (!Context.IsMainPlayer)
@@ -203,22 +217,55 @@ namespace QuestFramework.Quests
             }
 
             QuestFrameworkMod.Instance.QuestStateStore.Commit(payload);
+            (this.State as ActiveState)?.OnSync();
         }
 
         void IStateRestorable.RestoreState(StatePayload payload)
         {
             if (payload.StateData == null)
             {
+                this.ClearState();
                 this.State = this.PrepareState();
+                return;
+            }
+
+            if (this is CustomQuest<ActiveState> activeStateQuest)
+            {
+                if (activeStateQuest.State == null)
+                    activeStateQuest.State = activeStateQuest.PrepareState();
+
+                activeStateQuest.State.SetState(payload.StateData);
+
                 return;
             }
 
             this.State = payload.StateData.ToObject<TState>();
         }
 
+        private void ClearState()
+        {
+            if (this.State is IDisposable disposableState)
+                disposableState.Dispose();
+
+            this.State = null;
+        }
+
         bool IStateRestorable.VerifyState(StatePayload payload)
         {
+            if (this.State is ActiveState activeState)
+                return activeState.WasChanged;
+
             return JToken.DeepEquals(payload.StateData, JObject.FromObject(this.State));
+        }
+
+        internal override void Update()
+        {
+            base.Update();
+
+            if (this.State is ActiveState activeState && activeState.WasChanged)
+            {
+                this.Sync();
+            }
         }
 
         /// <summary>
@@ -227,13 +274,64 @@ namespace QuestFramework.Quests
         /// <returns></returns>
         protected virtual TState PrepareState()
         {
-            return new TState();
+            var state = new TState();
+
+            if (state is ActiveState activeState)
+            {
+                activeState.WatchFields(this.GatherActiveStateFields().ToArray());
+                activeState.OnChange += this.StateChanged;
+            }
+
+            return state;
+        }
+
+        private IEnumerable<ActiveStateField> GatherActiveStateFields()
+        {
+            List<ActiveStateField> activeStateFields = new List<ActiveStateField>();
+
+            foreach (var statePropInfo in this.GetType().GetProperties().Where(prop => prop.GetCustomAttribute<ActiveStateAttribute>() != null))
+            {
+                var stateProp = (ActiveStateField)statePropInfo.GetValue(this);
+
+                if (stateProp != null && stateProp.Name == null)
+                    stateProp.Name = statePropInfo.GetCustomAttribute<ActiveStateAttribute>().Name ?? statePropInfo.Name;
+
+                activeStateFields.Add(stateProp);
+            }
+
+            foreach (var stateFieldInfo in this.GetType().GetFields().Where(field => field.GetCustomAttribute<ActiveStateAttribute>() != null))
+            {
+                var stateField = (ActiveStateField)stateFieldInfo.GetValue(this);
+
+                if (stateField != null && stateField.Name == null)
+                    stateField.Name = stateFieldInfo.GetCustomAttribute<ActiveStateAttribute>().Name ?? stateFieldInfo.Name;
+
+                activeStateFields.Add(stateField);
+            }
+
+            return activeStateFields;
+        }
+
+        private void StateChanged(JObject state)
+        {
+            this.NeedsUpdate = true;
         }
 
         /// <inheritdoc cref="CustomQuest.Reset"/>
         public override void Reset()
         {
             base.Reset();
+
+            if (this.State is IResetableState resetableState)
+            {
+                resetableState.Reset();
+                this.Sync();
+                return;
+            }
+
+            if (this.State is IDisposable disposableState)
+                disposableState.Dispose();
+
             this.State = this.PrepareState();
             this.Sync();
         }

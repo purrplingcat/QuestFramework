@@ -14,6 +14,7 @@
 
 ### For SMAPI modders
 
+- Added active state
 - Added new APIs for expose custom quest types (class)
 - Exposed `ITriggerLoader` interface
 
