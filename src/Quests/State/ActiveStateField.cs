@@ -22,10 +22,12 @@ namespace QuestFramework.Quests.State
             }
         }
 
+        protected abstract void Reset(bool silent);
         public Action<ActiveStateField> OnChange { get; internal set; }
         public abstract JToken ToJToken();
         public abstract void FromJToken(JToken token);
-        public abstract void Reset();
+        public void Reset() => this.Reset(silent: false);
+        internal void SilentReset() => this.Reset(silent: true);
     }
 
     public class ActiveStateField<T> : ActiveStateField
@@ -60,9 +62,14 @@ namespace QuestFramework.Quests.State
             return JToken.FromObject(this._value);
         }
 
-        public override void Reset()
+        protected override void Reset(bool silent)
         {
-            this.Value = this._defaultValue;
+            this._value = this._defaultValue;
+
+            if (!silent)
+            {
+                this.OnChange?.Invoke(this);
+            }
         }
 
         public override void FromJToken(JToken token)

@@ -4,21 +4,17 @@ using System.Runtime.Serialization;
 namespace QuestFramework.Quests.State
 {
     [Serializable]
-    public class ActiveStateException : Exception
+    public sealed class ActiveStateException : Exception
     {
-        public ActiveStateException()
+        internal ActiveStateException()
         {
         }
 
-        public ActiveStateException(string message) : base(message)
+        internal ActiveStateException(string message) : base(message)
         {
         }
 
-        public ActiveStateException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
-
-        protected ActiveStateException(SerializationInfo info, StreamingContext context) : base(info, context)
+        internal ActiveStateException(string message, Exception innerException) : base(message, innerException)
         {
         }
     }

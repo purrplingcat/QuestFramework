@@ -38,7 +38,7 @@ namespace QuestFramework.Api
             this.QuestManager.AcceptQuest(fullQuestName, silent);
         }
 
-        [Obsolete]
+        [Obsolete("This API is deprecated! Use IManagedQuestApi.GetQuestById instead.", true)]
         public CustomQuest GetById(int id)
         {
             return this.GetQuestById(id);

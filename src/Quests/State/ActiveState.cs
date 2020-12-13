@@ -1,19 +1,23 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using QuestFramework.Framework.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace QuestFramework.Quests.State
 {
-    public sealed class ActiveState : IDisposable, IResetableState
+    public sealed class ActiveState : IDisposable, IPersistentState, IReactiveState
     {
         private JObject _state;
         private Dictionary<string, ActiveStateField> _activeFields;
 
+        [JsonIgnore]
+        public bool WasChanged { get; private set; }
+
         public event Action<JObject> OnChange;
         public event Action<Dictionary<string, ActiveStateField>> OnUpdateFields;
-        internal bool WasChanged { get; private set; }
 
         public ActiveState()
         {
@@ -51,9 +55,9 @@ namespace QuestFramework.Quests.State
             foreach (var field in this._activeFields.Values)
             {
                 if (this._state.ContainsKey(field.Name))
+                {
                     field.FromJToken(this._state[field.Name]);
-                else
-                    field.Reset();
+                }
             }
 
             this.OnUpdateFields?.Invoke(this._activeFields);
@@ -61,7 +65,7 @@ namespace QuestFramework.Quests.State
 
         public JObject GetState()
         {
-            return (JObject)this._state.DeepClone();
+            return this._state;
         }
 
         public void SetState(JObject state)
@@ -89,9 +93,15 @@ namespace QuestFramework.Quests.State
                 field.Reset();
         }
 
-        internal void OnSync()
+        public void StateSynced()
         {
             this.WasChanged = false;
+        }
+
+        public void Initialize(CustomQuest customQuest)
+        {
+            this.WatchFields(ActiveStateHelper.GatherActiveStateProperties(customQuest).ToArray());
+            this.WatchFields(ActiveStateHelper.GatherActiveStateFields(customQuest).ToArray());
         }
     }
 }
