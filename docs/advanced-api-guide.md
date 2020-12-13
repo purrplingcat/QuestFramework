@@ -285,6 +285,7 @@ ActiveState allows you define quest state in simple way and also doesn't need ca
 
 For use active state fields on your custom quest type use class `ActiveState` as state type and then define properties on your class (property type must derive class `ActiveStateField`) with attribute `ActiveState`. QF automatically detects these properties as active state fields and initializes them. These properties is synchronized with state in store (state ready for write to savefile or ready to sync via network in multiplayer).
  
+ **Automatic active state field(s) initialization**
 ```cs
 using QuestFramework.Quests;
 using QuestFramework.Quests.State;
@@ -313,7 +314,51 @@ namespace QuestEssentials
         /* ... */
     }
 }
+```
+You can define more active fields than one in this way.
+
+**Manual active state field(s) initialization**
+
+```cs
+using QuestFramework.Quests;
+using QuestFramework.Quests.State;
+
+namespace QuestEssentials
+{
+    class EarnMoneyQuest : CustomQuest<ActiveState>, IQuestObserver
+    {
+        public int Goal { get; set; }
+
+        /* 
+         * Give name for your active state field via constructor is needed, 
+         * because name can't be fetched from property name by reflection 
+         * (manual way doesn't use reflection)
+         */
+        public ActiveStateField<int> Earned { get; } = new ActiveStateField<int>(0, "Earned");
+        
+        protected override ActiveState PrepareState()
+        {
+            // Watch your active state field in overriden `PrepareState` method
+            return base.PrepareState().WatchFields(this.Earned);
+        }
+
+        public bool CheckIfComplete(IQuestInfo questData, ICompletionArgs completion)
+        {
+            if (questData.VanillaQuest.completed.Value || completion.String != "money" || completion.Number1 <= 0)
+            {
+                return false;
+            }
+
+            // Update the state. No call `this.Sync()` needed
+            this.Earned.Value += completion.Number1;
+        
+            return this.Earned.Value >= this.Goal;
+        }
+        /* ... */
+    }
+}
    ```
+   You can define more active fields than one in this way. (Method `WatchFields` on `ActiveState` class instance supports propagate more active state fields via `params`.)
 
 ### Manual quest handling
 

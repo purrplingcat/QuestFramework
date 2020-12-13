@@ -16,7 +16,7 @@ namespace QuestFramework.Quests.State
             set
             {
                 if (this._name != null)
-                    throw new InvalidOperationException("This state field is aready named.");
+                    throw new InvalidOperationException("This active state field is already named.");
 
                 this._name = value;
             }
@@ -45,6 +45,11 @@ namespace QuestFramework.Quests.State
         {
             this._defaultValue = initialValue;
             this._value = initialValue;
+        }
+
+        public ActiveStateField(T initialValue, string name) : this(initialValue)
+        {
+            this.Name = name;
         }
 
         public T Value
