@@ -1,4 +1,5 @@
-﻿← [README](../README.md)
+﻿
+← [README](../README.md)
 
 # Advanced API guide
 
@@ -277,6 +278,42 @@ TODO
 ### Create custom quest type
 
 TODO
+
+### Using ActiveState on custom quest
+
+ActiveState allows you define quest state in simple way and also doesn't need call `this.Sync()` instead of work with dummy quest state. (Sync method is called automatically at end of update cycle)
+
+For use active state fields on your custom quest type use class `ActiveState` as state type and then define properties on your class (property type must derive class `ActiveStateField`) with attribute `ActiveState`. QF automatically detects these properties as active state fields and initializes them. These properties is synchronized with state in store (state ready for write to savefile or ready to sync via network in multiplayer).
+ 
+```cs
+using QuestFramework.Quests;
+using QuestFramework.Quests.State;
+
+namespace QuestEssentials
+{
+    class EarnMoneyQuest : CustomQuest<ActiveState>, IQuestObserver
+    {
+        public int Goal { get; set; }
+
+        [ActiveState]
+        public ActiveStateField<int> Earned { get; } = new ActiveStateField<int>(0);
+
+        public bool CheckIfComplete(IQuestInfo questData, ICompletionArgs completion)
+        {
+            if (questData.VanillaQuest.completed.Value || completion.String != "money" || completion.Number1 <= 0)
+            {
+                return false;
+            }
+
+            // Update the state. No call `this.Sync()` needed
+            this.Earned.Value += completion.Number1;
+        
+            return this.Earned.Value >= this.Goal;
+        }
+        /* ... */
+    }
+}
+   ```
 
 ### Manual quest handling
 
