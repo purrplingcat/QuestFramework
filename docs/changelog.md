@@ -4,6 +4,7 @@
 
 ### Common changes
 
+- Fixed some issues with multiplayer
 - Write quest type classes in console for `quests_list`, `quests_log` and `quests_customtypes`
 - Added new command `quests_customtypes`
 

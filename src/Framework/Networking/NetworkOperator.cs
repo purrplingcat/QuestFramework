@@ -73,6 +73,7 @@ namespace QuestFramework.Framework.Networing
                     return;
                 }
 
+                this.monitor.Log($"Received quest state data from {e.FromPlayerID}");
                 this.questStateStore.Commit(payload);
             }
 
