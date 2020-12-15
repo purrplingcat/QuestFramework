@@ -18,7 +18,7 @@ namespace QuestFramework.Api
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [Obsolete("This API is deprecated! Use IManagedQuestApi.GetQuestById instead.")]
+        [Obsolete("This API is deprecated! Use IManagedQuestApi.GetQuestById instead.", true)]
         CustomQuest GetById(int id);
 
         /// <summary>

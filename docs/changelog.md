@@ -15,6 +15,10 @@
 
 ### For SMAPI modders
 
+- Deprecated `IStateful.ResetState()` and `IManagedQuestApi.GetById` now raise a compilation error when it is used in code
+- Added active state
+- Added new state interfaces: `IPersistentState` and `IReactiveState`
+- Added support for disposable quest state (by implementing `IDisposable` interface)
 - Added new APIs for expose custom quest types (class)
 - Exposed `ITriggerLoader` interface
 
