@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using QuestFramework.Hooks;
 using QuestFramework.Quests;
+using QuestFramework.Structures;
 using StardewModdingAPI;
 using System.Collections.Generic;
 
@@ -24,6 +25,8 @@ namespace QuestFramework.Framework.ContentPacks.Model
         public bool Cancelable { get; set; }
         public string ReactionText { get; set; }
         public JToken Trigger { get; set; }
+        public string Texture { get; set; }
+        public QuestLogColors Colors { get; set; }
         public List<Hook> Hooks { get; set; }
         public ConversationTopicData ConversationTopic { get; set; }
 

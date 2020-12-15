@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json.Linq;
 using PurrplingCore.Lexing;
 using PurrplingCore.Lexing.LexTokens;
 using QuestFramework.Framework.ContentPacks.Model;
@@ -276,11 +278,24 @@ namespace QuestFramework.Framework.ContentPacks
             managedQuest.Cancelable = questData.Cancelable;
             managedQuest.Trigger = this.ApplyTokens(trigger);
             managedQuest.NextQuests = questData.NextQuests;
+            managedQuest.Colors = questData.Colors;
             managedQuest.OwnedByModUid = content.Owner.Manifest.UniqueID;
 
             if (questData.CustomTypeId != -1)
             {
                 managedQuest.CustomTypeId = questData.CustomTypeId;
+            }
+
+            if (!string.IsNullOrEmpty(questData.Texture))
+            {
+                try
+                {
+                    managedQuest.Texture = content.Owner.LoadAsset<Texture2D>(questData.Texture);
+                } 
+                catch (ContentLoadException ex)
+                {
+                    this.Monitor.Log($"Couldn't load quest background texture file `{questData.Texture}`: {ex.Message}");
+                }
             }
 
             questData.PopulateExtendedData(managedQuest);

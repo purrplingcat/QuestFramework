@@ -139,40 +139,80 @@ namespace QuestFramework.Framework.Menus
             SpriteText.drawStringWithScrollCenteredAt(
                 b, Game1.content.LoadString("Strings\\StringsFromCSFiles:QuestLog.cs.11373"),
                 this.xPositionOnScreen + (this.width / 2), this.yPositionOnScreen - 64, "", 1f, -1, 0, 0.88f, false);
-            drawTextureBox(
-                b, Game1.mouseCursors, new Rectangle(384, 373, 18, 18), this.xPositionOnScreen, this.yPositionOnScreen,
-                this.width, this.height, Color.White, 4f, true);
+
+            if (this.QuestPage != -1 && this.CurrentQuest.IsManaged() && this.CurrentQuest.AsManagedQuest().Texture != null)
+            {
+                b.Draw(
+                    texture: this.CurrentQuest.AsManagedQuest().Texture,
+                    destinationRectangle: new Rectangle(this.xPositionOnScreen,this.yPositionOnScreen, this.width, this.height),
+                    color: Color.White);
+            }
+            else
+            {
+                drawTextureBox(
+                    b, Game1.mouseCursors, new Rectangle(384, 373, 18, 18), this.xPositionOnScreen, this.yPositionOnScreen,
+                    this.width, this.height, Color.White, 4f, true);
+            }
         }
 
         private void DrawManagedQuestDetails(SpriteBatch b)
         {
+            var managedQuest = this.CurrentQuest.AsManagedQuest();
+
             SpriteText.drawStringHorizontallyCenteredAt(
                 b, this.CurrentQuest.questTitle,
                 this.xPositionOnScreen
                 + (this.width / 2)
                 + (!this.CurrentQuest.dailyQuest.Value || this.CurrentQuest.daysLeft.Value <= 0 ? 0 : Math.Max(
                     32, SpriteText.getWidthOfString(this.CurrentQuest.questTitle, 999999) / 3) - 32),
-                this.yPositionOnScreen + 32, 999999, -1, 999999, 1f, 0.88f, false, -1, 99999);
+                this.yPositionOnScreen + 32, 
+                color: managedQuest.Colors?.TitleColor ?? -1);
 
             if (this.CurrentQuest.dailyQuest.Value && this.CurrentQuest.daysLeft.Value > 0)
             {
                 Utility.drawWithShadow(b, Game1.mouseCursors,
                     new Vector2(this.xPositionOnScreen + 32, this.yPositionOnScreen + 48 - 8),
                     new Rectangle(410, 501, 9, 9), Color.White, 0.0f, Vector2.Zero, 4f, false, 0.99f, -1, -1, 0.35f);
-                Utility.drawTextWithShadow(
-                    b,
-                    Game1.parseText(this.CurrentQuest.daysLeft.Value > 1 
-                        ? Game1.content.LoadString(@"Strings\StringsFromCSFiles:QuestLog.cs.11374", this.CurrentQuest.daysLeft.Value)
-                        : Game1.content.LoadString(@"Strings\StringsFromCSFiles:QuestLog.cs.11375", this.CurrentQuest.daysLeft.Value), 
-                    Game1.dialogueFont, this.width - 128),
-                    Game1.dialogueFont, new Vector2(this.xPositionOnScreen + 80, this.yPositionOnScreen + 48 - 8),
-                    Game1.textColor, 1f, -1f, -1, -1, 1f, 3);
+
+                if (managedQuest.Colors != null && managedQuest.Colors.ObjectiveColor != -1)
+                {
+                    b.DrawString(Game1.dialogueFont,
+                        Game1.parseText(this.CurrentQuest.daysLeft.Value > 1
+                            ? Game1.content.LoadString(@"Strings\StringsFromCSFiles:QuestLog.cs.11374", this.CurrentQuest.daysLeft.Value)
+                            : Game1.content.LoadString(@"Strings\StringsFromCSFiles:QuestLog.cs.11375", this.CurrentQuest.daysLeft.Value),
+                            Game1.dialogueFont, this.width - 128),
+                        new Vector2(this.xPositionOnScreen + 80, this.yPositionOnScreen + 48 - 8),
+                        SpriteText.getColorFromIndex(managedQuest.Colors.ObjectiveColor),
+                        0.0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
+                }
+                else
+                {
+                    Utility.drawTextWithShadow(
+                        b,
+                        Game1.parseText(this.CurrentQuest.daysLeft.Value > 1
+                            ? Game1.content.LoadString(@"Strings\StringsFromCSFiles:QuestLog.cs.11374", this.CurrentQuest.daysLeft.Value)
+                            : Game1.content.LoadString(@"Strings\StringsFromCSFiles:QuestLog.cs.11375", this.CurrentQuest.daysLeft.Value),
+                            Game1.dialogueFont, this.width - 128),
+                        Game1.dialogueFont, new Vector2(this.xPositionOnScreen + 80, this.yPositionOnScreen + 48 - 8),
+                        Game1.textColor, 1f, -1f, -1, -1, 1f, 3);
+                }
             }
-            Utility.drawTextWithShadow(b, Game1.parseText(this.CurrentQuest.questDescription, Game1.dialogueFont, this.width - 128), Game1.dialogueFont, new Vector2(this.xPositionOnScreen + 64, this.yPositionOnScreen + 96), Game1.textColor, 1f, -1f, -1, -1, 1f, 3);
+
+            if (managedQuest.Colors != null && managedQuest.Colors.TextColor != -1)
+            {
+                b.DrawString(Game1.dialogueFont, Game1.parseText(this.CurrentQuest.questDescription, Game1.dialogueFont, this.width - 128), new Vector2(this.xPositionOnScreen + 64, this.yPositionOnScreen + 96), SpriteText.getColorFromIndex(managedQuest.Colors.TextColor), 0.0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
+            }
+            else
+            {
+                Utility.drawTextWithShadow(b, Game1.parseText(this.CurrentQuest.questDescription, Game1.dialogueFont, this.width - 128), Game1.dialogueFont, new Vector2(this.xPositionOnScreen + 64, this.yPositionOnScreen + 96),
+                    managedQuest.Colors != null ? SpriteText.getColorFromIndex(managedQuest.Colors.TextColor) : Game1.textColor,
+                    1f, -1f, -1, -1, 1f, 3);
+            }
+
             float y = (float)(this.yPositionOnScreen + 96 + (double)Game1.dialogueFont.MeasureString(Game1.parseText(this.CurrentQuest.questDescription, Game1.dialogueFont, this.width - 128)).Y + 32.0);
             if (this.CurrentQuest.completed.Value)
             {
-                SpriteText.drawString(b, Game1.content.LoadString("Strings\\StringsFromCSFiles:QuestLog.cs.11376"), this.xPositionOnScreen + 32 + 4, this.rewardBox.bounds.Y + 21 + 4, 999999, -1, 999999, 1f, 0.88f, false, -1, "", -1, SpriteText.ScrollTextAlignment.Left);
+                SpriteText.drawString(b, Game1.content.LoadString("Strings\\StringsFromCSFiles:QuestLog.cs.11376"), this.xPositionOnScreen + 32 + 4, this.rewardBox.bounds.Y + 21 + 4, color: managedQuest.Colors?.TitleColor ?? -1);
                 this.rewardBox.draw(b);
 
                 if (this.CurrentQuest.moneyReward.Value <= 0)
@@ -180,16 +220,16 @@ namespace QuestFramework.Framework.Menus
                     return;
                 }
 
-                if (this.CurrentQuest.AsManagedQuest().RewardType == RewardType.Item && this.rewardItem != null)
+                if (managedQuest.RewardType == RewardType.Item && this.rewardItem != null)
                 {
                     this.rewardItem.drawInMenu(
                         b, new Vector2(this.rewardBox.bounds.X + 18, this.rewardBox.bounds.Y + 18 - Game1.dialogueButtonScale / 6f), 0.9f + this.rewardBox.scale * 0.03f);
                     SpriteText.drawString(b,
                         Utils.CutText(this.rewardItem.DisplayName, 15),
-                        this.xPositionOnScreen + 448, this.rewardBox.bounds.Y + 21 + 4, 999999, -1, 999999, 1f, 0.88f,
-                        false, -1, "", -1, SpriteText.ScrollTextAlignment.Left);
+                        this.xPositionOnScreen + 448, this.rewardBox.bounds.Y + 21 + 4,
+                        color: managedQuest.Colors?.TitleColor ?? -1);
                 }
-                else if (this.CurrentQuest.AsManagedQuest().RewardType == RewardType.Money)
+                else if (managedQuest.RewardType == RewardType.Money)
                 {
                     b.Draw(Game1.mouseCursors,
                            new Vector2(this.rewardBox.bounds.X + 16, this.rewardBox.bounds.Y + 16 - Game1.dialogueButtonScale / 2f),
@@ -197,8 +237,8 @@ namespace QuestFramework.Framework.Menus
                            SpriteEffects.None, 1f);
                     SpriteText.drawString(b,
                         Game1.content.LoadString("Strings\\StringsFromCSFiles:LoadGameMenu.cs.11020", this.CurrentQuest.moneyReward.Value),
-                        this.xPositionOnScreen + 448, this.rewardBox.bounds.Y + 21 + 4, 999999, -1, 999999, 1f, 0.88f,
-                        false, -1, "", -1, SpriteText.ScrollTextAlignment.Left);
+                        this.xPositionOnScreen + 448, this.rewardBox.bounds.Y + 21 + 4,
+                        color: managedQuest.Colors?.TitleColor ?? -1);
                 }
             }
             else
@@ -207,10 +247,23 @@ namespace QuestFramework.Framework.Menus
                     b, Game1.mouseCursors,
                     new Vector2(this.xPositionOnScreen + 96 + (float)(8.0 * Game1.dialogueButtonScale / 10.0), y),
                     new Rectangle(412, 495, 5, 4), Color.White, 1.570796f, Vector2.Zero, -1f, false, -1f, -1, -1, 0.35f);
-                Utility.drawTextWithShadow(b,
-                    Game1.parseText(this.CurrentQuest.currentObjective, Game1.dialogueFont, this.width - 256),
-                    Game1.dialogueFont, new Vector2(this.xPositionOnScreen + 128, y - 8f), Color.DarkBlue, 1f, -1f, -1,
-                    -1, 1f, 3);
+
+                if (managedQuest.Colors != null && managedQuest.Colors.ObjectiveColor != -1)
+                {
+                    b.DrawString(Game1.dialogueFont,
+                        Game1.parseText(this.CurrentQuest.currentObjective, Game1.dialogueFont, this.width - 128),
+                        new Vector2(this.xPositionOnScreen + 128, y - 8f),
+                        SpriteText.getColorFromIndex(managedQuest.Colors.ObjectiveColor),
+                        0.0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
+                }
+                else
+                {
+                    Utility.drawTextWithShadow(b,
+                        Game1.parseText(this.CurrentQuest.currentObjective, Game1.dialogueFont, this.width - 256),
+                        Game1.dialogueFont, new Vector2(this.xPositionOnScreen + 128, y - 8f),
+                        managedQuest.Colors != null ? SpriteText.getColorFromIndex(managedQuest.Colors.ObjectiveColor) : Color.DarkBlue,
+                        1f, -1f, -1, -1, 1f, 3);
+                }
 
                 if (this.CurrentQuest.canBeCancelled.Value)
                 {

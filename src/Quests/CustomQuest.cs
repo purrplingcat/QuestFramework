@@ -7,6 +7,8 @@ using StardewModdingAPI;
 using StardewValley;
 using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework.Graphics;
+using QuestFramework.Structures;
 
 namespace QuestFramework.Quests
 {
@@ -34,10 +36,13 @@ namespace QuestFramework.Quests
         public List<string> NextQuests { get; set; }
         public int Reward { get; set; }
         public RewardType RewardType { get; set; } = RewardType.Money;
+        public int RewardAmount { get; set; }
         public string RewardDescription { get; set; }
         public bool Cancelable { get; set; }
         public string ReactionText { get; set; }
         public int DaysLeft { get; set; } = 0;
+        public Texture2D Texture { get; set; }
+        public QuestLogColors Colors { get; set; }
         public List<Hook> Hooks { get; set; }
 
         public string Name
@@ -98,8 +103,6 @@ namespace QuestFramework.Quests
         internal protected static IModHelper Helper => QuestFrameworkMod.Instance.Helper;
         internal protected static IMonitor Monitor => QuestFrameworkMod.Instance.Monitor;
         private static StatsManager StatsManager => QuestFrameworkMod.Instance.StatsManager;
-
-        public int RewardAmount { get; internal set; }
 
         public CustomQuest()
         {
