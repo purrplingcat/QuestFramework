@@ -269,6 +269,8 @@ namespace QuestFramework.Framework.ContentPacks
             managedQuest.Objective = questData.Objective;
             managedQuest.DaysLeft = questData.DaysLeft;
             managedQuest.Reward = questData.Reward;
+            managedQuest.RewardType = questData.RewardType;
+            managedQuest.RewardAmount = questData.RewardAmount;
             managedQuest.RewardDescription = questData.RewardDescription;
             managedQuest.ReactionText = questData.ReactionText;
             managedQuest.Cancelable = questData.Cancelable;

@@ -7,6 +7,7 @@ using QuestFramework.Framework.ContentPacks;
 using QuestFramework.Framework.Controllers;
 using QuestFramework.Framework.Events;
 using QuestFramework.Framework.Hooks;
+using QuestFramework.Framework.Menus;
 using QuestFramework.Framework.Networing;
 using QuestFramework.Framework.Stats;
 using QuestFramework.Framework.Store;
@@ -246,6 +247,12 @@ namespace QuestFramework
 
         private void OnQuestLogMenuChanged(object sender, MenuChangedEventArgs e)
         {
+            if (e.NewMenu is QuestLog && !(e.NewMenu is ManagedQuestLog))
+            {
+                Game1.activeClickableMenu = new ManagedQuestLog();
+                return;
+            }
+
             if (e.NewMenu is QuestLog && !(e.OldMenu is QuestLog))
                 this.EventManager.QuestLogMenuOpen.Fire(new System.EventArgs(), this);
             if (!(e.NewMenu is QuestLog) && e.OldMenu is QuestLog)

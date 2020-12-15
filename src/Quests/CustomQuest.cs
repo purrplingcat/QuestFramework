@@ -33,6 +33,7 @@ namespace QuestFramework.Quests
         public string Objective { get; set; }
         public List<string> NextQuests { get; set; }
         public int Reward { get; set; }
+        public RewardType RewardType { get; set; } = RewardType.Money;
         public string RewardDescription { get; set; }
         public bool Cancelable { get; set; }
         public string ReactionText { get; set; }
@@ -97,6 +98,8 @@ namespace QuestFramework.Quests
         internal protected static IModHelper Helper => QuestFrameworkMod.Instance.Helper;
         internal protected static IMonitor Monitor => QuestFrameworkMod.Instance.Monitor;
         private static StatsManager StatsManager => QuestFrameworkMod.Instance.StatsManager;
+
+        public int RewardAmount { get; internal set; }
 
         public CustomQuest()
         {
