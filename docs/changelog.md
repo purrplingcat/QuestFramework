@@ -1,20 +1,24 @@
-﻿# Changelog
+# Changelog
 
 ## 1.2.0
 
 ### Common changes
 
+- Added support for custom background texture and font colors for quest details window in quest log menu
+- Added support for new types of quest reward: `Object` and `Weapon`
 - Fixed some issues with multiplayer
 - Write quest type classes in console for `quests_list`, `quests_log` and `quests_customtypes`
 - Added new command `quests_customtypes`
 
 ### For Content Pack modders
 
+- Added new fields for quest: `RewardType`, `RewardAmount`, `Texture` and `Colors`
 - Added support for custom quest types in content packs (via `<modUid>/<questTypeName>` in `Type` field)
 - Better error messages
 
 ### For SMAPI modders
 
+- Added new APIs for define quest reward type, custom bg texture nad font colors
 - Deprecated `IStateful.ResetState()` and `IManagedQuestApi.GetById` now raise a compilation error when it is used in code
 - Added active state
 - Added new state interfaces: `IPersistentState` and `IReactiveState`

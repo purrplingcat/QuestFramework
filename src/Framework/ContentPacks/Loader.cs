@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json.Linq;
 using PurrplingCore.Lexing;
 using PurrplingCore.Lexing.LexTokens;
 using QuestFramework.Framework.ContentPacks.Model;
@@ -6,6 +8,7 @@ using QuestFramework.Framework.Helpers;
 using QuestFramework.Offers;
 using QuestFramework.Quests;
 using StardewModdingAPI;
+using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -268,12 +271,15 @@ namespace QuestFramework.Framework.ContentPacks
             managedQuest.Description = questData.Description;
             managedQuest.Objective = questData.Objective;
             managedQuest.DaysLeft = questData.DaysLeft;
-            managedQuest.Reward = questData.Reward;
+            managedQuest.Reward = this.ParseReward(questData.Reward, questData.RewardType);
+            managedQuest.RewardType = questData.RewardType;
+            managedQuest.RewardAmount = questData.RewardAmount;
             managedQuest.RewardDescription = questData.RewardDescription;
             managedQuest.ReactionText = questData.ReactionText;
             managedQuest.Cancelable = questData.Cancelable;
             managedQuest.Trigger = this.ApplyTokens(trigger);
             managedQuest.NextQuests = questData.NextQuests;
+            managedQuest.Colors = questData.Colors;
             managedQuest.OwnedByModUid = content.Owner.Manifest.UniqueID;
 
             if (questData.CustomTypeId != -1)
@@ -281,9 +287,60 @@ namespace QuestFramework.Framework.ContentPacks
                 managedQuest.CustomTypeId = questData.CustomTypeId;
             }
 
+            if (!string.IsNullOrEmpty(questData.Texture))
+            {
+                try
+                {
+                    managedQuest.Texture = content.Owner.LoadAsset<Texture2D>(questData.Texture);
+                } 
+                catch (ContentLoadException ex)
+                {
+                    this.Monitor.Log($"Couldn't load quest background texture file `{questData.Texture}`: {ex.Message}");
+                }
+            }
+
             questData.PopulateExtendedData(managedQuest);
 
             return managedQuest;
+        }
+
+        private int ParseReward(JToken reward, RewardType rewardType)
+        {
+            if (reward != null)
+            {
+                if (reward.Type == JTokenType.Integer)
+                {
+                    return reward.ToObject<int>();
+                }
+
+                int id;
+                string rewardName = reward.ToObject<string>();
+                switch (rewardType)
+                {
+                    case RewardType.Money:
+                        return reward.ToObject<int>();
+                    case RewardType.Object:
+                        id = ItemHelper.GetObjectId(rewardName);
+
+                        if (id == -1)
+                        {
+                            this.Monitor.Log($"Unknown object `{rewardName}` for quest reward.", LogLevel.Error);
+                        }
+
+                        return id;
+                    case RewardType.Weapon:
+                        id = ItemHelper.GetWeaponId(rewardName);
+
+                        if (id == -1)
+                        {
+                            this.Monitor.Log($"Unknown weapon `{rewardName}` for quest reward.", LogLevel.Error);
+                        }
+
+                        return id;
+                }
+            }
+
+            return 0;
         }
 
         private Content LoadContentPack(IContentPack contentPack)

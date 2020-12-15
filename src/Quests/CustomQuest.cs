@@ -6,6 +6,8 @@ using StardewModdingAPI;
 using StardewValley;
 using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework.Graphics;
+using QuestFramework.Structures;
 using QuestFramework.Quests.State;
 using Newtonsoft.Json;
 using System.Linq;
@@ -37,11 +39,16 @@ namespace QuestFramework.Quests
         public string Objective { get; set; }
         public List<string> NextQuests { get; set; }
         public int Reward { get; set; }
+        public RewardType RewardType { get; set; } = RewardType.Money;
+        public int RewardAmount { get; set; }
         public string RewardDescription { get; set; }
         public bool Cancelable { get; set; }
         public string ReactionText { get; set; }
         public int DaysLeft { get; set; } = 0;
+        public Texture2D Texture { get; set; }
+        public QuestLogColors Colors { get; set; }
         public List<Hook> Hooks { get; set; }
+        public Dictionary<string, string> Tags { get; }
 
         public string Name
         {
@@ -74,6 +81,29 @@ namespace QuestFramework.Quests
             return this.DaysLeft > 0;
         }
 
+        public int CustomTypeId 
+        { 
+            get => this.BaseType == QuestType.Custom ? this.customTypeId : -1; 
+            set => this.customTypeId = value >= 0 ? value : 0; 
+        }
+
+        internal protected static IModHelper Helper => QuestFrameworkMod.Instance.Helper;
+        internal protected static IMonitor Monitor => QuestFrameworkMod.Instance.Monitor;
+        private static StatsManager StatsManager => QuestFrameworkMod.Instance.StatsManager;
+
+        public CustomQuest()
+        {
+            this.BaseType = QuestType.Custom;
+            this.NextQuests = new List<string>();
+            this.Hooks = new List<Hook>();
+            this.Tags = new Dictionary<string, string>();
+        }
+
+        public CustomQuest(string name) : this()
+        {
+            this.Name = name;
+        }
+
         internal void ConfirmComplete(IQuestInfo questInfo)
         {
             StatsManager.AddCompletedQuest(this.GetFullName());
@@ -90,28 +120,6 @@ namespace QuestFramework.Quests
         {
             StatsManager.AddRemovedQuest(this.GetFullName());
             this.Removed?.Invoke(this, questInfo);
-        }
-
-        public int CustomTypeId 
-        { 
-            get => this.BaseType == QuestType.Custom ? this.customTypeId : -1; 
-            set => this.customTypeId = value >= 0 ? value : 0; 
-        }
-
-        internal protected static IModHelper Helper => QuestFrameworkMod.Instance.Helper;
-        internal protected static IMonitor Monitor => QuestFrameworkMod.Instance.Monitor;
-        private static StatsManager StatsManager => QuestFrameworkMod.Instance.StatsManager;
-
-        public CustomQuest()
-        {
-            this.BaseType = QuestType.Custom;
-            this.NextQuests = new List<string>();
-            this.Hooks = new List<Hook>();
-        }
-
-        public CustomQuest(string name) : this()
-        {
-            this.Name = name;
         }
 
         /// <summary>

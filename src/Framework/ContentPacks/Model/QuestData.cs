@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using QuestFramework.Hooks;
 using QuestFramework.Quests;
+using QuestFramework.Structures;
 using StardewModdingAPI;
 using System.Collections.Generic;
 
@@ -17,11 +18,15 @@ namespace QuestFramework.Framework.ContentPacks.Model
         public string Objective { get; set; }
         public List<string> NextQuests { get; set; }
         public int DaysLeft { get; set; }
-        public int Reward { get; set; }
+        public JToken Reward { get; set; }
+        public RewardType RewardType { get; set; } = RewardType.Money;
+        public int RewardAmount { get; set; }
         public string RewardDescription { get; set; }
         public bool Cancelable { get; set; }
         public string ReactionText { get; set; }
         public JToken Trigger { get; set; }
+        public string Texture { get; set; }
+        public QuestLogColors Colors { get; set; }
         public List<Hook> Hooks { get; set; }
         public ConversationTopicData ConversationTopic { get; set; }
 

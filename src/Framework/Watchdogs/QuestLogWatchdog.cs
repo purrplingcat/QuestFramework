@@ -11,8 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using SConstants = StardewModdingAPI.Constants;
 
 namespace QuestFramework.Framework.Watchdogs
 {
@@ -31,7 +30,7 @@ namespace QuestFramework.Framework.Watchdogs
 
             // QuestLog reference only for andoroid, 
             // other platform uses ElementChanged event on NetObjectList
-            if (Constants.TargetPlatform == GamePlatform.Android)
+            if (SConstants.TargetPlatform == GamePlatform.Android)
             {
                 modEvents.GameLoop.UpdateTicked += this.OnUpdateTicked;
                 modEvents.GameLoop.ReturnedToTitle += this.OnReturnedToTitle;
@@ -43,7 +42,7 @@ namespace QuestFramework.Framework.Watchdogs
             if (!Context.IsWorldReady)
                 return;
 
-            if (Constants.TargetPlatform == GamePlatform.Android)
+            if (SConstants.TargetPlatform == GamePlatform.Android)
                 this.LastQuestLog = new List<Quest>(Game1.player.questLog);
             else
                 this.RegisterNetListElementChangedEvent();
