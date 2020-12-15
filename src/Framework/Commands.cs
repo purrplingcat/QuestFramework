@@ -5,6 +5,7 @@ using StardewValley;
 using System.Linq;
 using System.Text;
 using System.Collections.Generic;
+using System;
 
 namespace QuestFramework.Framework
 {
@@ -43,13 +44,57 @@ namespace QuestFramework.Framework
                     .AppendLine($"    Owned by: {quest.OwnedByModUid}")
                     .AppendLine($"    Current ID: {quest.id}")
                     .AppendLine($"    Trigger: {quest.Trigger ?? "null"}")
-                    .AppendLine($"    Reward: {quest.Reward}g")
+                    .AppendLine($"    Reward: {FormatReward(quest.Reward, quest.RewardType, quest.RewardAmount)}")
+                    .AppendLine($"    Reward Type: {quest.RewardType}")
+                    .AppendLine($"    Custom texture: {(quest.Texture != null ? "Yes" : "No")}")
+                    .AppendLine($"    Custom colors: {(quest.Colors != null ? "Yes" : "No")}")
                     .AppendLine($"    Active: {(quest.id >= 0 ? "Yes" : "No")}")
                     .AppendLine($"    Is in quest log: {quest.IsInQuestLog()}")
                     .AppendLine($"    Next quests: {string.Join(", ", quest.NextQuests ?? new List<string>())}");
             }
 
             Monitor.Log(builder.ToString(), LogLevel.Info);
+        }
+
+        private static string FormatReward(int reward, QuestFramework.Quests.RewardType rewardType, int rewardAmount)
+        {
+            switch (rewardType)
+            {
+                case QuestFramework.Quests.RewardType.Money:
+                    return $"{reward}g";
+                case QuestFramework.Quests.RewardType.Object:
+                    return $"Item object '{TranslateObject(reward)}' ({Math.Max(1, rewardAmount)} pieces)";
+                case QuestFramework.Quests.RewardType.Weapon:
+                    return $"Item weapon '{TranslateWeapon(reward)}'";
+            }
+
+            return reward.ToString();
+        }
+
+        private static object TranslateWeapon(int reward)
+        {
+            var dict = Game1.content.Load<Dictionary<int, string>>(@"Data\Weapons");
+
+            if (dict.TryGetValue(reward, out string definition))
+            {
+                string[] frags = definition.Split('/');
+
+                return frags[0];
+            }
+
+            return "Invalid Weapon";
+        }
+
+        private static object TranslateObject(int reward)
+        {
+            if (Game1.objectInformation.TryGetValue(reward, out string definition))
+            {
+                string[] frags = definition.Split('/');
+
+                return frags[0];
+            }
+
+            return "Invalid Object";
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Styl", "IDE0060", Justification = "Command handler")]
@@ -79,7 +124,10 @@ namespace QuestFramework.Framework
                     .AppendLine($"    Owned by: {quest.OwnedByModUid}")
                     .AppendLine($"    Current ID: {quest.id}")
                     .AppendLine($"    Trigger: {quest.Trigger ?? "null"}")
-                    .AppendLine($"    Reward: {quest.Reward}g")
+                    .AppendLine($"    Reward: {FormatReward(quest.Reward, quest.RewardType, quest.RewardAmount)}")
+                    .AppendLine($"    Reward Type: {quest.RewardType}")
+                    .AppendLine($"    Custom texture: {(quest.Texture != null ? "Yes" : "No")}")
+                    .AppendLine($"    Custom colors: {(quest.Colors != null ? "Yes" : "No")}")
                     .AppendLine($"    Cancelable: {(quest.Cancelable ? "Yes" : "No")}")
                     .AppendLine($"    Completed: {(vanillaQuest.completed.Value ? "Yes" : "No")}")
                     .AppendLine($"    Next quests: {string.Join(", ", quest.NextQuests ?? new List<string>())}");

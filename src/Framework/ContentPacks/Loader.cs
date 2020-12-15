@@ -306,7 +306,7 @@ namespace QuestFramework.Framework.ContentPacks
 
         private int ParseReward(JToken reward, RewardType rewardType)
         {
-            if (reward != null)
+            if (reward != null && reward.Type != JTokenType.Null)
             {
                 if (reward.Type == JTokenType.Integer)
                 {
