@@ -18,7 +18,7 @@ namespace QuestFramework.Framework.ContentPacks.Model
         public string Objective { get; set; }
         public List<string> NextQuests { get; set; }
         public int DaysLeft { get; set; }
-        public int Reward { get; set; }
+        public JToken Reward { get; set; }
         public RewardType RewardType { get; set; } = RewardType.Money;
         public int RewardAmount { get; set; }
         public string RewardDescription { get; set; }

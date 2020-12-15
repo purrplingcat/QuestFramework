@@ -95,7 +95,6 @@ namespace QuestFramework.Framework.Menus
             var managedQuest = this.CurrentQuest?.AsManagedQuest();
 
             this.rewardItem = null;
-            this.learnedRecipe = null;
 
             switch (managedQuest?.RewardType)
             {
