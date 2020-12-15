@@ -8,6 +8,7 @@ using StardewValley;
 using StardewValley.BellsAndWhistles;
 using StardewValley.Menus;
 using StardewValley.Quests;
+using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,7 +42,7 @@ namespace QuestFramework.Framework.Menus
             if (this.lastQuestPage != this.QuestPage)
             {
                 this.lastQuestPage = this.QuestPage;
-                this.UpdateRewardBoxContent();
+                this.UpdateRewardBoxItem();
             }
 
             base.update(time);
@@ -57,7 +58,8 @@ namespace QuestFramework.Framework.Menus
                         Game1.player.Money += this.CurrentQuest.moneyReward.Value;
                         Game1.playSound("purchaseRepeat");
                         break;
-                    case RewardType.Item:
+                    case RewardType.Object:
+                    case RewardType.Weapon:
                         Game1.playSound("coin");
                         Game1.player.addItemByMenuIfNecessary(this.rewardItem, (ItemGrabMenu.behaviorOnItemSelect)null);
                         this.rewardItem = null;
@@ -82,18 +84,29 @@ namespace QuestFramework.Framework.Menus
                 && this.rewardBox.containsPoint(x, y);
         }
 
-        private void UpdateRewardBoxContent()
+        private bool IsItemReward(RewardType rewardType)
+        {
+            return rewardType == RewardType.Object 
+                || rewardType == RewardType.Weapon;
+        }
+
+        private void UpdateRewardBoxItem()
         {
             var managedQuest = this.CurrentQuest?.AsManagedQuest();
 
-            if (managedQuest != null && managedQuest.RewardType == RewardType.Item)
+            this.rewardItem = null;
+            this.learnedRecipe = null;
+
+            switch (managedQuest?.RewardType)
             {
-                this.rewardItem = new StardewValley.Object(
-                    Vector2.Zero, managedQuest.Reward, 
-                    managedQuest.RewardAmount > 0 ? managedQuest.RewardAmount : 1);
-            } else
-            {
-                this.rewardItem = null;
+                case RewardType.Object:
+                    this.rewardItem = new StardewValley.Object(
+                        Vector2.Zero, managedQuest.Reward,
+                        managedQuest.RewardAmount > 0 ? managedQuest.RewardAmount : 1);
+                    break;
+                case RewardType.Weapon:
+                    this.rewardItem = new MeleeWeapon(managedQuest.Reward);
+                    break;
             }
         }
 
@@ -220,7 +233,7 @@ namespace QuestFramework.Framework.Menus
                     return;
                 }
 
-                if (managedQuest.RewardType == RewardType.Item && this.rewardItem != null)
+                if (this.IsItemReward(managedQuest.RewardType) && this.rewardItem != null)
                 {
                     this.rewardItem.drawInMenu(
                         b, new Vector2(this.rewardBox.bounds.X + 18, this.rewardBox.bounds.Y + 18 - Game1.dialogueButtonScale / 6f), 0.9f + this.rewardBox.scale * 0.03f);

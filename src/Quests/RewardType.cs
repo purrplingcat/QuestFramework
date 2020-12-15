@@ -3,6 +3,7 @@
     public enum RewardType
     {
         Money = 2,
-        Item = 4,
+        Object = 4,
+        Weapon = 8,
     }
 }
