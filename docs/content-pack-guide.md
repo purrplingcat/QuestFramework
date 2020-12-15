@@ -173,6 +173,8 @@ Same usage as *LostItem*
 
 Custom quest type. You can specify field `CustomTypeId` for more explicit which custom quest type. In JSON api you can use hooks to create custom quest handling.
 
+You can define custom quest via setup value `Custom` into field `Type` or in format `<modUID>/<QuestTypeName>` for custom quests defined by other mods which exposes their quest types for content packs.
+
 *Trigger*: Custom defined. In JSON api use hooks instead for handle your pure JSON custom quest. If you target a custom quest type defined by any other mod in your JSON content pack, follow instructions of the source mod of this quest type.
 
 ### Rewards
