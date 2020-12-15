@@ -32,17 +32,17 @@ namespace QuestFramework.Framework
 
             if (string.IsNullOrEmpty(quest.Name) || string.IsNullOrEmpty(quest.OwnedByModUid))
             {
-                throw new ArgumentException($"Quest name and category can't be empty or null!");
+                throw new InvalidQuestException($"Quest name and category can't be empty or null!");
             }
 
             if (quest.Name.Contains(' ') || quest.Name.Contains('@'))
             {
-                throw new ArgumentException("Quest name contains illegal characters (spaces or these reserved characters: @)");
+                throw new InvalidQuestException("Quest name contains illegal characters (spaces or these reserved characters: @)");
             }
 
             if (this.Quests.Any(q => q.GetFullName() == quest.GetFullName()))
             {
-                throw new InvalidOperationException($"Quest `{quest.GetFullName()}` is already registered!");
+                throw new InvalidQuestException($"Quest `{quest.GetFullName()}` is already registered!");
             }
 
             this.Quests.Add(quest);
@@ -110,6 +110,15 @@ namespace QuestFramework.Framework
                 return null;
 
             return this.Quests.Where(q => q.id == id).FirstOrDefault();
+        }
+
+        public void Update()
+        {
+            foreach (var customQuest in this.Quests.Where(q => q.NeedsUpdate))
+            {
+                customQuest.Update();
+                customQuest.NeedsUpdate = false;
+            }
         }
 
         internal int ResolveGameQuestId(string fullName)

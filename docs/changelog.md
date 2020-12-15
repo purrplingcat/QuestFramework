@@ -1,4 +1,4 @@
-﻿# Changelog
+# Changelog
 
 ## 1.2.0
 
@@ -19,6 +19,10 @@
 ### For SMAPI modders
 
 - Added new APIs for define quest reward type, custom bg texture nad font colors
+- Deprecated `IStateful.ResetState()` and `IManagedQuestApi.GetById` now raise a compilation error when it is used in code
+- Added active state
+- Added new state interfaces: `IPersistentState` and `IReactiveState`
+- Added support for disposable quest state (by implementing `IDisposable` interface)
 - Added new APIs for expose custom quest types (class)
 - Exposed `ITriggerLoader` interface
 

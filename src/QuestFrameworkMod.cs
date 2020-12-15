@@ -78,6 +78,7 @@ namespace QuestFramework
             helper.Content.AssetEditors.Add(this.MailController);
 
             helper.Events.GameLoop.GameLaunched += this.OnGameStarted;
+            helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
             helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
             helper.Events.GameLoop.Saving += this.OnSaving;
             helper.Events.GameLoop.DayStarted += this.OnDayStarted;
@@ -108,6 +109,14 @@ namespace QuestFramework
             var packs = helper.ContentPacks.GetOwned();
             if (packs.Any())
                 this.ContentPackLoader.LoadPacks(packs);
+        }
+
+        private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
+        {
+            if (!Context.IsGameLaunched)
+                return;
+
+            this.QuestManager.Update();
         }
 
         [EventPriority(EventPriority.High + 100)]
