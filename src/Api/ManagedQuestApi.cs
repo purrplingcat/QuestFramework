@@ -16,16 +16,16 @@ namespace QuestFramework.Api
         public string ModUid { get; }
         public QuestManager QuestManager { get; }
         public QuestOfferManager QuestOfferManager { get; }
-        public ConditionManager HookManager { get; }
+        public ConditionManager ConditionManager { get; }
 
         private static IMonitor Monitor => QuestFrameworkMod.Instance.Monitor;
 
-        public ManagedQuestApi(string modUid, QuestManager questManager, QuestOfferManager questOfferManager, ConditionManager hookManager)
+        public ManagedQuestApi(string modUid, QuestManager questManager, QuestOfferManager questOfferManager, ConditionManager conditionManager)
         {
             this.ModUid = modUid;
             this.QuestManager = questManager;
             this.QuestOfferManager = questOfferManager;
-            this.HookManager = hookManager;
+            this.ConditionManager = conditionManager;
         }
 
         public void AcceptQuest(string fullQuestName, bool silent = false)
@@ -115,7 +115,7 @@ namespace QuestFramework.Api
 
             string fullConditionName = $"{this.ModUid}/{conditionName}";
 
-            this.HookManager.Conditions[fullConditionName] = conditionHandler;
+            this.ConditionManager.Conditions[fullConditionName] = conditionHandler;
             Monitor.Log($"Exposed custom global condition `{fullConditionName}`");
         }
 

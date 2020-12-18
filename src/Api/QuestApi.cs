@@ -59,7 +59,7 @@ namespace QuestFramework.Api
                 modUid: manifest.UniqueID,
                 questManager: this.mod.QuestManager,
                 questOfferManager: this.mod.QuestOfferManager,
-                hookManager: this.mod.HookManager);
+                conditionManager: this.mod.ConditionManager);
         }
 
         public void ForceRefresh()

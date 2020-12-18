@@ -35,7 +35,7 @@ namespace QuestFramework
         internal QuestManager QuestManager { get; private set; }
         internal QuestStateStore QuestStateStore { get; private set; }
         internal StatsManager StatsManager { get; private set; }
-        internal ConditionManager HookManager { get; private set; }
+        internal ConditionManager ConditionManager { get; private set; }
         internal QuestOfferManager QuestOfferManager { get; private set; }
         internal Loader ContentPackLoader { get; private set; }
         internal QuestController QuestController { get; private set; }
@@ -59,8 +59,8 @@ namespace QuestFramework
             this.QuestManager = new QuestManager(this.Monitor);
             this.QuestStateStore = new QuestStateStore(helper.Data, this.Monitor);
             this.StatsManager = new StatsManager(helper.Multiplayer, helper.Data);
-            this.HookManager = new ConditionManager(this.Monitor);
-            this.QuestOfferManager = new QuestOfferManager(this.HookManager, this.QuestManager);
+            this.ConditionManager = new ConditionManager(this.Monitor);
+            this.QuestOfferManager = new QuestOfferManager(this.ConditionManager, this.QuestManager);
             this.ContentPackLoader = new Loader(this.Monitor, this.QuestManager, this.QuestOfferManager);
             this.QuestController = new QuestController(this.QuestManager, this.QuestOfferManager, this.Monitor);
             this.MailController = new MailController(this.QuestManager, this.QuestOfferManager, this.Monitor);
@@ -91,7 +91,7 @@ namespace QuestFramework
 
             this.Patcher.Apply(
                 new Patches.QuestPatch(this.QuestManager, this.EventManager),
-                new Patches.LocationPatch(this.HookManager),
+                new Patches.LocationPatch(this.ConditionManager),
                 new Patches.Game1Patch(this.QuestManager, this.QuestOfferManager),
                 new Patches.DialoguePatch(this.QuestManager),
                 new Patches.NPCPatch(this.QuestManager, this.QuestOfferManager),
@@ -179,7 +179,7 @@ namespace QuestFramework
             this.QuestController.Reset();
             this.QuestManager.Quests.Clear();
             this.QuestOfferManager.Offers.Clear();
-            this.HookManager.Clean();
+            this.ConditionManager.Clean();
             this.QuestStateStore.Clean();
             this.StatsManager.Clean();
             this.NetworkOperator.Reset();
@@ -240,7 +240,7 @@ namespace QuestFramework
 
 
             this.RestoreStatefullQuests();
-            this.HookManager.CollectHooks(this.QuestManager.Quests);
+            this.ConditionManager.CollectHooks(this.QuestManager.Quests);
             this.QuestLogWatchdog.Initialize();
             InvalidateCache();
 
@@ -282,8 +282,8 @@ namespace QuestFramework
 
         private void RegisterDefaultHooks()
         {
-            this.HookManager.AddHookObserver(new LocationHook(this.Helper));
-            this.HookManager.AddHookObserver(new TileHook(this.Helper));
+            this.ConditionManager.AddHookObserver(new LocationHook(this.Helper));
+            this.ConditionManager.AddHookObserver(new TileHook(this.Helper));
         }
 
         private void RestoreStatefullQuests()
