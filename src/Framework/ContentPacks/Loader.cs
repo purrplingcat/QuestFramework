@@ -287,6 +287,22 @@ namespace QuestFramework.Framework.ContentPacks
                 managedQuest.CustomTypeId = questData.CustomTypeId;
             }
 
+            if (questData.FriendshipGain != null)
+            {
+                foreach (var fship in questData.FriendshipGain)
+                {
+                    managedQuest.FriendshipGain[fship.Key] = fship.Value;
+                }
+            }
+
+            if (questData.Tags != null)
+            {
+                foreach (var tag in questData.Tags)
+                {
+                    managedQuest.Tags[tag.Key] = tag.Value;
+                }
+            }
+
             if (!string.IsNullOrEmpty(questData.Texture))
             {
                 try

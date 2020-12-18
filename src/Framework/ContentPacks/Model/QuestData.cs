@@ -28,6 +28,8 @@ namespace QuestFramework.Framework.ContentPacks.Model
         public string Texture { get; set; }
         public QuestLogColors Colors { get; set; }
         public List<Hook> Hooks { get; set; }
+        public Dictionary<string, string> Tags { get; set; }
+        public Dictionary<string, int> FriendshipGain { get; set; }
         public ConversationTopicData ConversationTopic { get; set; }
 
         [JsonExtensionData]

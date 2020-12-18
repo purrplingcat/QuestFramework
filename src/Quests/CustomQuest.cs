@@ -48,6 +48,7 @@ namespace QuestFramework.Quests
         public Texture2D Texture { get; set; }
         public QuestLogColors Colors { get; set; }
         public List<Hook> Hooks { get; set; }
+        public Dictionary<string, int> FriendshipGain { get; }
         public Dictionary<string, string> Tags { get; }
 
         public string Name
@@ -96,6 +97,7 @@ namespace QuestFramework.Quests
             this.BaseType = QuestType.Custom;
             this.NextQuests = new List<string>();
             this.Hooks = new List<Hook>();
+            this.FriendshipGain = new Dictionary<string, int>();
             this.Tags = new Dictionary<string, string>();
         }
 
@@ -106,8 +108,24 @@ namespace QuestFramework.Quests
 
         internal void ConfirmComplete(IQuestInfo questInfo)
         {
+            this.GainFriendshipPoints();
             StatsManager.AddCompletedQuest(this.GetFullName());
             this.Completed?.Invoke(this, questInfo);
+        }
+
+        private void GainFriendshipPoints()
+        {
+            NPC npc;
+
+            foreach (var friendship in this.FriendshipGain)
+            {
+                npc = Game1.getCharacterFromName(friendship.Key);
+
+                if (npc != null)
+                {
+                    Game1.player.changeFriendship(friendship.Value, npc);
+                }
+            }
         }
 
         internal void ConfirmAccept(IQuestInfo questInfo)

@@ -1,4 +1,5 @@
 ﻿
+
 ← [README](../README.md)
 
 # Content pack guide
@@ -63,24 +64,25 @@ In the `Quests` section you can define one ore more custom quests. Quest definit
 Field             | Required? | Description 
 ----------------- | --------- | -----------
 Name              | required  | `string` Name (UID) of your quest (this never shows to player)
-Type              | required  | `string` Vanilla SDV quest type (see quest type)
+[Type](#quest-types) | required  | `string` Vanilla SDV quest type (see quest type)
 CustomTypeId      |           | `int` Custom Quest type id (see custom quest types in advanced API). Can be handled by any other mod.
 Title             | required  | `string` Quest title in the quest log
 Description       |           | `string` Quest description
 Objective         | required  | `string` Quest objective
 NextQuests        |           | `string[]` One of more next quests which will be added to player's quest log when this quest is completed.
 DaysLeft          |           | `int` If this field is filled or is greater than 0, this quest is marked as daily and limited for specified number of days here.
-Reward            |           | `int|string` Reward in SDV currency "golds". If this field is not defined or has value `0`, then player will receive no money reward.
+[Reward](#rewards) || `int|string` Reward in SDV currency "golds". If this field is not defined or has value `0`, then player will receive no money reward.
 RewardType        |           | `RewardType` Type of [reward for player](#Rewards). (default: *Money*)
 RewardAmount      |           | `int` Amount of reward items. Only for `Object` reward type.
 RewardDescription |           | `string` Reward description
 Cancelable        |           | `boolean` Can player cancel this quest?
 ReactionText      |           | `string` NPC's reaction text when you complete this quest (only for quests which interacts with NPCs)
 Trigger           |           | `string` Completion trigger (see quest types for more info) Supports [JSON Assets](#json-assets-support)
-Texture           |           | `string` Path to PNG file with custom background texture for this quest in quest log menu. Path is relative to your content pack root directory.
-Colors            |           | `QuestLogColors` Settings of font colors for this quest in the quest log menu.
-Hooks             |           | `Hook` Quest hooks (see hooks for more info)
-ConversationTopic |           | `ConversationTopic` Add or remove conversation topic (see conversation topic for more info)
+[Texture](#colors--texture) || `string` Path to PNG file with custom background texture for this quest in quest log menu. Path is relative to your content pack root directory.
+[Colors](#colors--texture)  || `QuestLogColors` Settings of font colors for this quest in the quest log menu.
+FriendshipGain    |           | `{[string]: int}` Additional friendship points for enumarated NPCs which player gains after this quest was completed.
+[Hooks](#hooks) || `Hook[]` Quest hooks (see hooks for more info)
+[ConversationTopic](#conversation-topic) || `ConversationTopic` Add or remove conversation topic (see conversation topic for more info)
 
 #### Example
 
@@ -99,7 +101,10 @@ ConversationTopic |           | `ConversationTopic` Add or remove conversation t
       "RewardType": "Money",
       "Cancelable": true, // This quest can be cancelled by player
       "Trigger": "Abigail 66", // Bring amethyst to Abby
-      "ReactionText": "Oh, it's looks delicious. I am really hungry."
+      "ReactionText": "Oh, it's looks delicious. I am really hungry.",
+      "FriendshipGain": {
+        "Abigail": 100 // Gain 100 additional friendship points when this quest was completed
+      }
     }
   ]
 }

@@ -1,4 +1,5 @@
 ﻿
+
 ← [README](../README.md)
 
 # Advanced API guide
@@ -359,6 +360,23 @@ namespace QuestEssentials
 }
    ```
    You can define more active fields than one in this way. (Method `WatchFields` on `ActiveState` class instance supports propagate more active state fields via `params`.)
+
+### Use custom texture&colors
+
+```csharp
+// In this context we work with QF managed api on SMAPI Mod class instance
+CustomQuest quest = new CustomQuest("myQuest");
+
+quest.Texture = this.Helper.Content.Load<Texture2D>("assets/my-quest-texture.png");
+quest.Colors = new QuestLogColors() 
+{
+    TitleColor = 4,
+    TextColor = 4,
+    ObjectiveColor = 1,
+}
+
+managedApi.RegisterQuest(quest);
+```
 
 ### Manual quest handling
 
