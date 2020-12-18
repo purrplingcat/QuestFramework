@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using QuestFramework.Quests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +19,9 @@ namespace QuestFramework.Offers
         public Dictionary<string, string> When { get; set; }
         public bool OnlyMainPlayer { get; set; }
 
+        [JsonIgnore]
+        public Func<CustomQuest, bool> ConditionFunc { get; set; }
+
         public QuestOffer<TAttributes> AsOfferWithDetails<TAttributes>()
         {
             if (this is QuestOffer<JObject> jsonSchedule)
@@ -27,6 +32,16 @@ namespace QuestFramework.Offers
             }
 
             return this as QuestOffer<TAttributes>;
+        }
+
+        internal bool CheckAdditionalCondition(CustomQuest context)
+        {
+            if (this.ConditionFunc != null)
+            {
+                return this.ConditionFunc(context);
+            }
+
+            return true;
         }
     }
 

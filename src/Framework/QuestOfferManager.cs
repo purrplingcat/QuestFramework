@@ -9,12 +9,12 @@ namespace QuestFramework.Framework
 {
     class QuestOfferManager
     {
-        private readonly HookManager hookManager;
+        private readonly ConditionManager hookManager;
         private readonly QuestManager questManager;
 
         public List<QuestOffer> Offers { get; }
 
-        public QuestOfferManager(HookManager hookManager, QuestManager questManager)
+        public QuestOfferManager(ConditionManager hookManager, QuestManager questManager)
         {
             this.Offers = new List<QuestOffer>();
             this.hookManager = hookManager;
@@ -37,6 +37,7 @@ namespace QuestFramework.Framework
                    let isRelevantOffer = offer.OfferedBy == source && context != null
                    where isRelevantOffer
                          && this.hookManager.CheckConditions(offer.When, context)
+                         && offer.CheckAdditionalCondition(context)
                          && (offer.OnlyMainPlayer == Context.IsMainPlayer || offer.OnlyMainPlayer == false)
                    select offer;
         }

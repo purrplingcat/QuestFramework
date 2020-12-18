@@ -11,9 +11,9 @@ namespace QuestFramework.Patches
     {
         public override string Name => nameof(LocationPatch);
 
-        public HookManager HookManager { get; }
+        public ConditionManager HookManager { get; }
 
-        public LocationPatch(HookManager hookManager)
+        public LocationPatch(ConditionManager hookManager)
         {
             this.HookManager = hookManager;
             Instance = this;

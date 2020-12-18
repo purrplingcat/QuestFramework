@@ -4,6 +4,7 @@
 
 ### Common changes
 
+- Internal hook API is deprecated
 - Added support for gain additional friendship by complete a quest
 - Added support for custom background texture and font colors for quest details window in quest log menu
 - Added support for new types of quest reward: `Object` and `Weapon`
@@ -20,6 +21,7 @@
 
 ### For SMAPI modders
 
+- Added property `ConditionFunc` on `QuestOffer` class for support additional programatic condition
 - Added new API on `CustomQuest` class for define how much friendship points for which NPCs player gains after quest completion
 - Added new APIs for define quest reward type, custom bg texture nad font colors
 - Deprecated `IStateful.ResetState()` and `IManagedQuestApi.GetById` now raise a compilation error when it is used in code

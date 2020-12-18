@@ -16,11 +16,11 @@ namespace QuestFramework.Api
         public string ModUid { get; }
         public QuestManager QuestManager { get; }
         public QuestOfferManager QuestOfferManager { get; }
-        public HookManager HookManager { get; }
+        public ConditionManager HookManager { get; }
 
         private static IMonitor Monitor => QuestFrameworkMod.Instance.Monitor;
 
-        public ManagedQuestApi(string modUid, QuestManager questManager, QuestOfferManager questOfferManager, HookManager hookManager)
+        public ManagedQuestApi(string modUid, QuestManager questManager, QuestOfferManager questOfferManager, ConditionManager hookManager)
         {
             this.ModUid = modUid;
             this.QuestManager = questManager;
