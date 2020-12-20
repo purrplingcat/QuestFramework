@@ -21,6 +21,7 @@ namespace QuestFramework.Framework.Watchdogs
         private StatsManager StatsManager { get; }
         private IMonitor Monitor { get; }
         private List<Quest> LastQuestLog { get; set; }
+        public bool IsQuiet { get; set; }
 
         public QuestLogWatchdog(IModEvents modEvents, EventManager eventManager, StatsManager statsManager, IMonitor monitor)
         {
@@ -69,6 +70,11 @@ namespace QuestFramework.Framework.Watchdogs
 
         private void HandleChange(Quest oldValue, Quest newValue)
         {
+            if (this.IsQuiet)
+            {
+                return;
+            }
+
             if (oldValue == null && newValue != null && newValue.IsManaged())
             {
                 var managedQuest = newValue.AsManagedQuest();
@@ -138,6 +144,20 @@ namespace QuestFramework.Framework.Watchdogs
                 return true;
 
             return false;
+        }
+
+        internal void DoQuietAction(Action action)
+        {
+            if (action == null)
+            {
+                return;
+            }
+
+            var prevFlag = this.IsQuiet;
+
+            this.IsQuiet = true;
+            action();
+            this.IsQuiet = prevFlag;
         }
     }
 }

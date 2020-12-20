@@ -76,6 +76,11 @@ namespace QuestFramework.Framework
             }
         }
 
+        internal bool HasQuest(string fullQuestName)
+        {
+            return this.Quests.Any(q => q.GetFullName() == fullQuestName);
+        }
+
         public void AcceptQuest(int id)
         {
             if (!Game1.player.hasQuest(id))

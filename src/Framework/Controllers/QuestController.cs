@@ -63,27 +63,34 @@ namespace QuestFramework.Framework.Controllers
                 // Refresh (de-sanitize) all managed quests in questlog
                 foreach (var farmhand in Game1.getAllFarmers())
                 {
-                    var managedLog = farmhand.questLog
-                        .Where(q => q.IsManaged())
-                        .Select(q => new {
-                            vanillaQuest = q,
-                            managedQuest = q.AsManagedQuest()
-                        });
-
-                    foreach (var q in managedLog)
-                    {
-                        // Restore title, description and right cancellable flag
-                        q.vanillaQuest._questTitle = q.managedQuest.Title;
-                        q.vanillaQuest._questDescription = q.managedQuest.Description;
-                        q.vanillaQuest.canBeCancelled.Value = q.managedQuest.Cancelable;
-                        q.vanillaQuest.questTitle = q.managedQuest.Title; // For more safety
-                    }
-
-                    //var jsonStr = helper.Serialize(farmhand.questLog);
-                    //var deserialized = helper.Deserialize<Quest[]>(jsonStr);
-
+                    var managedLog = from qe in this.QuestLogStore.GetData()
+                                     where qe.Quest != null
+                                        && qe.FarmerId == farmhand.UniqueMultiplayerID 
+                                        && this.QuestManager.HasQuest(qe.FullQuestName)
+                                        && !farmhand.questLog.Any(q => q.id.Value == qe.Quest.id.Value)
+                                     select qe.Quest;
+                    
+                    farmhand.questLog.AddRange(managedLog);
+                    RefreshQuestsDetails(farmhand.questLog);
                     this.monitor.Log($"Refresh managed quests info in questlog for player `{farmhand.UniqueMultiplayerID}` aka `{farmhand.Name}`.");
                 }
+            }
+        }
+
+        private static void RefreshQuestsDetails(IEnumerable<Quest> questLog)
+        {
+            var managedLog = from q in questLog
+                             where q.IsManaged()
+                             select new { vanillaQuest = q, managedQuest = q.AsManagedQuest() };
+
+            foreach (var q in managedLog)
+            {
+                // Restore title, description and right cancellable flag
+                q.vanillaQuest.id.Value = q.managedQuest.id;
+                q.vanillaQuest._questTitle = q.managedQuest.Title;
+                q.vanillaQuest._questDescription = q.managedQuest.Description;
+                q.vanillaQuest.canBeCancelled.Value = q.managedQuest.Cancelable;
+                q.vanillaQuest.questTitle = q.managedQuest.Title; // For more safety
             }
         }
 
@@ -106,13 +113,7 @@ namespace QuestFramework.Framework.Controllers
                             farmhand.UniqueMultiplayerID, 
                             q.managedQuest.GetFullName(), 
                             q.vanillaQuest));
-
-                    q.vanillaQuest.canBeCancelled.Value = true; // Allow cancelation
-                    // Add "disclaimer" info
-                    q.vanillaQuest._questTitle = $"{q.managedQuest.Name} {translation.Get("fallbackTitle")}";
-                    q.vanillaQuest._questDescription = translation.Get("fallbackDescription");
-                    q.vanillaQuest._currentObjective = translation.Get("fallbackObjective");
-                    q.vanillaQuest.questTitle = q.vanillaQuest._questTitle; // For more safety
+                    farmhand.questLog.Remove(q.vanillaQuest);
                 }
 
                 this.monitor.Log($"Managed quests in questlog for player `{farmhand.UniqueMultiplayerID}` aka `{farmhand.Name}` sanitized.");

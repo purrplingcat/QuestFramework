@@ -67,7 +67,7 @@ namespace QuestFramework.Api
             this.monitor.Log("Force refresh requested");
 
             QuestFrameworkMod.InvalidateCache();
-            this.mod.QuestController.RefreshAllManagedQuestsInQuestLog();
+            // this.mod.QuestController.RefreshAllManagedQuestsInQuestLog();
             this.mod.QuestController.RefreshBulletinboardQuestOffer();
             this.mod.EventManager.Refreshed.Fire(new EventArgs(), this);
         }

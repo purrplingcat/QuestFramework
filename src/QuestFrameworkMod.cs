@@ -147,21 +147,26 @@ namespace QuestFramework
         [EventPriority(EventPriority.Low - 100)]
         private void OnDayStarted(object sender, DayStartedEventArgs e)
         {
-            this.QuestController.RefreshAllManagedQuestsInQuestLog();
-            this.QuestController.RefreshBulletinboardQuestOffer();
-            this.MailController.ReceiveQuestLetterToMailbox();
-            this.EventManager.Refreshed.Fire(new EventArgs(), this);
+            this.QuestLogWatchdog.DoQuietAction(() => {
+                this.QuestController.RefreshAllManagedQuestsInQuestLog();
+                this.QuestController.RefreshBulletinboardQuestOffer();
+                this.MailController.ReceiveQuestLetterToMailbox();
+                this.EventManager.Refreshed.Fire(new EventArgs(), this);
+            });
+            
         }
 
         [EventPriority(EventPriority.Low - 100)]
         private void OnDayEnding(object sender, DayEndingEventArgs e)
         {
-            this.QuestController.SanitizeAllManagedQuestsInQuestLog(this.Helper.Translation);
+            this.QuestLogWatchdog.DoQuietAction(() => {
+                this.QuestController.SanitizeAllManagedQuestsInQuestLog(this.Helper.Translation);
 
-            if (this.Config.EnableStateVerification)
-                this.QuestStateStore.Verify(
-                    Game1.player.UniqueMultiplayerID, 
-                    this.QuestManager.Quests.Where(q => q is IStateRestorable));
+                if (this.Config.EnableStateVerification)
+                    this.QuestStateStore.Verify(
+                        Game1.player.UniqueMultiplayerID,
+                        this.QuestManager.Quests.Where(q => q is IStateRestorable));
+            });
         }
 
         public override object GetApi()
