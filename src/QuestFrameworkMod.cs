@@ -9,6 +9,7 @@ using QuestFramework.Framework.Events;
 using QuestFramework.Framework.Hooks;
 using QuestFramework.Framework.Menus;
 using QuestFramework.Framework.Networing;
+using QuestFramework.Framework.Serialization;
 using QuestFramework.Framework.Stats;
 using QuestFramework.Framework.Store;
 using QuestFramework.Framework.Watchdogs;
@@ -34,6 +35,7 @@ namespace QuestFramework
         internal Bridge Bridge { get; private set; }
         internal QuestManager QuestManager { get; private set; }
         internal QuestStateStore QuestStateStore { get; private set; }
+        internal QuestLogStore QuestLogStore { get; private set; }
         internal StatsManager StatsManager { get; private set; }
         internal ConditionManager ConditionManager { get; private set; }
         internal QuestOfferManager QuestOfferManager { get; private set; }
@@ -52,17 +54,19 @@ namespace QuestFramework
         public override void Entry(IModHelper helper)
         {
             Instance = this;
+            var customDataHelper = new DataHelper(helper.Data);
 
             this.Config = helper.ReadConfig<Config>();
             this.Bridge = new Bridge(helper.ModRegistry, this.Config.DebugMode);
             this.EventManager = new EventManager(this.Monitor);
             this.QuestManager = new QuestManager(this.Monitor);
-            this.QuestStateStore = new QuestStateStore(helper.Data, this.Monitor);
+            this.QuestStateStore = new QuestStateStore(customDataHelper, this.Monitor);
+            this.QuestLogStore = new QuestLogStore(customDataHelper, this.Monitor);
             this.StatsManager = new StatsManager(helper.Multiplayer, helper.Data);
             this.ConditionManager = new ConditionManager(this.Monitor);
             this.QuestOfferManager = new QuestOfferManager(this.ConditionManager, this.QuestManager);
             this.ContentPackLoader = new Loader(this.Monitor, this.QuestManager, this.QuestOfferManager);
-            this.QuestController = new QuestController(this.QuestManager, this.QuestOfferManager, this.Monitor);
+            this.QuestController = new QuestController(this.QuestManager, this.QuestOfferManager, this.QuestLogStore, this.Monitor);
             this.MailController = new MailController(this.QuestManager, this.QuestOfferManager, this.Monitor);
             this.QuestLogWatchdog = new QuestLogWatchdog(helper.Events, this.EventManager, this.StatsManager, this.Monitor);
             this.NetworkOperator = new NetworkOperator(
@@ -135,6 +139,7 @@ namespace QuestFramework
             {
                 this.Helper.Data.WriteSaveData("storedQuestIds", this.QuestController.GetQuestIds());
                 this.QuestStateStore.Persist();
+                this.QuestLogStore.Persist();
                 this.StatsManager.SaveStats();
             }
         }
@@ -220,6 +225,7 @@ namespace QuestFramework
             // Restore data from savefile on the main player 
             // (farmhands get initial state from init message from host)
             this.QuestStateStore.RestoreData();
+            this.QuestLogStore.Restore();
             this.StatsManager.LoadStats();
             this.ContentPackLoader.RegisterQuestsFromPacks();
 

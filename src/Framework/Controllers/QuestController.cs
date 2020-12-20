@@ -1,4 +1,7 @@
-﻿using QuestFramework.Extensions;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using QuestFramework.Extensions;
+using QuestFramework.Framework.Store;
 using QuestFramework.Quests;
 using StardewModdingAPI;
 using StardewValley;
@@ -14,16 +17,18 @@ namespace QuestFramework.Framework.Controllers
         private Dictionary<string, int> questIdCache;
         private readonly IMonitor monitor;
 
-        public QuestController(QuestManager questManager, QuestOfferManager offerManager, IMonitor monitor)
+        public QuestController(QuestManager questManager, QuestOfferManager offerManager, QuestLogStore questLogStore, IMonitor monitor)
         {
             this.QuestManager = questManager;
             this.OfferManager = offerManager;
+            this.QuestLogStore = questLogStore;
             this.monitor = monitor;
             this.questIdCache = new Dictionary<string, int>();
         }
 
         public QuestManager QuestManager { get; }
         public QuestOfferManager OfferManager { get; }
+        public QuestLogStore QuestLogStore { get; }
 
         public bool CanEdit<T>(IAssetInfo asset)
         {
@@ -74,6 +79,9 @@ namespace QuestFramework.Framework.Controllers
                         q.vanillaQuest.questTitle = q.managedQuest.Title; // For more safety
                     }
 
+                    //var jsonStr = helper.Serialize(farmhand.questLog);
+                    //var deserialized = helper.Deserialize<Quest[]>(jsonStr);
+
                     this.monitor.Log($"Refresh managed quests info in questlog for player `{farmhand.UniqueMultiplayerID}` aka `{farmhand.Name}`.");
                 }
             }
@@ -93,6 +101,12 @@ namespace QuestFramework.Framework.Controllers
 
                 foreach (var q in managedLog)
                 {
+                    this.QuestLogStore.Commit(
+                        new QuestLogEntry(
+                            farmhand.UniqueMultiplayerID, 
+                            q.managedQuest.GetFullName(), 
+                            q.vanillaQuest));
+
                     q.vanillaQuest.canBeCancelled.Value = true; // Allow cancelation
                     // Add "disclaimer" info
                     q.vanillaQuest._questTitle = $"{q.managedQuest.Name} {translation.Get("fallbackTitle")}";

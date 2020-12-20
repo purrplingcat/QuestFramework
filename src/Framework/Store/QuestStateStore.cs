@@ -1,4 +1,5 @@
-﻿using QuestFramework.Quests;
+﻿using QuestFramework.Framework.Serialization;
+using QuestFramework.Quests;
 using StardewModdingAPI;
 using StardewValley;
 using System;
@@ -12,13 +13,13 @@ namespace QuestFramework.Framework.Store
     internal class QuestStateStoreData : Dictionary<long, Dictionary<string, StatePayload>> { }
     internal class QuestStateStore
     {
-        private QuestStateStoreData Store { get; set; }
+        private QuestStateStoreData _store;
         public IDataHelper Helper { get; }
         public IMonitor Monitor { get; }
 
         public QuestStateStore(IDataHelper helper, IMonitor monitor)
         {
-            this.Store = new QuestStateStoreData();
+            this._store = new QuestStateStoreData();
             this.Helper = helper;
             this.Monitor = monitor;
         }
@@ -27,7 +28,7 @@ namespace QuestFramework.Framework.Store
         {
             if (Context.IsMainPlayer)
             {
-                this.Helper.WriteSaveData("questStateStore", this.Store);
+                this.Helper.WriteSaveData("questStateStore", this._store);
                 this.Monitor.Log("Store data was written to savefile.");
             }
         }
@@ -44,7 +45,7 @@ namespace QuestFramework.Framework.Store
                     return;
                 }
 
-                this.Store = data;
+                this._store = data;
                 this.Monitor.Log("Quests store data was restored from savefile.");
             }
         }
@@ -63,13 +64,13 @@ namespace QuestFramework.Framework.Store
 
         public void RestoreData(QuestStateStoreData data)
         {
-            this.Store = data;
+            this._store = data;
             this.Monitor.Log("Quests store data was restored from given payload.");
         }
 
         public Dictionary<string, StatePayload> GetPayloadList(long farmerId)
         {
-            if (this.Store.TryGetValue(farmerId, out var payloadList))
+            if (this._store.TryGetValue(farmerId, out var payloadList))
                 return payloadList;
 
             return null;
@@ -77,16 +78,16 @@ namespace QuestFramework.Framework.Store
 
         internal void Commit(StatePayload payload)
         {
-            if (!this.Store.ContainsKey(payload.FarmerId))
-                this.Store.Add(payload.FarmerId, new Dictionary<string, StatePayload>());
+            if (!this._store.ContainsKey(payload.FarmerId))
+                this._store.Add(payload.FarmerId, new Dictionary<string, StatePayload>());
 
-            this.Store[payload.FarmerId][payload.QuestName] = payload;
+            this._store[payload.FarmerId][payload.QuestName] = payload;
             this.Monitor.Log($"Payload `{payload.QuestName}/{payload.FarmerId}` type `{payload.StateData.Type}` commited to store");
         }
 
         internal void Clean()
         {
-            this.Store = new QuestStateStoreData();
+            this._store = new QuestStateStoreData();
         }
     }
 }
