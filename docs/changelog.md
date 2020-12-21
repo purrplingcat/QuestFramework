@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.1
+
+### Common changes
+
+- Update to work with Stardew Valley 1.5 (SMAPI 3.8)
+
 ## 1.2.0
 
 ### Common changes

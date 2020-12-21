@@ -22,7 +22,7 @@ namespace QuestFramework.Framework.Menus
         private int lastQuestPage = -1;
         private Item rewardItem;
 
-        private List<List<Quest>> Pages => Reflection.GetField<List<List<Quest>>>(this, "pages").GetValue();
+        private List<List<IQuest>> Pages => Reflection.GetField<List<List<IQuest>>>(this, "pages").GetValue();
         private int QuestPage => Reflection.GetField<int>(this, "questPage").GetValue();
         private int CurrentPage => Reflection.GetField<int>(this, "currentPage").GetValue();
 
@@ -33,7 +33,7 @@ namespace QuestFramework.Framework.Menus
                 if (this.Pages.ElementAtOrDefault(this.CurrentPage) == null || this.Pages[this.CurrentPage].ElementAtOrDefault(this.QuestPage) == null)
                     return null;
 
-                return this.Pages[this.CurrentPage][this.QuestPage];
+                return this.Pages[this.CurrentPage][this.QuestPage] as Quest;
             }
         }
 
@@ -55,7 +55,7 @@ namespace QuestFramework.Framework.Menus
                 switch (this.CurrentQuest.AsManagedQuest().RewardType)
                 {
                     case RewardType.Money:
-                        Game1.player.Money += this.CurrentQuest.moneyReward.Value;
+                        Game1.player.Money += this.CurrentQuest.GetMoneyReward();
                         Game1.playSound("purchaseRepeat");
                         break;
                     case RewardType.Object:
@@ -77,7 +77,8 @@ namespace QuestFramework.Framework.Menus
 
         private bool IsClickedOnRewardBox(int x, int y)
         {
-            return this.QuestPage != -1 
+            return this.QuestPage != -1
+                && this.CurrentQuest != null
                 && this.CurrentQuest.IsManaged()
                 && this.CurrentQuest.completed.Value 
                 && this.CurrentQuest.moneyReward.Value > 0 
