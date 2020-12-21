@@ -1,5 +1,9 @@
 # Changelog
 
+## Upcoming version
+
+- Fixed some multiplayer problems
+
 ## 1.2.1
 
 ### Common changes
