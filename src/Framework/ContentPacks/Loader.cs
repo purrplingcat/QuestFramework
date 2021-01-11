@@ -4,7 +4,9 @@ using Newtonsoft.Json.Linq;
 using PurrplingCore.Lexing;
 using PurrplingCore.Lexing.LexTokens;
 using QuestFramework.Framework.ContentPacks.Model;
+using QuestFramework.Framework.Controllers;
 using QuestFramework.Framework.Helpers;
+using QuestFramework.Framework.Structures;
 using QuestFramework.Offers;
 using QuestFramework.Quests;
 using StardewModdingAPI;
@@ -20,13 +22,15 @@ namespace QuestFramework.Framework.ContentPacks
     {
         private readonly Regex allowedChars = new Regex("^[a-zA-Z0-9_-]*$");
 
-        public Loader(IMonitor monitor, QuestManager manager, QuestOfferManager scheduleManager)
+        public Loader(IMonitor monitor, QuestManager manager, QuestOfferManager scheduleManager, ConditionManager conditionManager, CustomBoardController customBoardController)
         {
             this.Contents = new List<Content>();
             this.ValidContents = new List<Content>();
             this.Monitor = monitor;
             this.Manager = manager;
             this.ScheduleManager = scheduleManager;
+            this.ConditionManager = conditionManager;
+            this.CustomBoardController = customBoardController;
         }
 
         public List<Content> Contents { get; }
@@ -34,6 +38,8 @@ namespace QuestFramework.Framework.ContentPacks
         public IMonitor Monitor { get; }
         public QuestManager Manager { get; }
         public QuestOfferManager ScheduleManager { get; }
+        public ConditionManager ConditionManager { get; }
+        public CustomBoardController CustomBoardController { get; }
 
         public void LoadPacks(IEnumerable<IContentPack> contentPacks)
         {
@@ -123,10 +129,38 @@ namespace QuestFramework.Framework.ContentPacks
                 }
             }
 
+            this.RegisterBoards(content.CustomBoards);
+
             // Add quest schedules
             foreach (var offer in content.Offers)
             {
                 this.ScheduleManager.AddOffer(offer);
+            }
+        }
+
+        private void RegisterBoards(List<CustomBoardData> customBoards)
+        {
+            if (customBoards == null)
+                return;
+
+            CustomBoardTrigger trigger;
+
+            foreach (var boardData in customBoards)
+            {
+                trigger = new CustomBoardTrigger()
+                {
+                    BoardName = boardData.BoardName,
+                    LocationName = boardData.Location,
+                    Tile = boardData.Tile,
+                    ShowIndicator = boardData.ShowIndicator,
+                };
+
+                if (boardData.UnlockWhen != null)
+                {
+                    trigger.unlockConditionFunc = () => this.ConditionManager.CheckConditions(boardData.UnlockWhen, new object());
+                }
+
+                this.CustomBoardController.RegisterBoardTrigger(trigger);
             }
         }
 

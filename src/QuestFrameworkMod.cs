@@ -40,6 +40,7 @@ namespace QuestFramework
         internal Loader ContentPackLoader { get; private set; }
         internal QuestController QuestController { get; private set; }
         internal MailController MailController { get; private set; }
+        internal CustomBoardController CustomBoardController { get; private set; }
         internal QuestLogWatchdog QuestLogWatchdog { get; private set; }
         internal NetworkOperator NetworkOperator { get; private set; }
         internal EventManager EventManager { get; private set; }
@@ -58,10 +59,11 @@ namespace QuestFramework
             this.EventManager = new EventManager(this.Monitor);
             this.QuestManager = new QuestManager(this.Monitor);
             this.QuestStateStore = new QuestStateStore(helper.Data, this.Monitor);
+            this.CustomBoardController = new CustomBoardController(helper.Events);
             this.StatsManager = new StatsManager(helper.Multiplayer, helper.Data);
             this.ConditionManager = new ConditionManager(this.Monitor);
             this.QuestOfferManager = new QuestOfferManager(this.ConditionManager, this.QuestManager);
-            this.ContentPackLoader = new Loader(this.Monitor, this.QuestManager, this.QuestOfferManager);
+            this.ContentPackLoader = new Loader(this.Monitor, this.QuestManager, this.QuestOfferManager, this.ConditionManager, this.CustomBoardController);
             this.QuestController = new QuestController(this.QuestManager, this.QuestOfferManager, this.Monitor);
             this.MailController = new MailController(this.QuestManager, this.QuestOfferManager, this.Monitor);
             this.QuestLogWatchdog = new QuestLogWatchdog(helper.Events, this.EventManager, this.StatsManager, this.Monitor);
@@ -91,7 +93,7 @@ namespace QuestFramework
 
             this.Patcher.Apply(
                 new Patches.QuestPatch(this.QuestManager, this.EventManager),
-                new Patches.LocationPatch(this.ConditionManager),
+                new Patches.LocationPatch(this.ConditionManager, this.CustomBoardController),
                 new Patches.Game1Patch(this.QuestManager, this.QuestOfferManager),
                 new Patches.DialoguePatch(this.QuestManager),
                 new Patches.NPCPatch(this.QuestManager, this.QuestOfferManager),
@@ -144,6 +146,7 @@ namespace QuestFramework
         {
             this.QuestController.RefreshAllManagedQuestsInQuestLog();
             this.QuestController.RefreshBulletinboardQuestOffer();
+            this.CustomBoardController.RefreshBoards();
             this.MailController.ReceiveQuestLetterToMailbox();
             this.EventManager.Refreshed.Fire(new EventArgs(), this);
         }
@@ -177,6 +180,7 @@ namespace QuestFramework
         {
             this.ChangeState(State.CLEANING);
             this.QuestController.Reset();
+            this.CustomBoardController.Reset();
             this.QuestManager.Quests.Clear();
             this.QuestOfferManager.Offers.Clear();
             this.ConditionManager.Clean();

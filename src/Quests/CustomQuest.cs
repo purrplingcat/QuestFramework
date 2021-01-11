@@ -221,8 +221,6 @@ namespace QuestFramework.Quests
 
         public List<CustomQuestObjective> GetCurrentObjectives()
         {
-            this.UpdateCurrentObjectives();
-
             return this._currentObjectives;
         }
 

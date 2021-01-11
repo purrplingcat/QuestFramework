@@ -1,4 +1,6 @@
 ﻿using QuestFramework.Framework;
+using QuestFramework.Framework.Controllers;
+using QuestFramework.Framework.Structures;
 using QuestFramework.Offers;
 using QuestFramework.Quests;
 using StardewModdingAPI;
@@ -17,15 +19,17 @@ namespace QuestFramework.Api
         public QuestManager QuestManager { get; }
         public QuestOfferManager QuestOfferManager { get; }
         public ConditionManager ConditionManager { get; }
+        public CustomBoardController CustomBoardController { get; }
 
         private static IMonitor Monitor => QuestFrameworkMod.Instance.Monitor;
 
-        public ManagedQuestApi(string modUid, QuestManager questManager, QuestOfferManager questOfferManager, ConditionManager conditionManager)
+        public ManagedQuestApi(string modUid, QuestManager questManager, QuestOfferManager questOfferManager, ConditionManager conditionManager, CustomBoardController customBoardController)
         {
             this.ModUid = modUid;
             this.QuestManager = questManager;
             this.QuestOfferManager = questOfferManager;
             this.ConditionManager = conditionManager;
+            this.CustomBoardController = customBoardController;
         }
 
         public void AcceptQuest(string fullQuestName, bool silent = false)
@@ -115,7 +119,7 @@ namespace QuestFramework.Api
 
             string fullConditionName = $"{this.ModUid}/{conditionName}";
 
-            this.ConditionManager.Conditions[fullConditionName] = conditionHandler;
+            this.ConditionManager.Conditions[fullConditionName] = (value, context) => conditionHandler(value, context as CustomQuest);
             Monitor.Log($"Exposed custom global condition `{fullConditionName}`");
         }
 
@@ -138,6 +142,11 @@ namespace QuestFramework.Api
                 type = $"{this.ModUid}/{type}";
 
             return this.QuestManager.Factories.ContainsKey(type);
+        }
+
+        public void RegisterCustomBoard(CustomBoardTrigger boardTrigger)
+        {
+            this.CustomBoardController.RegisterBoardTrigger(boardTrigger);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using QuestFramework.Extensions;
+using QuestFramework.Framework.Menus;
 using QuestFramework.Quests;
 using StardewModdingAPI;
 using StardewValley;
@@ -183,6 +184,8 @@ namespace QuestFramework.Framework.Controllers
                 {
                     this.monitor.Log("Multiple quests scheduled for this time to add on buletin board. First on the list was added, others are ignored.", LogLevel.Warn);
                 }
+
+                CustomBoard.todayQuests.Clear();
             }
         }
 
