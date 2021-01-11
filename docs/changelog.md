@@ -2,7 +2,15 @@
 
 ## Upcoming version
 
+### Common changes
+
+- Managed quests are scrollable in questlog if content needs scroll (like special orders)
+- Added support for multiple objectives
 - Fixed some multiplayer problems
+
+### For SMAPI modders
+
+- New CustomQuest apis: `GetCurrentObjectives`, `UpdateUpdateCurrentObjectives` methods and property `Objectives` for define multiple objectives for a quest. (You must handle objectives manually in your quest code)
 
 ## 1.2.1
 
