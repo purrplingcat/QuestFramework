@@ -217,8 +217,6 @@ namespace QuestFramework.Quests
 
         protected virtual void UpdateCurrentObjectives(List<CustomQuestObjective> currentObjectives)
         {
-            currentObjectives.Add(new CustomQuestObjective("test2", "text of second objective"));
-            currentObjectives.Add(new CustomQuestObjective("test3", "this is completed objective") { IsCompleted = true });
         }
 
         public List<CustomQuestObjective> GetCurrentObjectives()

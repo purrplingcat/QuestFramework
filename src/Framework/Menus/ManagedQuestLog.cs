@@ -75,7 +75,10 @@ namespace QuestFramework.Framework.Menus
             {
                 if (this._shownQuest is Quest quest && quest.IsManaged())
                 {
-                    this._currentObjectives = quest.AsManagedQuest().GetCurrentObjectives();
+                    var managedQuest = quest.AsManagedQuest();
+
+                    managedQuest.UpdateCurrentObjectives();
+                    this._currentObjectives = managedQuest.GetCurrentObjectives();
                 }
             }
         }
