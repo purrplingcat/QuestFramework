@@ -2,8 +2,11 @@
 using Microsoft.Xna.Framework.Graphics;
 using QuestFramework.Framework.Menus;
 using QuestFramework.Framework.Structures;
+using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.GameData;
+using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,17 +52,53 @@ namespace QuestFramework.Framework.Controllers
         {
             return boardTrigger.ShowIndicator
                 && boardTrigger.IsUnlocked()
-                && CustomBoard.todayQuests.ContainsKey(boardTrigger.BoardName)
-                && CustomBoard.todayQuests[boardTrigger.BoardName] != null
-                && CustomBoard.todayQuests[boardTrigger.BoardName].accepted.Value == false;
+                && IsOfferingQuest(boardTrigger);
+        }
+
+        private static bool IsOfferingQuest(CustomBoardTrigger boardTrigger)
+        {
+            if (!Context.IsWorldReady)
+                return false;
+
+            switch (boardTrigger.BoardType)
+            {
+                case BoardType.Quests:
+                    return CustomBoard.todayQuests.ContainsKey(boardTrigger.BoardName)
+                        && CustomBoard.todayQuests[boardTrigger.BoardName] != null
+                        && CustomBoard.todayQuests[boardTrigger.BoardName].accepted.Value == false;
+                case BoardType.SpecialOrders:
+                    string orderType = $"QF:{boardTrigger.BoardName}";
+                    return Game1.player.team.availableSpecialOrders.Where(so => so.orderType.Value == orderType).Any()
+                        && !Game1.player.team.acceptedSpecialOrderTypes.Contains(orderType) 
+                        && !Game1.eventUp;
+                default:
+                    return false;
+            }
         }
 
         public void RefreshBoards()
         {
-            foreach (var boardTrigger in this._customBoardTriggers)
+            foreach (var boardTrigger in this._customBoardTriggers.Where(OnlyUnlockedQuestsBoard))
             {
                 CustomBoard.LoadTodayQuestsIfNecessary(boardTrigger.BoardName);
             }
+
+            var order_types = this._customBoardTriggers.Where(OnlyUnlockedSpecialOrdersBoard)
+                .Select(b => $"QF:{b.BoardName}")
+                .Distinct()
+                .ToArray();
+
+            UpdateAvailableSpecialOrders(order_types);
+        }
+
+        private static bool OnlyUnlockedQuestsBoard(CustomBoardTrigger boardTrigger)
+        {
+            return boardTrigger.BoardType == BoardType.Quests && boardTrigger.IsUnlocked();
+        }
+
+        private static bool OnlyUnlockedSpecialOrdersBoard(CustomBoardTrigger boardTrigger)
+        {
+            return boardTrigger.BoardType == BoardType.SpecialOrders && boardTrigger.IsUnlocked();
         }
 
         private void OnPlayerWarped(object sender, WarpedEventArgs e)
@@ -75,12 +114,26 @@ namespace QuestFramework.Framework.Controllers
 
             if (boardTrigger != null && !Game1.eventUp)
             {
-                Game1.activeClickableMenu = new CustomBoard(boardTrigger.BoardName);
+                Game1.activeClickableMenu = this.CreateBoardMenu(boardTrigger.BoardName, boardTrigger.BoardType);
 
                 return true;
             }
 
             return false;
+        }
+
+        private IClickableMenu CreateBoardMenu(string boardName, BoardType boardType)
+        {
+            switch(boardType)
+            {
+                case BoardType.Quests:
+                    return new CustomBoard(boardName);
+                case BoardType.SpecialOrders:
+                    return new SpecialOrdersBoard(!string.IsNullOrEmpty(boardName) ? $"QF:{boardName}" : "");
+                default:
+                    QuestFrameworkMod.Instance.Monitor.Log($"Unknown board type `{boardType}` for board `{boardName}`.", LogLevel.Error);
+                    return null;
+            }
         }
 
         public void RegisterBoardTrigger(CustomBoardTrigger trigger)
@@ -96,6 +149,96 @@ namespace QuestFramework.Framework.Controllers
         public void Reset()
         {
             this._customBoardTriggers.Clear();
+        }
+
+        public static void UpdateAvailableSpecialOrders(string[] validTypes)
+        {
+            Game1.player.team.availableSpecialOrders.Clear();
+            Game1.player.team.acceptedSpecialOrderTypes.Clear();
+            var order_data = Game1.content.Load<Dictionary<string, SpecialOrderData>>("Data\\SpecialOrders");
+            var keys = new List<string>(order_data.Keys);
+
+            for (int k = 0; k < keys.Count; k++)
+            {
+                string key = keys[k];
+                bool invalid = false;
+                if (!invalid && order_data[key].Repeatable != "True" && Game1.MasterPlayer.team.completedSpecialOrders.ContainsKey(key))
+                {
+                    invalid = true;
+                }
+                if (Game1.dayOfMonth >= 16 && order_data[key].Duration == "Month")
+                {
+                    invalid = true;
+                }
+                if (!invalid && !SpecialOrder.CheckTags(order_data[key].RequiredTags))
+                {
+                    invalid = true;
+                }
+                if (!invalid)
+                {
+                    foreach (SpecialOrder specialOrder in Game1.player.team.specialOrders)
+                    {
+                        if (specialOrder.questKey.Value == key)
+                        {
+                            invalid = true;
+                            break;
+                        }
+                    }
+                }
+                if (invalid)
+                {
+                    keys.RemoveAt(k);
+                    k--;
+                }
+            }
+            Random r = new Random((int)Game1.uniqueIDForThisGame + (int)((float)Game1.stats.DaysPlayed * 1.3f));
+            Game1.player.team.availableSpecialOrders.Clear();
+
+            var types = new List<string>() { "", "Qi" };
+            types.AddRange(validTypes);
+
+            foreach (string type_to_find in types)
+            {
+                var typed_keys = new List<string>();
+                foreach (string key3 in keys)
+                {
+                    if (order_data[key3].OrderType == type_to_find)
+                    {
+                        typed_keys.Add(key3);
+                    }
+                }
+                
+                if (type_to_find != "Qi")
+                {
+                    for (int j = 0; j < typed_keys.Count; j++)
+                    {
+                        if (Game1.player.team.completedSpecialOrders.ContainsKey(typed_keys[j]))
+                        {
+                            typed_keys.RemoveAt(j);
+                            j--;
+                        }
+                    }
+                }
+
+                var all_keys = new List<string>(typed_keys);
+                for (int i = 0; i < 2; i++)
+                {
+                    if (typed_keys.Count == 0)
+                    {
+                        if (all_keys.Count == 0)
+                        {
+                            break;
+                        }
+                        typed_keys = new List<string>(all_keys);
+                    }
+
+                    int index = r.Next(typed_keys.Count);
+                    string key2 = typed_keys[index];
+                    Game1.player.team.availableSpecialOrders.Add(SpecialOrder.GetSpecialOrder(key2, r.Next()));
+                    typed_keys.Remove(key2);
+                    all_keys.Remove(key2);
+                }
+            }
         }
     }
 }

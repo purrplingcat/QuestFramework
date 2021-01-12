@@ -4,14 +4,14 @@
 
 ### Common changes
 
-- Added support for custom quest boards (in any location what you want)
+- Added support for custom quest and special order boards (in any location what you want)
 - Managed quests are scrollable in questlog if content needs scroll (like special orders)
 - Added support for multiple objectives
 - Fixed some multiplayer problems
 
 ### For Content Pack modders
 
-- Added field `CustomBoards` for define custom quest boards (see docs)
+- Added field `CustomBoards` for define custom quest or special order boards (see docs)
 
 ### For SMAPI modders
 

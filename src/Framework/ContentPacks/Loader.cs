@@ -150,6 +150,7 @@ namespace QuestFramework.Framework.ContentPacks
                 trigger = new CustomBoardTrigger()
                 {
                     BoardName = boardData.BoardName,
+                    BoardType = boardData.BoardType,
                     LocationName = boardData.Location,
                     Tile = boardData.Tile,
                     ShowIndicator = boardData.ShowIndicator,

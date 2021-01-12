@@ -27,7 +27,7 @@ namespace QuestFramework.Framework.Menus
 
         public static void LoadTodayQuestsIfNecessary(string boardName)
         {
-            if (todayQuests.ContainsKey(boardName))
+            if (string.IsNullOrEmpty(boardName) || todayQuests.ContainsKey(boardName))
                 return;
 
             var quests = QuestFrameworkMod.Instance.QuestOfferManager.GetMatchedOffers($"Board:{boardName}");
@@ -77,12 +77,11 @@ namespace QuestFramework.Framework.Menus
             LoadTodayQuestsIfNecessary(boardName);
             Game1.playSound("bigSelect");
 
-            if (todayQuests.TryGetValue(boardName, out Quest quest))
+            if (!string.IsNullOrEmpty(boardName) && todayQuests.TryGetValue(boardName, out Quest quest))
             {
                 this._offeredQuest = quest;
                 this._acceptQuestButton.visible = !quest.accepted.Value;
             }
-
             
             this._billboardTexture = boardTexture ?? Game1.content.Load<Texture2D>("LooseSprites\\Billboard");
 
