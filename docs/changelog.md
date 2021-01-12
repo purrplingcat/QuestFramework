@@ -4,6 +4,7 @@
 
 ### Common changes
 
+- When NPC offers you a quest via dialogue, an indicator is shown above their head. (You can disable it in config.json)
 - Added support for custom quest and special order boards (in any location what you want)
 - Managed quests are scrollable in questlog if content needs scroll (like special orders)
 - Added support for multiple objectives
@@ -16,7 +17,7 @@
 ### For SMAPI modders
 
 - New managed API method `RegisterCustomBoard`
-- New CustomQuest apis: `GetCurrentObjectives`, `UpdateUpdateCurrentObjectives` methods and property `Objectives` for define multiple objectives for a quest. (You must handle objectives manually in your quest code)
+- New CustomQuest apis: `GetCurrentObjectives`, `UpdateUpdateCurrentObjectives` methods for define multiple objectives for a quest. (You must handle objectives manually in your quest code)
 
 ## 1.2.1
 
