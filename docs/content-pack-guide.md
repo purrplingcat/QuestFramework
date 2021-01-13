@@ -1,6 +1,7 @@
 ﻿
 
 
+
 ← [README](../README.md)
 
 # Content pack guide
@@ -50,14 +51,17 @@ Your `quests.json` has this format:
 {
   "Format": "1.0", // this is required
   "Quests": [
-    // quests are defined here
+    // (optional) quests are defined here
   ],
   "Offers": [
-    // quest offers are defined here (optional)
+    // (optional) quest offers are defined here
   ],
   "CustomBoards": [
     // (optional) define your custom quest or special order boards here
-  ]
+  ],
+  "CustomDropBoxes": [
+    // (optional) define your custom drop boxes for your special orders here
+  ],
 }
 ```
 
@@ -774,6 +778,67 @@ Custom special orders are defined with Quest Framework in `quests.json` in your 
 }
 ```
 *NOTE: Special orders board custom background texture must be `338x198 px`*
+
+## Custom drop boxes (for special orders)
+
+If you need define special orders with objective type donation and do you want define your custom donation drop box for your special orders, we have good news for you. With Quest Framework you can do it! Just define your drop boxes in field `CustomDropBoxes` in root element of your `quests.json` file in your QF content pack folder. Then you can refer your drop boxes in your special orders defined with *Content Patcher* what you want.
+
+Field name | Type      | Description
+---------- | --------- | -----------
+Name       | `string`  | Name of your custom drop box.
+Location   | `string`  | Name of location where your drop box is placed.
+Tile       | `Point`   | Tile where is your drop box placed. Format is `<x>,<y>`.
+
+```js
+// quests.json in QF content pack folder
+{
+  /* ... */
+  "CustomDropBoxes": [
+    {
+      "Name": "MyDropBox",
+      "Location": "Farm",
+      "Tile": "69,8"
+    }
+  ]
+}
+```
+```js
+// content.json in your Content Patcher content pack
+{
+  /* ... */
+  "Changes": [
+    {
+      "Action": "EditData",
+      "Target": "Data/SpecialOrders",
+      "Entries": {
+        "PurrplingCat.PurrplingOrders.AbbyRockLunch": {
+          "Name": "[PurrplingCat.PurrplingOrders.AbbyRockLunch_Name]",
+          "Requester": "Abigail",
+          "Duration": "Week",
+          "Repeatable": "True",
+          "RequiredTags": "",
+          "OrderType": "", // Or put `QF:<boardName>` you can specify which custom board offer this order (must be defined in `CustomBoards` in QF content pack field first)
+          "Objectives": [
+            {
+              "Type": "Donate",
+              "Text": "[Lumisteria.SpecialOrders.DemetriusCrabPotStudy_Objective_1_Text]",
+		      "RequiredCount": "25",
+              "Data": {
+                "DropBox": "MyDropBox", // Your drop box name here
+                "DropBoxGameLocation": "Farm",
+                "DropBoxIndicatorLocation": "69 7",
+                "AcceptedContextTags": "mineral_amethyst"
+              }
+            }
+          ],
+          /* ... */
+        },
+        /* ... */
+      }
+    }
+  ]
+}
+```
 
 ## Compatibility with other mods
 

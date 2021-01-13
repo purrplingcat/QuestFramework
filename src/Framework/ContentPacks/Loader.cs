@@ -21,6 +21,7 @@ namespace QuestFramework.Framework.ContentPacks
     class Loader
     {
         private readonly Regex allowedChars = new Regex("^[a-zA-Z0-9_-]*$");
+        private readonly List<KeyValuePair<IContentPack, CustomDropBoxData>> dropBoxes;
 
         public Loader(IMonitor monitor, QuestManager manager, QuestOfferManager scheduleManager, ConditionManager conditionManager, CustomBoardController customBoardController)
         {
@@ -31,6 +32,7 @@ namespace QuestFramework.Framework.ContentPacks
             this.ScheduleManager = scheduleManager;
             this.ConditionManager = conditionManager;
             this.CustomBoardController = customBoardController;
+            this.dropBoxes = new List<KeyValuePair<IContentPack, CustomDropBoxData>>();
         }
 
         public List<Content> Contents { get; }
@@ -130,12 +132,48 @@ namespace QuestFramework.Framework.ContentPacks
             }
 
             this.RegisterBoards(content.Owner, content.CustomBoards);
+            this.RegisterDropBoxes(content.Owner, content.CustomDropBoxes);
 
             // Add quest schedules
             foreach (var offer in content.Offers)
             {
                 this.ScheduleManager.AddOffer(offer);
             }
+        }
+
+        private void RegisterDropBoxes(IContentPack pack, List<CustomDropBoxData> customDropBoxes)
+        {
+            if (customDropBoxes == null)
+                return;
+
+            foreach (var dropBoxData in customDropBoxes)
+                this.dropBoxes.Add(new KeyValuePair<IContentPack, CustomDropBoxData>(pack, dropBoxData));
+        }
+
+        public void OnLocationChange(GameLocation location)
+        {
+            foreach (var dropBox in this.dropBoxes)
+            {
+
+                if (location?.Name != dropBox.Value.Location)
+                {
+                    continue;
+                }
+
+                if (location.doesTileHaveProperty(dropBox.Value.Tile.X, dropBox.Value.Tile.Y, "Action", "Buildings") != null)
+                {
+                    this.Monitor.Log($"({dropBox.Key.Manifest.UniqueID}) Cannot add drop box on tile `{dropBox.Value.Tile}` in `{dropBox.Value.Location}`: This tile is reserved for another action.", LogLevel.Error);
+                    continue;
+                }
+
+                location.setTileProperty(dropBox.Value.Tile.X, dropBox.Value.Tile.Y, "Buildings", "Action", $"DropBox {dropBox.Value.Name}");
+                this.Monitor.Log($"({dropBox.Key.Manifest.UniqueID}) Added drop box on tile `{dropBox.Value.Tile}` in `{dropBox.Value.Location}`");
+            }
+        }
+
+        public void OnReturnedToTitle()
+        {
+            this.dropBoxes.Clear();
         }
 
         private void RegisterBoards(IContentPack pack, List<CustomBoardData> customBoards)
@@ -205,6 +243,7 @@ namespace QuestFramework.Framework.ContentPacks
 
         public void ApplyLoadedContentPacks()
         {
+            this.dropBoxes.Clear();
             this.ValidContents.ForEach(content => this.Apply(content.Translate(content.Owner.Translation)));
 
         }
@@ -347,7 +386,7 @@ namespace QuestFramework.Framework.ContentPacks
                 } 
                 catch (ContentLoadException ex)
                 {
-                    this.Monitor.Log($"Couldn't load quest background texture file `{questData.Texture}`: {ex.Message}");
+                    this.Monitor.Log($"Couldn't load quest background texture file `{questData.Texture}`: {ex.Message}", LogLevel.Error);
                 }
             }
 

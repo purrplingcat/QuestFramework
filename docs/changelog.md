@@ -4,6 +4,7 @@
 
 ### Common changes
 
+- Added custom drop box support for special orders
 - Added texture loader for content packs (allows load texture added by Content Patcher)
 - When NPC offers you a quest via dialogue, an indicator is shown above their head. (You can disable it in config.json)
 - Added support for custom quest and special order boards (in any location what you want)
@@ -13,6 +14,7 @@
 
 ### For Content Pack modders
 
+- Added field `CustomDropBoxes` for define custom drop boxes for special orders (see docs)
 - Added field `CustomBoards` for define custom quest or special order boards (see docs)
 
 ### For SMAPI modders

@@ -89,6 +89,7 @@ namespace QuestFramework
             helper.Events.GameLoop.DayEnding += this.OnDayEnding;
             helper.Events.GameLoop.ReturnedToTitle += this.OnReturnToTitle;
             helper.Events.Display.MenuChanged += this.OnQuestLogMenuChanged;
+            helper.Events.Player.Warped += this.OnPlayerWarped;
             this.NetworkOperator.InitReceived += this.OnNetworkInitMessageReceived;
 
             this.Patcher = new GamePatcher(this.ModManifest.UniqueID, this.Monitor, false);
@@ -113,6 +114,12 @@ namespace QuestFramework
             var packs = helper.ContentPacks.GetOwned();
             if (packs.Any())
                 this.ContentPackLoader.LoadPacks(packs);
+        }
+
+        private void OnPlayerWarped(object sender, WarpedEventArgs e)
+        {
+            if (e.NewLocation != e.OldLocation)
+                this.ContentPackLoader.OnLocationChange(e.NewLocation);
         }
 
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
@@ -189,6 +196,7 @@ namespace QuestFramework
             this.QuestStateStore.Clean();
             this.StatsManager.Clean();
             this.NetworkOperator.Reset();
+            this.ContentPackLoader.OnReturnedToTitle();
             this.hasInitialized = false;
             this.hasSaveLoaded = false;
             this.hasInitMessageArrived = false;
