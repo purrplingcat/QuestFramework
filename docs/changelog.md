@@ -4,10 +4,11 @@
 
 ### Common changes
 
+- Added texture loader for content packs (allows load texture added by Content Patcher)
 - When NPC offers you a quest via dialogue, an indicator is shown above their head. (You can disable it in config.json)
 - Added support for custom quest and special order boards (in any location what you want)
 - Managed quests are scrollable in questlog if content needs scroll (like special orders)
-- Added support for multiple objectives
+- Added support for multiple objectives (for future features)
 - Fixed some multiplayer problems
 
 ### For Content Pack modders

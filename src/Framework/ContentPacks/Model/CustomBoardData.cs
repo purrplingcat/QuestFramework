@@ -12,5 +12,6 @@ namespace QuestFramework.Framework.ContentPacks.Model
         public Point Tile { get; set; }
         public Dictionary<string, string> UnlockWhen { get; set; }
         public bool ShowIndicator { get; set; } = true;
+        public string Texture { get; set; }
     }
 }

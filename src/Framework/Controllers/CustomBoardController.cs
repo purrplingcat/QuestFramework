@@ -114,7 +114,7 @@ namespace QuestFramework.Framework.Controllers
 
             if (boardTrigger != null && !Game1.eventUp)
             {
-                Game1.activeClickableMenu = this.CreateBoardMenu(boardTrigger.BoardName, boardTrigger.BoardType);
+                Game1.activeClickableMenu = this.CreateBoardMenu(boardTrigger);
 
                 return true;
             }
@@ -122,16 +122,18 @@ namespace QuestFramework.Framework.Controllers
             return false;
         }
 
-        private IClickableMenu CreateBoardMenu(string boardName, BoardType boardType)
+        private IClickableMenu CreateBoardMenu(CustomBoardTrigger boardTrigger)
         {
-            switch(boardType)
+            switch(boardTrigger.BoardType)
             {
                 case BoardType.Quests:
-                    return new CustomBoard(boardName);
+                    return new CustomBoard(boardTrigger.BoardName, boardTrigger.Texture);
                 case BoardType.SpecialOrders:
-                    return new SpecialOrdersBoard(!string.IsNullOrEmpty(boardName) ? $"QF:{boardName}" : "");
+                    return new CustomOrderBoard(
+                        !string.IsNullOrEmpty(boardTrigger.BoardName) ? $"QF:{boardTrigger.BoardName}" : "", 
+                        boardTrigger.Texture);
                 default:
-                    QuestFrameworkMod.Instance.Monitor.Log($"Unknown board type `{boardType}` for board `{boardName}`.", LogLevel.Error);
+                    QuestFrameworkMod.Instance.Monitor.Log($"Unknown board type `{boardTrigger.BoardName}` for board `{boardTrigger.BoardName}`.", LogLevel.Error);
                     return null;
             }
         }

@@ -129,7 +129,7 @@ namespace QuestFramework.Framework.ContentPacks
                 }
             }
 
-            this.RegisterBoards(content.CustomBoards);
+            this.RegisterBoards(content.Owner, content.CustomBoards);
 
             // Add quest schedules
             foreach (var offer in content.Offers)
@@ -138,7 +138,7 @@ namespace QuestFramework.Framework.ContentPacks
             }
         }
 
-        private void RegisterBoards(List<CustomBoardData> customBoards)
+        private void RegisterBoards(IContentPack pack, List<CustomBoardData> customBoards)
         {
             if (customBoards == null)
                 return;
@@ -154,6 +154,7 @@ namespace QuestFramework.Framework.ContentPacks
                     LocationName = boardData.Location,
                     Tile = boardData.Tile,
                     ShowIndicator = boardData.ShowIndicator,
+                    Texture = this.LoadTexture(pack, boardData.Texture),
                 };
 
                 if (boardData.UnlockWhen != null)
@@ -202,7 +203,7 @@ namespace QuestFramework.Framework.ContentPacks
             };
         }
 
-        public void RegisterQuestsFromPacks()
+        public void ApplyLoadedContentPacks()
         {
             this.ValidContents.ForEach(content => this.Apply(content.Translate(content.Owner.Translation)));
 
@@ -342,7 +343,7 @@ namespace QuestFramework.Framework.ContentPacks
             {
                 try
                 {
-                    managedQuest.Texture = content.Owner.LoadAsset<Texture2D>(questData.Texture);
+                    managedQuest.Texture = this.LoadTexture(content.Owner, questData.Texture);
                 } 
                 catch (ContentLoadException ex)
                 {
@@ -353,6 +354,26 @@ namespace QuestFramework.Framework.ContentPacks
             questData.PopulateExtendedData(managedQuest);
 
             return managedQuest;
+        }
+
+        private Texture2D LoadTexture(IContentPack pack, string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                return null;
+
+            try
+            {
+                if (pack.HasFile(path))
+                    return pack.LoadAsset<Texture2D>(path);
+
+                return Game1.content.Load<Texture2D>(path);
+            }
+            catch (ContentLoadException ex)
+            {
+                this.Monitor.Log($"({pack.Manifest.UniqueID}) Cannot load texture `{path}`: {ex.Message}");
+
+                return null;
+            }
         }
 
         private int ParseReward(JToken reward, RewardType rewardType)

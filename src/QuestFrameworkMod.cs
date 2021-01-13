@@ -46,6 +46,7 @@ namespace QuestFramework
         internal EventManager EventManager { get; private set; }
 
         internal static QuestFrameworkMod Instance { get; private set; }
+        internal static Multiplayer Multiplayer { get; private set; }
         internal GamePatcher Patcher { get; private set; }
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
@@ -53,6 +54,7 @@ namespace QuestFramework
         public override void Entry(IModHelper helper)
         {
             Instance = this;
+            Multiplayer = helper.Reflection.GetField<Multiplayer>(typeof(Game1), "multiplayer").GetValue();
 
             this.Config = helper.ReadConfig<Config>();
             this.Bridge = new Bridge(helper.ModRegistry, this.Config.DebugMode);
@@ -217,7 +219,7 @@ namespace QuestFramework
             if (!Context.IsMainPlayer && !this.hasInitMessageArrived)
                 return; // Init meessage must be received or player must be main player (singleplayer game or host in co-op)
             if (this.hasInitialized)
-                return; // Don't init again if it'S already initialized
+                return; // Don't init again if it's already initialized
 
             this.ChangeState(State.LAUNCHING);
 
@@ -225,7 +227,7 @@ namespace QuestFramework
             // (farmhands get initial state from init message from host)
             this.QuestStateStore.RestoreData();
             this.StatsManager.LoadStats();
-            this.ContentPackLoader.RegisterQuestsFromPacks();
+            this.ContentPackLoader.ApplyLoadedContentPacks();
 
             this.EventManager.GettingReady.Fire(new Events.GettingReadyEventArgs(), this);
             this.ChangeState(State.LAUNCHED);
