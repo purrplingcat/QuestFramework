@@ -4,6 +4,7 @@
 
 ### Common changes
 
+- Quest bulletin board in town now chooses random quest when is offered more quests of the day in the same day
 - Added custom drop box support for special orders
 - Added texture loader for content packs (allows load texture added by Content Patcher)
 - When NPC offers you a quest via dialogue, an indicator is shown above their head. (You can disable it in config.json)
@@ -14,6 +15,7 @@
 
 ### For Content Pack modders
 
+- Added extra optional field `Secret` for `OfferDetails` of `NPC` quest offer.
 - Added field `CustomDropBoxes` for define custom drop boxes for special orders (see docs)
 - Added field `CustomBoards` for define custom quest or special order boards (see docs)
 

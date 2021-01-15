@@ -191,6 +191,7 @@ namespace QuestFramework.Framework.ContentPacks
                     BoardType = boardData.BoardType,
                     LocationName = boardData.Location,
                     Tile = boardData.Tile,
+                    IndicatorOffset = boardData.IndicatorOffset,
                     ShowIndicator = boardData.ShowIndicator,
                     Texture = this.LoadTexture(pack, boardData.Texture),
                 };

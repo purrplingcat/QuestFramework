@@ -23,10 +23,10 @@ namespace QuestFramework.Framework.ContentPacks.Model
             return new Content()
             {
                 Format = this.Format,
-                Quests = this.Quests.Select(q => q.Translate(translation)).ToList(),
-                Offers = this.Offers.Select(o => TranslationUtils.TranslateOffer(translation, o)).ToList(),
-                CustomBoards = this.CustomBoards.Select(b => TranslationUtils.Translate(translation, b)).ToList(),
-                CustomDropBoxes = this.CustomDropBoxes.Select(b => TranslationUtils.Translate(translation, b)).ToList(),
+                Quests = this.Quests?.Select(q => q.Translate(translation)).ToList(),
+                Offers = this.Offers?.Select(o => TranslationUtils.TranslateOffer(translation, o)).ToList(),
+                CustomBoards = this.CustomBoards?.Select(b => TranslationUtils.Translate(translation, b)).ToList(),
+                CustomDropBoxes = this.CustomDropBoxes?.Select(b => TranslationUtils.Translate(translation, b)).ToList(),
                 Owner = this.Owner,
             };
         }

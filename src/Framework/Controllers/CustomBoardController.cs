@@ -4,6 +4,7 @@ using QuestFramework.Framework.Menus;
 using QuestFramework.Framework.Structures;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.GameData;
 using StardewValley.Menus;
@@ -40,7 +41,10 @@ namespace QuestFramework.Framework.Controllers
                 float yOffset = 4f * (float)Math.Round(Math.Sin(Game1.currentGameTime.TotalGameTime.TotalMilliseconds / 250.0), 2);
                 e.SpriteBatch.Draw(Game1.mouseCursors,
                     Game1.GlobalToLocal(
-                        Game1.viewport, new Vector2(boardTrigger.Tile.X * 64 + 8, (boardTrigger.Tile.Y * 64) + yOffset - 32)),
+                        Game1.viewport,
+                        new Vector2(
+                            x: boardTrigger.Tile.X * 64 + 8 + boardTrigger.IndicatorOffset.X, 
+                            y: (boardTrigger.Tile.Y * 64) + yOffset - 32 + boardTrigger.IndicatorOffset.Y)),
                     new Rectangle(395, 497, 3, 8),
                     Color.White, 0f,
                     new Vector2(1f, 4f), 4f + Math.Max(0f, 0.25f - yOffset / 16f),
@@ -78,17 +82,22 @@ namespace QuestFramework.Framework.Controllers
 
         public void RefreshBoards()
         {
+            CustomBoard.todayQuests.Clear();
+
             foreach (var boardTrigger in this._customBoardTriggers.Where(OnlyUnlockedQuestsBoard))
             {
                 CustomBoard.LoadTodayQuestsIfNecessary(boardTrigger.BoardName);
             }
 
-            var order_types = this._customBoardTriggers.Where(OnlyUnlockedSpecialOrdersBoard)
-                .Select(b => $"QF:{b.BoardName}")
-                .Distinct()
-                .ToArray();
+            if (Context.IsMainPlayer && SDate.Now().DayOfWeek == DayOfWeek.Monday)
+            {
+                var order_types = this._customBoardTriggers.Where(OnlyUnlockedSpecialOrdersBoard)
+                    .Select(b => $"QF:{b.BoardName}")
+                    .Distinct()
+                    .ToArray();
 
-            UpdateAvailableSpecialOrders(order_types);
+                UpdateAvailableSpecialOrders(order_types);
+            }
         }
 
         private static bool OnlyUnlockedQuestsBoard(CustomBoardTrigger boardTrigger)
@@ -112,7 +121,7 @@ namespace QuestFramework.Framework.Controllers
         {
             var boardTrigger = this._currentLocationBoardTriggers?.FirstOrDefault(t => t.Tile.Equals(tile));
 
-            if (boardTrigger != null && !Game1.eventUp)
+            if (boardTrigger != null && !Game1.eventUp && boardTrigger.IsUnlocked())
             {
                 Game1.activeClickableMenu = this.CreateBoardMenu(boardTrigger);
 

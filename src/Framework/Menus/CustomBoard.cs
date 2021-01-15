@@ -30,14 +30,29 @@ namespace QuestFramework.Framework.Menus
             if (string.IsNullOrEmpty(boardName) || todayQuests.ContainsKey(boardName))
                 return;
 
-            var quests = QuestFrameworkMod.Instance.QuestOfferManager.GetMatchedOffers($"Board:{boardName}");
-            if (quests.Any())
+            QuestFrameworkMod.Instance.Monitor.Log($"Refreshing quests for board `{boardName}` ...");
+            Random random = new Random((int)Game1.uniqueIDForThisGame + (int)Game1.stats.DaysPlayed + Game1.dayOfMonth);
+            var quests = QuestFrameworkMod.Instance.QuestOfferManager.GetMatchedOffers($"Board:{boardName}").ToList();
+
+            if (quests.Count > 0)
             {
-                var randomQuestName = quests.ElementAt(Game1.random.Next(quests.Count())).QuestName;
-                var questId = QuestFrameworkMod.Instance.QuestManager.ResolveGameQuestId(randomQuestName);
+                int which = random.Next(quests.Count);
+                string randomQuestName = quests.ElementAt(which < quests.Count ? which : 0).QuestName;
+                int questId = QuestFrameworkMod.Instance.QuestManager.ResolveGameQuestId(randomQuestName);
 
                 if (questId != -1)
+                {
                     todayQuests.Add(boardName, Quest.getQuestFromId(questId));
+                    QuestFrameworkMod.Instance.Monitor.VerboseLog($"  Chosen quest at index {which} of count {quests.Count} ({randomQuestName})");
+                }
+                else
+                {
+                    QuestFrameworkMod.Instance.Monitor.VerboseLog($"  Unknown quest `{randomQuestName}`");
+                }
+            }
+            else
+            {
+                QuestFrameworkMod.Instance.Monitor.VerboseLog($"  No quests available today for board `{boardName}`.");
             }
         }
 

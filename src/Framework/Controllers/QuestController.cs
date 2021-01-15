@@ -167,22 +167,23 @@ namespace QuestFramework.Framework.Controllers
             {
                 this.monitor.VerboseLog("Try refresh offered quest of the day");
 
-                var offers = this.OfferManager.GetMatchedOffers("Bulletinboard");
-                var offer = offers.FirstOrDefault();
-                var quest = offer != null ? this.QuestManager.Fetch(offer.QuestName) : null;
+                Random random = new Random((int)Game1.uniqueIDForThisGame + (int)Game1.stats.DaysPlayed + Game1.dayOfMonth);
+                var offers = this.OfferManager.GetMatchedOffers("Bulletinboard").ToList();
 
-                if (quest == null || Game1.player.hasQuest(quest.id))
+                if (offers.Count > 0)
                 {
-                    this.monitor.VerboseLog("Offered quest is already accepted in questlog.");
-                    return;
-                }
+                    int which = random.Next(offers.Count);
+                    var offer = offers.ElementAtOrDefault(which < offers.Count ? which : 0);
+                    var quest = offer != null ? this.QuestManager.Fetch(offer.QuestName) : null;
 
-                Game1.questOfTheDay = Quest.getQuestFromId(quest.id);
-                this.monitor.Log($"Added quest `{quest.Name}` to bulletin board as quest of the day.");
+                    if (quest == null || Game1.player.hasQuest(quest.id))
+                    {
+                        this.monitor.VerboseLog("Offered quest is already accepted in questlog.");
+                        return;
+                    }
 
-                if (offers.Count() > 1)
-                {
-                    this.monitor.Log("Multiple quests scheduled for this time to add on buletin board. First on the list was added, others are ignored.", LogLevel.Warn);
+                    Game1.questOfTheDay = Quest.getQuestFromId(quest.id);
+                    this.monitor.Log($"Added quest `{quest.Name}` to bulletin board as quest of the day. (Chosen from today {offers.Count} offered quests)");
                 }
 
                 CustomBoard.todayQuests.Clear();

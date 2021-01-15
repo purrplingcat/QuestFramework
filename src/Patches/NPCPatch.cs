@@ -83,6 +83,7 @@ namespace QuestFramework.Patches
 
             var showIndicator = Instance.ScheduleManager.GetMatchedOffers<NpcOfferAttributes>("NPC")
                 .Any(o => o.OfferDetails.NpcName == __instance.Name 
+                    && !o.OfferDetails.Secret
                     && !Game1.player.hasQuest(Instance.QuestManager.ResolveGameQuestId(o.QuestName))
                     && !string.IsNullOrEmpty(o.OfferDetails.DialogueText));
 

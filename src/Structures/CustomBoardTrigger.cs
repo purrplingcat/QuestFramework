@@ -15,6 +15,7 @@ namespace QuestFramework.Framework.Structures
         public bool ShowIndicator { get; set; } = true;
         public BoardType BoardType { get; set; } = BoardType.Quests;
         public Texture2D Texture { get; set; }
+        public Vector2 IndicatorOffset { get; set; } = Vector2.Zero;
 
         public Func<bool> unlockConditionFunc;
 

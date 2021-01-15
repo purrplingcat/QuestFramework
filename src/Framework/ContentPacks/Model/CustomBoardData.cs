@@ -13,5 +13,6 @@ namespace QuestFramework.Framework.ContentPacks.Model
         public Dictionary<string, string> UnlockWhen { get; set; }
         public bool ShowIndicator { get; set; } = true;
         public string Texture { get; set; }
+        public Vector2 IndicatorOffset { get; set; } = Vector2.Zero;
     }
 }

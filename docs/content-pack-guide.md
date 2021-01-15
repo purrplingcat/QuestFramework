@@ -517,6 +517,7 @@ These are the available quests sources provided by native Quest Framework. Some 
 #### Bulletinboard
 
 Offers quest on bulletinboard located in front of the seeds shop (Pierre).
+Quest is offered on the board every day (morning).
 
 *This source NOT requires or accepts any offer details*
 
@@ -552,6 +553,7 @@ Offers quest on bulletinboard located in front of the seeds shop (Pierre).
 #### Custom board
 
 You can offer your quest on your custom quest board. Just use `Board:<boardName>` in quest offer field `OfferedBy`.
+Quest is offered on the board every day (morning).
 
 *This source NOT requires or accepts any offer details*
 
@@ -600,6 +602,9 @@ Field        | Description
 ------------ | -----------
 NpcName      | (string) Which NPC offers this quest.
 DialogueText | (string) What to NPC say to offer this quest.
+Secret       | (bool) If this is `true`, then the quest exclamation mark indicator about NPC head is hidden. (default is `false`)
+
+*NOTE: If you are using a `Random` condition in offer conditions, it's highly recommended set `Secret` in the offer details to `true`. Otherwise the quest exclamaiton mark indicator may blink!*
 
 ```js
 {
@@ -636,7 +641,8 @@ DialogueText | (string) What to NPC say to offer this quest.
 
 #### Mail
 
-Farmer can get a quest via received letter in their mailbox on the farm.
+Farmer can get a quest via received letter in their mailbox on the farm. 
+Letter with offered quest is delivered to player's mailbox in the morning.
 
 **Requires these offer details**
 Field        | Description 
@@ -682,15 +688,16 @@ Text         | (string) Text of the quest source letter (required)
 
 With the Quest Framework you can define your custom board for offer your custom quests or special orders. You can do it with field `CustomBoards` in root element of `quests.json` definition. This field provides an array with custom board definitions. Quest board definition contains these fields:
 
-Field name     | Type                   | Description
--------------- | ---------------------- | -----------
-BoardName      | `string`               | Name of your custom board
-BoardType      | `enum`                 | Type of your board. Allowed values is `Quests`, `SpecialOrders`. Default value: `Quests`
-Location       | `string`               | Name of the location where is the board placed
-Tile           | `Point`                | Tile where is the board placed. Format is `<x>,<y>`.
-UnlockWhen     | `Dict<string, string>` | (optional) Required conditions to unlock this board. When this field is not defined, no conditions are required - The board is always unlocked.
-ShowIndicator  | `bool`                 | (optional) Show the `!` indicator on the board tile when the board has an active quest which can be accepted? (default is `true`)
-Texture        | `string`               | (optional) Path to a custom background texture. Path can locate local PNG asset inside content pack folder or game asset. For locate background in game assets load this texture with **Content Patcher** first (or by another mod, which can inject custom game assets). If this field is not defined, then board menu uses default texture.
+Field name      | Type                   | Description
+--------------- | ---------------------- | -----------
+BoardName       | `string`               | Name of your custom board
+BoardType       | `enum`                 | Type of your board. Allowed values is `Quests`, `SpecialOrders`. Default value: `Quests`
+Location        | `string`               | Name of the location where is the board placed
+Tile            | `Point`                | Tile where is the board placed. Format is `<x>,<y>`.
+UnlockWhen      | `Dict<string, string>` | (optional) Required conditions to unlock this board. When this field is not defined, no conditions are required - The board is always unlocked.
+ShowIndicator   | `bool`                 | (optional) Show the `!` indicator on the board tile when the board has an active quest which can be accepted? (default is `true`)
+IndicatorOffset | `Vector2`              | (optional) Position offset of exclamation mark indicator on the board tile (offset is in px)
+Texture         | `string`               | (optional) Path to a custom background texture. Path can locate local PNG asset inside content pack folder or game asset. For locate background in game assets load this texture with **Content Patcher** first (or by another mod, which can inject custom game assets). If this field is not defined, then board menu uses default texture.
 
 Custom board is placed as actionable tile to specified position in defined location. If the board is unlocked and player clicks to the board tile a board menu is shown. This board menu offers quests which refers this board. How to refer custom board in quest or special order see bellow.
 
@@ -727,7 +734,7 @@ Custom board is placed as actionable tile to specified position in defined locat
 }
 ```
 
-*NOTE: Texture size for `Quests` board type must be `338x198 px`*. 
+*NOTE: Texture size for `Quests` board type must be `338x198 px`.*
 
 ### Custom special orders board
 
