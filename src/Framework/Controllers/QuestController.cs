@@ -133,21 +133,21 @@ namespace QuestFramework.Framework.Controllers
                         if (!farmhand.hasQuest(oldId.Value))
                             continue;
 
-                        var relevantIds = newIds.Where(i => i.Key == oldId.Key);
-                        if (relevantIds.Any())
+                        var relevantNameIds = newIds.Where(i => i.Key == oldId.Key);
+                        if (relevantNameIds.Any())
                         {
-                            var relevantId = relevantIds.First();
-                            var quest = Game1.player.questLog.Where(q => q.id.Value == oldId.Value).First();
-                            var managedQuest = this.QuestManager.Fetch(relevantId.Key);
-                            var questType = this.QuestManager.Fetch(relevantId.Key).CustomTypeId;
+                            var relevantNameIdPair = relevantNameIds.First();
+                            var quest = farmhand.questLog.Where(q => q.id.Value == oldId.Value).FirstOrDefault();
+                            var managedQuest = this.QuestManager.Fetch(relevantNameIdPair.Key);
+                            var questType = this.QuestManager.Fetch(relevantNameIdPair.Key).CustomTypeId;
 
-                            quest.id.Value = relevantId.Value;
+                            quest.id.Value = relevantNameIdPair.Value;
                             // quest.currentObjective = quest.id.Value.ToString();
                             quest.questType.Value = questType != -1
                                 ? questType
                                 : (int)managedQuest.BaseType;
 
-                            this.monitor.Log($"Updated ID for quest in quest log: #{oldId.Value} -> #{relevantId.Value} in {farmhand.Name}'s questlog (player id: {farmhand.UniqueMultiplayerID}).");
+                            this.monitor.Log($"Updated ID for quest in quest log: #{oldId.Value} -> #{relevantNameIdPair.Value} in {farmhand.Name}'s questlog (player id: {farmhand.UniqueMultiplayerID}).");
                         }
                         else
                         {

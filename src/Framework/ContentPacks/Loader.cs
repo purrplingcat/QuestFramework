@@ -7,7 +7,6 @@ using QuestFramework.Framework.ContentPacks.Model;
 using QuestFramework.Framework.Controllers;
 using QuestFramework.Framework.Helpers;
 using QuestFramework.Framework.Structures;
-using QuestFramework.Offers;
 using QuestFramework.Quests;
 using StardewModdingAPI;
 using StardewValley;

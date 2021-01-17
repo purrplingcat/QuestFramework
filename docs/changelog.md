@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.1
+
+- Fixed problems with reintegrate quests
+
 ## 1.3.0
 
 ### Common changes
