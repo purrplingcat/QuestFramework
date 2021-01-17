@@ -886,8 +886,6 @@ You can add known quest in Quest Framework via NPC dialogues. You can define it 
 
 By place `[quest:<questname> <modUID>]` to the dialogue player get a quest when speak with NPC and this dialogue line is shown.
 
-#### Example
-
 ```js
 // Some dialogue definition file
 {
@@ -895,3 +893,5 @@ By place `[quest:<questname> <modUID>]` to the dialogue player get a quest when 
     "anotherDIalogue": "What's up? $h#$b#Are you interested to small fighting adventure?#$b#Bless your sword! [quest:slayMonsters purrplingcat.myquestmod]"
 }
 ```
+
+**NOTE:** By add quest via dialogue in this outbound way, you can't check the QF conditions and no exclamation mark will be shown above NPC head. But in this way you can offer a quest via question dialogue.

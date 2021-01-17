@@ -1,6 +1,6 @@
 # Changelog
 
-## Upcoming version
+## 1.3.0
 
 ### Common changes
 
