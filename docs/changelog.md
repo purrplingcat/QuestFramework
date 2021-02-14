@@ -1,5 +1,9 @@
 # Changelog
 
+## Upcoming version
+
+- Fixed problem with special order board in town (hopefully)
+
 ## 1.3.1
 
 - Fixed problems with reintegrate quests
