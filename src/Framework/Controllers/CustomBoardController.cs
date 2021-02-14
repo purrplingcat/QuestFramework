@@ -18,22 +18,23 @@ namespace QuestFramework.Framework.Controllers
 {
     class CustomBoardController
     {
-        private readonly List<CustomBoardTrigger> _customBoardTriggers;
-        private CustomBoardTrigger[] _currentLocationBoardTriggers;
+        private readonly PerScreen<List<CustomBoardTrigger>> _customBoardTriggers;
+        private readonly PerScreen<CustomBoardTrigger[]> _currentLocationBoardTriggers;
 
         public CustomBoardController(IModEvents events)
         {
             events.Player.Warped += this.OnPlayerWarped;
             events.Display.RenderedWorld += this.OnWorldRendered;
-            this._customBoardTriggers = new List<CustomBoardTrigger>();
+            this._customBoardTriggers = new PerScreen<List<CustomBoardTrigger>>(() => new List<CustomBoardTrigger>());
+            this._currentLocationBoardTriggers = new PerScreen<CustomBoardTrigger[]>();
         }
 
         private void OnWorldRendered(object sender, RenderedWorldEventArgs e)
         {
-            if (Game1.eventUp || this._currentLocationBoardTriggers == null)
+            if (Game1.eventUp || this._currentLocationBoardTriggers?.Value == null)
                 return;
 
-            foreach (var boardTrigger in this._currentLocationBoardTriggers)
+            foreach (var boardTrigger in this._currentLocationBoardTriggers.Value)
             {
                 if (!ShouldShowIndicator(boardTrigger))
                     continue;
@@ -82,16 +83,19 @@ namespace QuestFramework.Framework.Controllers
 
         public void RefreshBoards()
         {
+            if (Context.IsSplitScreen && !Context.IsMainPlayer)
+                return;
+
             CustomBoard.todayQuests.Clear();
 
-            foreach (var boardTrigger in this._customBoardTriggers.Where(OnlyUnlockedQuestsBoard))
+            foreach (var boardTrigger in this._customBoardTriggers.Value.Where(OnlyUnlockedQuestsBoard))
             {
                 CustomBoard.LoadTodayQuestsIfNecessary(boardTrigger.BoardName);
             }
 
             if (Context.IsMainPlayer && SDate.Now().DayOfWeek == DayOfWeek.Monday)
             {
-                var order_types = this._customBoardTriggers.Where(OnlyUnlockedSpecialOrdersBoard)
+                var order_types = this._customBoardTriggers.Value.Where(OnlyUnlockedSpecialOrdersBoard)
                     .Select(b => $"QF:{b.BoardName}")
                     .Distinct()
                     .ToArray();
@@ -112,14 +116,14 @@ namespace QuestFramework.Framework.Controllers
 
         private void OnPlayerWarped(object sender, WarpedEventArgs e)
         {
-            this._currentLocationBoardTriggers = this._customBoardTriggers
+            this._currentLocationBoardTriggers.Value = this._customBoardTriggers.Value
                 .Where(t => t.LocationName == e.NewLocation.Name)
                 .ToArray();
         }
 
         public bool CheckBoardHere(Point tile)
         {
-            var boardTrigger = this._currentLocationBoardTriggers?.FirstOrDefault(t => t.Tile.Equals(tile));
+            var boardTrigger = this._currentLocationBoardTriggers.Value?.FirstOrDefault(t => t.Tile.Equals(tile));
 
             if (boardTrigger != null && !Game1.eventUp && boardTrigger.IsUnlocked())
             {
@@ -154,18 +158,18 @@ namespace QuestFramework.Framework.Controllers
                 throw new InvalidOperationException($"Cannot register new board trigger when in state `{QuestFrameworkMod.Instance.Status}`.");
             }
 
-            this._customBoardTriggers.Add(trigger);
+            this._customBoardTriggers.Value.Add(trigger);
         }
 
         public void Reset()
         {
-            this._customBoardTriggers.Clear();
+            this._customBoardTriggers.Value.Clear();
         }
 
         public static void UpdateAvailableSpecialOrders(string[] validTypes)
         {
-            Game1.player.team.availableSpecialOrders.Clear();
-            Game1.player.team.acceptedSpecialOrderTypes.Clear();
+            SpecialOrder.UpdateAvailableSpecialOrders(true);
+
             var order_data = Game1.content.Load<Dictionary<string, SpecialOrderData>>("Data\\SpecialOrders");
             var keys = new List<string>(order_data.Keys);
 
@@ -202,13 +206,9 @@ namespace QuestFramework.Framework.Controllers
                     k--;
                 }
             }
+
             Random r = new Random((int)Game1.uniqueIDForThisGame + (int)((float)Game1.stats.DaysPlayed * 1.3f));
-            Game1.player.team.availableSpecialOrders.Clear();
-
-            var types = new List<string>() { "", "Qi" };
-            types.AddRange(validTypes);
-
-            foreach (string type_to_find in types)
+            foreach (string type_to_find in validTypes)
             {
                 var typed_keys = new List<string>();
                 foreach (string key3 in keys)
