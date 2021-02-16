@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using PurrplingCore.Patching;
 using QuestFramework.Framework;
+using QuestFramework.Framework.Helpers;
 using QuestFramework.Offers;
 using StardewValley;
 using System;
@@ -39,6 +40,22 @@ namespace QuestFramework.Patches
 
                 Instance.Monitor.VerboseLog($"Checking for new quest from NPC `{__instance.Name}`.");
 
+                if (OffersSpecialOrder(__instance, out SpecialOrder specialOrder))
+                {
+                    if (!__instance.Dialogue.TryGetValue($"order_{specialOrder.questKey.Value}", out string dialogue))
+                    {
+                        dialogue = specialOrder.GetDescription();
+                    }
+
+                    __result = true;
+                    Game1.player.team.specialOrders.Add(SpecialOrder.GetSpecialOrder(specialOrder.questKey.Value, specialOrder.generationSeed.Value));
+                    Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:Farmer.cs.2011"), 2));
+                    Game1.drawDialogue(__instance, dialogue);
+                    QuestFrameworkMod.Multiplayer.globalChatInfoMessage("AcceptedSpecialOrder", Game1.player.Name, specialOrder.GetName());
+
+                    return false;
+                }
+
                 var schedules = Instance.ScheduleManager.GetMatchedOffers<NpcOfferAttributes>("NPC");
                 var schedule = schedules.FirstOrDefault();
                 var quest = schedule != null ? Instance.QuestManager.Fetch(schedule.QuestName) : null;
@@ -70,6 +87,19 @@ namespace QuestFramework.Patches
             return true;
         }
 
+        private static bool OffersSpecialOrder(NPC npc, out SpecialOrder specialOrder)
+        {
+            var orders = from order in Game1.player.team.availableSpecialOrders
+                         where order.requester.Value == npc.Name
+                            && order.orderType.Value == "QF_NPC"
+                            && !Utils.IsSpecialOrderAccepted(order.questKey.Value)
+                         select order;
+
+            specialOrder = orders.FirstOrDefault();
+
+            return specialOrder != null;
+        }
+
         private static void After_draw(NPC __instance, SpriteBatch b, int ___textAboveHeadTimer, string ___textAboveHead)
         {
             if (!QuestFrameworkMod.Instance.Config.ShowNpcQuestIndicators)
@@ -87,7 +117,7 @@ namespace QuestFramework.Patches
                     && !Game1.player.hasQuest(Instance.QuestManager.ResolveGameQuestId(o.QuestName))
                     && !string.IsNullOrEmpty(o.OfferDetails.DialogueText));
 
-            if (showIndicator)
+            if (showIndicator || OffersSpecialOrder(__instance, out SpecialOrder _))
             {
                 float yOffset = 4f * (float)Math.Round(Math.Sin(Game1.currentGameTime.TotalGameTime.TotalMilliseconds / 250.0), 2);
                 b.Draw(Game1.mouseCursors,

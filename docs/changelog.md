@@ -1,5 +1,9 @@
 # Changelog
 
+## Upcoming version
+
+- Added support for offer special order via NPC talk
+
 ## 1.3.4
 
 - Fixed problem with quest type id reintegration
