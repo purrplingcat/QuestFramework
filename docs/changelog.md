@@ -1,6 +1,6 @@
 # Changelog
 
-## Upcoming version
+## 1.3.2
 
 - Fixed problem with special order board in town (hopefully)
 
