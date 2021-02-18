@@ -48,6 +48,7 @@ namespace QuestFramework.Framework
                 throw new InvalidQuestException($"Quest `{quest.GetFullName()}` is already registered!");
             }
 
+            quest.OnRegister();
             this.Quests.Add(quest);
             this.monitor.Log($"Added quest `{quest.Name}` to quest manager");
         }
@@ -188,6 +189,12 @@ namespace QuestFramework.Framework
         internal bool CheckForQuestComplete(object completionMessage)
         {
             return this.CheckForQuestComplete<CustomQuest>(completionMessage);
+        }
+
+        internal void Clean()
+        {
+            this.Quests.ForEach(q => q.Dispose());
+            this.Quests.Clear();
         }
     }
 }

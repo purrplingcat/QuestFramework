@@ -190,7 +190,7 @@ namespace QuestFramework
             this.ChangeState(State.CLEANING);
             this.QuestController.Reset();
             this.CustomBoardController.Reset();
-            this.QuestManager.Quests.Clear();
+            this.QuestManager.Clean();
             this.QuestOfferManager.Offers.Clear();
             this.ConditionManager.Clean();
             this.QuestStateStore.Clean();

@@ -2,8 +2,12 @@
 
 ## Upcoming version
 
-- Added new API on CustomQuest class: onCompletionCheck
-- Added new managed API: CheckForQuestComplete
+- `CustomQuest<TState>.Sync` now marks quest for sync at end of update sync instead of sync immediatelly (for immediatelly sync use new API method `CustomQuest<TState>.PerformSync`)
+- CustomQuest class now implements IDisposable interface
+- Added new extensions: `CheckGlobalConditions`, `CheckGlobalCondition`
+- Added new APIs for `CustomQuest<TState>` class: NeedsSync, PerformSync
+- Added new APIs for `CustomQuest` class: `onCompletionCheck`, `OnRegister`, `OnInitialize`, `ForceUpdate`, `OnUpdate`
+- Added new managed API: `CheckForQuestComplete`
 - Added support for offer special order via NPC talk
 
 ## 1.3.4
