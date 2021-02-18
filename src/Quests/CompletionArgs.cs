@@ -20,13 +20,14 @@ namespace QuestFramework.Quests
         /// <param name="number2"></param>
         /// <param name="item"></param>
         /// <param name="str"></param>
-        public CompletionArgs(NPC npc = null, int number1 = -1, int number2 = -1, Item item = null, string str = null)
+        public CompletionArgs(NPC npc = null, int number1 = -1, int number2 = -1, Item item = null, string str = null, int type = -1)
         {
             this.Npc = npc;
             this.Number1 = number1;
             this.Number2 = number2;
             this.Item = item;
             this.String = str;
+            this.CompletionType = type;
         }
 
         /// <summary>
@@ -53,5 +54,7 @@ namespace QuestFramework.Quests
         /// Text to test
         /// </summary>
         public string String { get; }
+
+        public int CompletionType { get; }
     }
 }

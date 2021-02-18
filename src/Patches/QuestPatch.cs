@@ -250,6 +250,12 @@ namespace QuestFramework.Patches
             }
         }
 
+        private static void Before_Farmer_checkForQuestComplete(ref bool __result, NPC n, int number1, int number2, Item item, string str, int questType = -1)
+        {
+            __result = Instance.QuestManager.CheckForQuestComplete(
+                new CompletionArgs(n, number1, number2, item, str, questType));
+        }
+
         protected override void Apply(HarmonyInstance harmony)
         {
             harmony.Patch(
@@ -276,6 +282,10 @@ namespace QuestFramework.Patches
             harmony.Patch(
                 original: AccessTools.Method(typeof(Quest), nameof(Quest.checkIfComplete)),
                 prefix: new HarmonyMethod(typeof(QuestPatch), nameof(QuestPatch.Before_checkIfComplete))
+            );
+            harmony.Patch(
+                original: AccessTools.Method(typeof(Farmer), nameof(Farmer.checkForQuestComplete)),
+                prefix: new HarmonyMethod(typeof(QuestPatch), nameof(QuestPatch.Before_Farmer_checkForQuestComplete))
             );
         }
     }

@@ -113,5 +113,22 @@ namespace QuestFramework.Api
         /// </summary>
         /// <param name="boardTrigger"></param>
         void RegisterCustomBoard(CustomBoardTrigger boardTrigger);
+
+        /// <summary>
+        /// Check for any managed quest is completed by provided completion message.
+        /// Internally calls <see cref="CustomQuest.OnCompletionCheck(object)"/> for check the quest is completed.
+        /// </summary>
+        /// <param name="completionMessage">The completion message</param>
+        /// <returns></returns>
+        bool CheckForQuestComplete(object completionMessage);
+
+        /// <summary>
+        /// Check for any managed quest of concrete class type is completed by provided completion message.
+        /// Internally calls <see cref="CustomQuest.OnCompletionCheck(object)"/> for check the quest is completed.
+        /// </summary>
+        /// <typeparam name="TQuest">Quest class type</typeparam>
+        /// <param name="completionMessage">The completion message</param>
+        /// <returns></returns>
+        bool CheckForQuestComplete<TQuest>(object completionMessage) where TQuest : CustomQuest;
     }
 }

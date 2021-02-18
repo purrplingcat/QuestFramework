@@ -161,6 +161,13 @@ namespace QuestFramework.Quests
         public virtual void Reset() { }
 
         /// <summary>
+        /// Called when quest completion is checked 
+        /// from <see cref="Farmer.checkForQuestComplete(NPC, int, int, Item, string, int, int)"/> or from QF managed API.
+        /// </summary>
+        /// <param name="completionMessage">Completion message</param>
+        public virtual void OnCompletionCheck(object completionMessage) { }
+
+        /// <summary>
         /// Get full quest name in format {questName}@{ownerModUniqueId}
         /// </summary>
         public string GetFullName()

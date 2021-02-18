@@ -3,6 +3,7 @@ using QuestFramework.Quests;
 using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
 using StardewValley;
+using StardewValley.Quests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -156,6 +157,37 @@ namespace QuestFramework.Framework
                 throw new InvalidQuestException("Quest name is unexpectedly assigned by factory!");
 
             return quest;
+        }
+
+        internal bool CheckForQuestComplete<TQuest>(object completionMessage) where TQuest : CustomQuest
+        {
+            bool worked = false;
+            Quest vanillaQuestProxy;
+            var activeQuests = this.Quests
+                .Where(q => q.IsInQuestLog())
+                .OfType<TQuest>();
+
+            this.monitor.Log($"Checking managed quest completions <{typeof(TQuest).FullName}, {completionMessage.GetType().FullName}>");
+
+            foreach (var activeQuest in activeQuests)
+            {
+                vanillaQuestProxy = activeQuest.GetInQuestLog();
+
+                if (vanillaQuestProxy == null || vanillaQuestProxy.completed.Value || vanillaQuestProxy.destroy.Value)
+                {
+                    continue;
+                }
+
+                activeQuest.OnCompletionCheck(completionMessage);
+                worked |= vanillaQuestProxy?.completed.Value ?? false;
+            }
+
+            return worked;
+        }
+
+        internal bool CheckForQuestComplete(object completionMessage)
+        {
+            return this.CheckForQuestComplete<CustomQuest>(completionMessage);
         }
     }
 }

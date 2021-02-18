@@ -146,7 +146,32 @@ namespace QuestFramework.Api
 
         public void RegisterCustomBoard(CustomBoardTrigger boardTrigger)
         {
+            if (boardTrigger == null)
+            {
+                throw new ArgumentNullException(nameof(boardTrigger));
+            }
+
             this.CustomBoardController.RegisterBoardTrigger(boardTrigger);
+        }
+
+        public bool CheckForQuestComplete(object completionMessage)
+        {
+            if (completionMessage == null)
+            {
+                throw new ArgumentNullException(nameof(completionMessage));
+            }
+
+            return this.QuestManager.CheckForQuestComplete(completionMessage);
+        }
+
+        public bool CheckForQuestComplete<TQuest>(object completionMessage) where TQuest : CustomQuest
+        {
+            if (completionMessage == null)
+            {
+                throw new ArgumentNullException(nameof(completionMessage));
+            }
+
+            return this.QuestManager.CheckForQuestComplete<TQuest>(completionMessage);
         }
     }
 }

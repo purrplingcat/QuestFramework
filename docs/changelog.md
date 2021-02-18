@@ -2,6 +2,8 @@
 
 ## Upcoming version
 
+- Added new API on CustomQuest class: onCompletionCheck
+- Added new managed API: CheckForQuestComplete
 - Added support for offer special order via NPC talk
 
 ## 1.3.4
