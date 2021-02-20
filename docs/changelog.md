@@ -2,14 +2,17 @@
 
 ## Upcoming version
 
+- Show talk bubble mouse cursor when quest should be offered on NPC talk
+- Added adjust quest trigger when farmer try talk with NPC
+- Added `ITalkMessage` interface
 - Quests with `BaseType` value `Custom` always returns false for Quest.checkIfComplete and your custom quest is not vanilla base type or doesn't implements `IQuestObserver` interface (for checking completion for custom quests override OnCompletionCheck method on your custom quest type class)
 - Update title, objective and description methods are splited from `IQuestObserver` to `IQuestInfoUpdater` (IQuestObserver extends IQuestInfoUpdater)
 - `CustomQuest<TState>.Sync` now marks quest for sync at end of update sync instead of sync immediatelly (for immediatelly sync use new API method `CustomQuest<TState>.PerformSync`)
 - CustomQuest class now implements IDisposable interface
 - Added new extensions: `CheckGlobalConditions`, `CheckGlobalCondition`
 - Added new APIs for `CustomQuest<TState>` class: NeedsSync, PerformSync
-- Added new APIs for `CustomQuest` class: `onCompletionCheck`, `OnRegister`, `OnInitialize`, `ForceUpdate`, `OnUpdate`
-- Added new managed API: `CheckForQuestComplete`
+- Added new APIs for `CustomQuest` class: `onCompletionCheck`, `OnRegister`, `OnInitialize`, `ForceUpdate`, `OnUpdate`, `OnAdjust`
+- Added new managed API: `CheckForQuestComplete`, `AdjustQuest` and `GetAllManagedQuests`
 - Added support for offer special order via NPC talk
 
 ## 1.3.4

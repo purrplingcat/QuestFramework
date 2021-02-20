@@ -173,5 +173,25 @@ namespace QuestFramework.Api
 
             return this.QuestManager.CheckForQuestComplete<TQuest>(completionMessage);
         }
+
+        public void AdjustQuest(object adjustMessage)
+        {
+            if (adjustMessage is null)
+            {
+                throw new ArgumentNullException(nameof(adjustMessage));
+            }
+
+            this.QuestManager.AdjustQuest(adjustMessage);
+        }
+
+        public IEnumerable<CustomQuest> GetAllManagedQuests()
+        {
+            return this.QuestManager.Quests.AsReadOnly();
+        }
+
+        public IEnumerable<T> GetAllManagedQuests<T>() where T : CustomQuest
+        {
+            return this.GetAllManagedQuests().OfType<T>();
+        }
     }
 }

@@ -130,5 +130,25 @@ namespace QuestFramework.Api
         /// <param name="completionMessage">The completion message</param>
         /// <returns></returns>
         bool CheckForQuestComplete<TQuest>(object completionMessage) where TQuest : CustomQuest;
+
+        /// <summary>
+        /// Adjust a quest or make some adjustable side-effects by the quest
+        /// </summary>
+        /// <param name="adjustMessage">Adjusting message</param>
+        void AdjustQuest(object adjustMessage);
+
+        /// <summary>
+        /// Get all registered managed quests;
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<CustomQuest> GetAllManagedQuests();
+
+        /// <summary>
+        /// Get all registered managed quests by a class type
+        /// </summary>
+        /// <typeparam name="T">Custom quest class type</typeparam>
+        /// <returns></returns>
+        IEnumerable<T> GetAllManagedQuests<T>() where T : CustomQuest;
     }
 }
+                           

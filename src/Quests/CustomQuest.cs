@@ -68,6 +68,10 @@ namespace QuestFramework.Quests
             }
         }
 
+        public virtual void OnAdjust(object adjustMessage)
+        {
+        }
+
         public string Trigger 
         {
             get => this._trigger;

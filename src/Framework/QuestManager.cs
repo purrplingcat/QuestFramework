@@ -53,6 +53,17 @@ namespace QuestFramework.Framework
             this.monitor.Log($"Added quest `{quest.Name}` to quest manager");
         }
 
+        internal void AdjustQuest(object adjustMessage)
+        {
+            var activeQuests = this.Quests
+                .Where(q => q.IsInQuestLog());
+
+            foreach(var activeQuest in activeQuests)
+            {
+                activeQuest.OnAdjust(adjustMessage);
+            }
+        }
+
         public void AcceptQuest(string fullQuestName, bool silent = false)
         {
             int id = this.ResolveGameQuestId(fullQuestName);

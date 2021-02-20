@@ -5,12 +5,10 @@ using PurrplingCore.Patching;
 using QuestFramework.Framework;
 using QuestFramework.Framework.Helpers;
 using QuestFramework.Offers;
+using QuestFramework.Framework.Messages;
 using StardewValley;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QuestFramework.Patches
 {
@@ -38,6 +36,7 @@ namespace QuestFramework.Patches
                 if (who.ActiveObject != null && who.ActiveObject.canBeGivenAsGift() && !who.isRidingHorse())
                     return true;
 
+                Instance.QuestManager.AdjustQuest(new TalkMessage(who, __instance));
                 Instance.Monitor.VerboseLog($"Checking for new quest from NPC `{__instance.Name}`.");
 
                 if (OffersSpecialOrder(__instance, out SpecialOrder specialOrder))
@@ -111,13 +110,7 @@ namespace QuestFramework.Patches
             if (___textAboveHeadTimer > 0 && ___textAboveHead != null)
                 return;
 
-            var showIndicator = Instance.ScheduleManager.GetMatchedOffers<NpcOfferAttributes>("NPC")
-                .Any(o => o.OfferDetails.NpcName == __instance.Name 
-                    && !o.OfferDetails.Secret
-                    && !Game1.player.hasQuest(Instance.QuestManager.ResolveGameQuestId(o.QuestName))
-                    && !string.IsNullOrEmpty(o.OfferDetails.DialogueText));
-
-            if (showIndicator || OffersSpecialOrder(__instance, out SpecialOrder _))
+            if (OffersQuest(__instance) || OffersSpecialOrder(__instance, out SpecialOrder _))
             {
                 float yOffset = 4f * (float)Math.Round(Math.Sin(Game1.currentGameTime.TotalGameTime.TotalMilliseconds / 250.0), 2);
                 b.Draw(Game1.mouseCursors,
@@ -130,6 +123,23 @@ namespace QuestFramework.Patches
             }
         }
 
+        public static void After_hasTemporaryMessageAvailable(NPC __instance, ref bool __result)
+        {
+            if (OffersQuest(__instance, hintSecret: true))
+            {
+                __result = true;
+            }
+        }
+
+        private static bool OffersQuest(NPC __instance, bool hintSecret = false)
+        {
+            return Instance.ScheduleManager.GetMatchedOffers<NpcOfferAttributes>("NPC")
+                .Any(o => o.OfferDetails.NpcName == __instance.Name
+                    && !o.OfferDetails.Secret || hintSecret
+                    && !Game1.player.hasQuest(Instance.QuestManager.ResolveGameQuestId(o.QuestName))
+                    && !string.IsNullOrEmpty(o.OfferDetails.DialogueText));
+        }
+
         protected override void Apply(HarmonyInstance harmony)
         {
             harmony.Patch(
@@ -139,6 +149,10 @@ namespace QuestFramework.Patches
             harmony.Patch(
                 original: AccessTools.Method(typeof(NPC), nameof(NPC.drawAboveAlwaysFrontLayer)),
                 postfix: new HarmonyMethod(typeof(NPCPatch), nameof(NPCPatch.After_draw))
+            );
+            harmony.Patch(
+                original: AccessTools.Method(typeof(NPC), nameof(NPC.hasTemporaryMessageAvailable)),
+                postfix: new HarmonyMethod(typeof(NPCPatch), nameof(NPCPatch.After_hasTemporaryMessageAvailable))
             );
         }
     }
