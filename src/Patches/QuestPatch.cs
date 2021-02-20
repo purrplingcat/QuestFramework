@@ -88,7 +88,7 @@ namespace QuestFramework.Patches
                 }
 
                 // Call observer objective updater (if this managed quest is observed)
-                if (managedQuest is IQuestObserver observer)
+                if (managedQuest is IQuestInfoUpdater observer)
                 {
                     observer.UpdateObjective(
                         new QuestInfo(__instance, Game1.player), 
@@ -166,7 +166,7 @@ namespace QuestFramework.Patches
                     __instance._questDescription = managedQuest.Description;
                 }
 
-                if (managedQuest is IQuestObserver observer)
+                if (managedQuest is IQuestInfoUpdater observer)
                 {
                     observer.UpdateDescription(
                         new QuestInfo(__instance, Game1.player),
@@ -195,7 +195,7 @@ namespace QuestFramework.Patches
                     __instance._questTitle = managedQuest.Title;
                 }
 
-                if (managedQuest is IQuestObserver observer)
+                if (managedQuest is IQuestInfoUpdater observer)
                 {
                     observer.UpdateTitle(
                         new QuestInfo(__instance, Game1.player),
@@ -236,6 +236,13 @@ namespace QuestFramework.Patches
                     Instance.QuestCheckerLock.Remove(__instance);
 
                     // For observed managed quest we don't call the original method Quest.checkIfComplete
+                    return false;
+                }
+
+                if (managedQuest.BaseType == QuestType.Custom)
+                {
+                    __result = false;
+
                     return false;
                 }
 

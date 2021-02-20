@@ -2,6 +2,8 @@
 
 ## Upcoming version
 
+- Quests with `BaseType` value `Custom` always returns false for Quest.checkIfComplete and your custom quest is not vanilla base type or doesn't implements `IQuestObserver` interface (for checking completion for custom quests override OnCompletionCheck method on your custom quest type class)
+- Update title, objective and description methods are splited from `IQuestObserver` to `IQuestInfoUpdater` (IQuestObserver extends IQuestInfoUpdater)
 - `CustomQuest<TState>.Sync` now marks quest for sync at end of update sync instead of sync immediatelly (for immediatelly sync use new API method `CustomQuest<TState>.PerformSync`)
 - CustomQuest class now implements IDisposable interface
 - Added new extensions: `CheckGlobalConditions`, `CheckGlobalCondition`
