@@ -190,8 +190,7 @@ namespace QuestFramework.Framework
                     continue;
                 }
 
-                activeQuest.OnCompletionCheck(completionMessage);
-                worked |= vanillaQuestProxy?.completed.Value ?? false;
+                worked |= activeQuest.OnCompletionCheck(completionMessage);
             }
 
             return worked;

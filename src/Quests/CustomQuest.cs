@@ -192,7 +192,11 @@ namespace QuestFramework.Quests
         /// from <see cref="Farmer.checkForQuestComplete(NPC, int, int, Item, string, int, int)"/> or from QF managed API.
         /// </summary>
         /// <param name="completionMessage">Completion message</param>
-        public virtual void OnCompletionCheck(object completionMessage) { }
+        /// <returns>Flag if some effects was applied (like progress changed or quest was completed)</returns>
+        public virtual bool OnCompletionCheck(object completionMessage) 
+        {
+            return false;
+        }
 
         /// <summary>
         /// Get full quest name in format {questName}@{ownerModUniqueId}
