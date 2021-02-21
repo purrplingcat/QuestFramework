@@ -36,7 +36,17 @@ namespace QuestFramework.Patches
                 if (who.ActiveObject != null && who.ActiveObject.canBeGivenAsGift() && !who.isRidingHorse())
                     return true;
 
+                if (Game1.dialogueUp)
+                    return true;
+
                 Instance.QuestManager.AdjustQuest(new TalkMessage(who, __instance));
+
+                if (Game1.dialogueUp && Game1.currentSpeaker == __instance)
+                {
+                    __result = true;
+                    return false;
+                }
+
                 Instance.Monitor.VerboseLog($"Checking for new quest from NPC `{__instance.Name}`.");
 
                 if (OffersSpecialOrder(__instance, out SpecialOrder specialOrder))
@@ -125,7 +135,7 @@ namespace QuestFramework.Patches
 
         public static void After_hasTemporaryMessageAvailable(NPC __instance, ref bool __result)
         {
-            if (OffersQuest(__instance, hintSecret: true))
+            if (OffersQuest(__instance, hintSecret: true) || OffersSpecialOrder(__instance, out var _))
             {
                 __result = true;
             }
