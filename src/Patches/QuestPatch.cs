@@ -1,6 +1,7 @@
 ﻿using Harmony;
 using PurrplingCore;
 using PurrplingCore.Patching;
+using QuestFramework.Extensions;
 using QuestFramework.Framework;
 using QuestFramework.Framework.Events;
 using QuestFramework.Framework.Quests;
@@ -217,8 +218,8 @@ namespace QuestFramework.Patches
         {
             try
             {
-                if (Instance.QuestCheckerLock.Contains(__instance))
-                    return true; // Always call only the original method for locked quests
+                if (Instance.QuestCheckerLock.Contains(__instance) || !__instance.IsManaged())
+                    return true; // Always call only the original method for locked or unmanaged quests
 
                 var managedQuest = Instance.QuestManager.GetById(__instance.id.Value);
 
