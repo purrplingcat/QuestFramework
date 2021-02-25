@@ -2,6 +2,7 @@
 
 ## 1.3.3
 
+- Optimized NPC offer indicator performance
 - Better error message when invalid client connected in multiplayer
 - Fixed exception when connected client running without SMAPI or without QF
 

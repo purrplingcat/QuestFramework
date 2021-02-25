@@ -75,7 +75,7 @@ namespace QuestFramework.Patches
             if (!QuestFrameworkMod.Instance.Config.ShowNpcQuestIndicators)
                 return;
 
-            if (__instance.IsInvisible || __instance.IsEmoting || __instance.isSleeping.Value || Game1.eventUp)
+            if (!__instance.isVillager() || __instance.IsInvisible || __instance.IsEmoting || __instance.isSleeping.Value || Game1.eventUp)
                 return;
 
             if (___textAboveHeadTimer > 0 && ___textAboveHead != null)
