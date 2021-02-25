@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.3
+
+- Better error message when invalid client connected in multiplayer
+- Fixed exception when connected client running without SMAPI or without QF
+
 ## 1.3.2
 
 - Fixed problem with special order board in town (hopefully)

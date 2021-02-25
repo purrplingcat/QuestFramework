@@ -38,19 +38,47 @@ namespace QuestFramework.Framework.Networing
         [EventPriority(EventPriority.High + 100)]
         private void OnClientConnected(object sender, PeerConnectedEventArgs e)
         {
-            if (Context.IsMainPlayer && e.Peer.Mods.Any(m => m.ID == this.modManifest.UniqueID))
-            {
-                var store = new QuestStateStoreData
-                {
-                    { e.Peer.PlayerID, this.questStateStore.GetPayloadList(e.Peer.PlayerID) }
-                };
-                var stats = this.statsManager.GetStats();
-                var message = new InitalMessage(this.questController.GetQuestIds(), store, stats);
+            if (!Context.IsMainPlayer)
+                return;
 
-                this.helper.SendMessage(
-                    message, "Init", new[] { this.modManifest.UniqueID }, new[] { e.Peer.PlayerID });
-                this.monitor.Log($"Sent quests initial state to {e.Peer.PlayerID}");
+            if (e.Peer.HasSmapi)
+            {
+                this.monitor.Log($"Peer connected: {e.Peer.PlayerID} on SMAPI {e.Peer.ApiVersion.ToString()} game version {e.Peer.GameVersion} platform {e.Peer.PlayerID}");
             }
+            else
+            {
+                this.monitor.Log($"Peer connected: {e.Peer.PlayerID} on pure vanilla SDV");
+            }
+
+            var qfModPeer = e.Peer.GetMod(this.modManifest.UniqueID);
+
+            if (qfModPeer == null)
+            {
+                this.monitor.Log($"Connected remote peer {e.Peer.PlayerID} doesn't run on SMAPI or they haven't installed the Quest Framework.", LogLevel.Warn);
+                this.monitor.Log($"Unable to send QF shake message to: {e.Peer.PlayerID} (mismatch versions or dependencies)", LogLevel.Error);
+
+                return;
+            }
+
+            if (qfModPeer.Version.IsOlderThan(this.modManifest.Version))
+            {
+                this.monitor.Log($"Remote peer {e.Peer.PlayerID} is running on outdated Quest Framework {qfModPeer.Version}", LogLevel.Warn);
+            }
+            else
+            {
+                this.monitor.Log($"Remote peer {e.Peer.PlayerID} is running on Quest Framework {qfModPeer.Version}");
+            }
+
+            var store = new QuestStateStoreData
+            {
+                { e.Peer.PlayerID, this.questStateStore.GetPayloadList(e.Peer.PlayerID) }
+            };
+            var stats = this.statsManager.GetStats();
+            var message = new InitalMessage(this.questController.GetQuestIds(), store, stats);
+
+            this.helper.SendMessage(
+                message, "Init", new[] { this.modManifest.UniqueID }, new[] { e.Peer.PlayerID });
+            this.monitor.Log($"Sent quests initial state to {e.Peer.PlayerID}");
         }
 
         public void Reset()
