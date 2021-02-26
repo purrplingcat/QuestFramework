@@ -227,6 +227,10 @@ namespace QuestFramework.Framework.ContentPacks
                     ConversationTopicHelper.AddConversationTopic(questData.ConversationTopic.AddWhenQuestCompleted);
                 if (!string.IsNullOrEmpty(questData.ConversationTopic?.RemoveWhenQuestCompleted))
                     ConversationTopicHelper.RemoveConversationTopic(questData.ConversationTopic.RemoveWhenQuestCompleted);
+                if (!string.IsNullOrEmpty(questData.AddMailOnComplete))
+                    MailHelper.AddMail(questData.AddMailOnComplete);
+                if (!string.IsNullOrEmpty(questData.RemoveMailOnComplete))
+                    MailHelper.RemoveMail(questData.RemoveMailOnComplete);
             };
             managedQuest.Removed += (_sender, _info) =>
             {
