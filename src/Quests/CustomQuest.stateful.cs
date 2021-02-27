@@ -79,6 +79,7 @@ namespace QuestFramework.Quests
             {
                 this.ClearState();
                 this.State = this.PrepareState();
+                this.OnStateRestored();
                 return;
             }
 
@@ -95,6 +96,16 @@ namespace QuestFramework.Quests
             {
                 this.State = payload.StateData.ToObject<TState>();
             }
+
+            this.OnStateRestored();
+        }
+
+        protected virtual void OnStateRestored()
+        {
+        }
+
+        protected virtual void OnStateReset()
+        {
         }
 
         private void ClearState()
@@ -159,6 +170,7 @@ namespace QuestFramework.Quests
             if (this.State is IPersistentState resetableState)
             {
                 resetableState.Reset();
+                this.OnStateReset();
                 this.PerformSync();
                 return;
             }
@@ -169,6 +181,7 @@ namespace QuestFramework.Quests
             }
 
             this.State = this.PrepareState();
+            this.OnStateReset();
             this.PerformSync();
         }
 
