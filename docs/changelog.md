@@ -2,6 +2,7 @@
 
 ## Upcoming version
 
+- Added offering quest by pick up an item
 - Reworked NPC quest offer system (optimized)
 - Added fields `AddMailOnComplete` and `RemoveMailOnComplete` for content pack quests
 - Show talk bubble mouse cursor when quest should be offered on NPC talk
