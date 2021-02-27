@@ -18,13 +18,7 @@ namespace QuestFramework.Framework.Helpers
 
         public static bool IsSpecialOrderAccepted(string key)
         {
-            foreach (SpecialOrder specialOrder in Game1.player.team.specialOrders)
-            {
-                if (specialOrder.questKey.Value == key)
-                    return true;
-            }
-
-            return false;
+            return Game1.player.team.SpecialOrderActive(key);
         }
     }
 }

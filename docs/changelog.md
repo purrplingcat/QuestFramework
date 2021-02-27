@@ -2,6 +2,7 @@
 
 ## Upcoming version
 
+- Reworked NPC quest offer system (optimized)
 - Added fields `AddMailOnComplete` and `RemoveMailOnComplete` for content pack quests
 - Show talk bubble mouse cursor when quest should be offered on NPC talk
 - Added adjust quest trigger when farmer try talk with NPC

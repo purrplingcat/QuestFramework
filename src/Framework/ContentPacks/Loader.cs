@@ -73,11 +73,11 @@ namespace QuestFramework.Framework.ContentPacks
 
         private void Prepare(Content content)
         {
-            foreach (var schedule in content.Offers)
+            foreach (var offer in content.Offers)
             {
-                if (!schedule.QuestName.Contains('@'))
+                if (!offer.QuestName.Contains('@'))
                 {
-                    schedule.QuestName = $"{schedule.QuestName}@{content.Owner.Manifest.UniqueID}";
+                    offer.QuestName = $"{offer.QuestName}@{content.Owner.Manifest.UniqueID}";
                 }
             }
         }
