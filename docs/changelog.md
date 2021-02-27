@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.4
+
+- Fixed problem with quest type id reintegration
+- Refactored quest reintegration and better log messages
+
 ## 1.3.3
 
 - Optimized NPC offer indicator performance

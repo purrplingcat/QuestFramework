@@ -75,7 +75,7 @@ namespace QuestFramework.Framework.Controllers
                         q.vanillaQuest.questTitle = q.managedQuest.Title; // For more safety
                     }
 
-                    this.monitor.Log($"Refresh managed quests info in questlog for player `{farmhand.UniqueMultiplayerID}` aka `{farmhand.Name}`.");
+                    this.monitor.Log($"Refresh managed quests info in questlog for player `{farmhand.Name}` ({farmhand.UniqueMultiplayerID}).");
                 }
             }
         }
@@ -102,7 +102,7 @@ namespace QuestFramework.Framework.Controllers
                     q.vanillaQuest.questTitle = q.vanillaQuest._questTitle; // For more safety
                 }
 
-                this.monitor.Log($"Managed quests in questlog for player `{farmhand.UniqueMultiplayerID}` aka `{farmhand.Name}` sanitized.");
+                this.monitor.Log($"Managed quests in questlog for player `{farmhand.Name}` ({farmhand.UniqueMultiplayerID}) sanitized.");
             }
         }
 
@@ -123,42 +123,48 @@ namespace QuestFramework.Framework.Controllers
 
             this.ResetIds(this.QuestManager.Quests);
             var newIds = this.AssignIds(QuestManager.ID_ROOT, this.QuestManager.Quests);
+            this.questIdCache = newIds;
 
-            if (oldIds != null && Context.IsWorldReady)
+            if (oldIds == null || !Context.IsWorldReady)
+                return;
+
+            foreach (var farmhand in Game1.getAllFarmers())
             {
-                foreach (var farmhand in Game1.getAllFarmers())
+                foreach (var oldIdName in oldIds)
                 {
-                    foreach (var oldId in oldIds)
+                    int oldId = oldIdName.Value;
+                    string questKey = oldIdName.Key;
+                    CustomQuest managedQuest = this.QuestManager.Fetch(questKey);
+
+                    if (!farmhand.hasQuest(oldIdName.Value))
+                        continue;
+
+                    if (managedQuest != null && newIds.TryGetValue(questKey, out int newId))
                     {
-                        if (!farmhand.hasQuest(oldId.Value))
+                        Quest quest = farmhand.questLog.FirstOrDefault(q => q.id.Value == oldId);
+                        int questType = managedQuest.CustomTypeId;
+
+                        if (quest == null)
+                        {
+                            this.monitor.Log($"Quest `{managedQuest.GetFullName()}` is no longer in {farmhand.Name}'s questlog (player id: {farmhand.UniqueMultiplayerID}) - No fix needed.");
                             continue;
-
-                        var relevantNameIds = newIds.Where(i => i.Key == oldId.Key);
-                        if (relevantNameIds.Any())
-                        {
-                            var relevantNameIdPair = relevantNameIds.First();
-                            var quest = farmhand.questLog.Where(q => q.id.Value == oldId.Value).FirstOrDefault();
-                            var managedQuest = this.QuestManager.Fetch(relevantNameIdPair.Key);
-                            var questType = this.QuestManager.Fetch(relevantNameIdPair.Key).CustomTypeId;
-
-                            quest.id.Value = relevantNameIdPair.Value;
-                            // quest.currentObjective = quest.id.Value.ToString();
-                            quest.questType.Value = questType != -1
-                                ? questType
-                                : (int)managedQuest.BaseType;
-
-                            this.monitor.Log($"Updated ID for quest in quest log: #{oldId.Value} -> #{relevantNameIdPair.Value} in {farmhand.Name}'s questlog (player id: {farmhand.UniqueMultiplayerID}).");
                         }
-                        else
-                        {
-                            farmhand.removeQuest(oldId.Value);
-                            this.monitor.Log($"Removed abandoned quest #{oldId.Value} from {farmhand.Name}'s questlog (player id: {farmhand.UniqueMultiplayerID}).");
-                        }
+
+                        quest.id.Value = newId;
+                        // quest.currentObjective = quest.id.Value.ToString();
+                        quest.questType.Value = questType != -1
+                            ? questType
+                            : managedQuest.BaseType.ToVanillaTypeId();
+
+                        this.monitor.Log($"Fixed quest `{managedQuest.GetFullName()}` (#{oldId} -> #{newId}) in {farmhand.Name}'s questlog (player id: {farmhand.UniqueMultiplayerID}).");
+                    }
+                    else
+                    {
+                        farmhand.removeQuest(oldIdName.Value);
+                        this.monitor.Log($"Removed unknown quest `{questKey}` #{oldIdName.Value} from {farmhand.Name}'s questlog (player id: {farmhand.UniqueMultiplayerID}).");
                     }
                 }
             }
-
-            this.questIdCache = newIds;
         }
 
         internal void RefreshBulletinboardQuestOffer()
