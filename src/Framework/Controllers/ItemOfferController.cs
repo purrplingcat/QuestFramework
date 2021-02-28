@@ -1,4 +1,5 @@
 ﻿using QuestFramework.Framework;
+using QuestFramework.Framework.Helpers;
 using QuestFramework.Offers;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -40,7 +41,7 @@ namespace QuestFramework.Framework.Controllers
         {
             foreach (var offer in offers)
             {
-                if (!CheckItemContextTags(item, offer.OfferDetails.ItemContextTags))
+                if (!ItemHelper.CheckItemContextTags(item, offer.OfferDetails.ItemContextTags))
                     continue;
 
                 int id = this._questManager.ResolveGameQuestId(offer.QuestName);
@@ -86,35 +87,6 @@ namespace QuestFramework.Framework.Controllers
         {
             return item.modData.ContainsKey(this._pickedFlag) 
                 && item.modData[this._pickedFlag] == "true";
-        }
-
-        private static bool CheckItemContextTags(Item item, string tags)
-        {
-            if (string.IsNullOrEmpty(tags))
-                return true;
-
-            bool fail = false;
-
-            foreach (string tagArray in tags.Split(','))
-            {
-                bool foundMatch = false;
-
-                foreach (string tag in tagArray.Split('/'))
-                {
-                    if (item.HasContextTag(tag.Trim()))
-                    {
-                        foundMatch = true;
-                        break;
-                    }
-                }
-
-                if (!foundMatch)
-                {
-                    fail = true;
-                }
-            }
-
-            return !fail;
         }
     }
 }

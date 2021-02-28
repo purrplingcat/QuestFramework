@@ -2,6 +2,7 @@
 
 ## Upcoming version
 
+- Added new common global condition: `HasItemInInvertory`
 - Quest offer manager now internally checks if offering quest is already in log (and offers it ONLY if not)
 - Added offering quest by pick up an item
 - Reworked NPC quest offer system (optimized)
