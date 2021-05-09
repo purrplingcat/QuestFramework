@@ -42,6 +42,7 @@ namespace QuestFramework.Patches
                     {
                         // This is fix for use custom dialogue text for slay monster quest type
                         (__result as SlayMonsterQuest).dialogueparts.Clear();
+                        (__result as SlayMonsterQuest).reward.Value = customQuest.Reward;
                     }
 
                     if (!Game1.player.hasQuest(id))
