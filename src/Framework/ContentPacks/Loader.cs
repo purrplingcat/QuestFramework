@@ -159,9 +159,10 @@ namespace QuestFramework.Framework.ContentPacks
                     continue;
                 }
 
-                if (location.doesTileHaveProperty(dropBox.Value.Tile.X, dropBox.Value.Tile.Y, "Action", "Buildings") != null)
+                string previousAction = location.doesTileHaveProperty(dropBox.Value.Tile.X, dropBox.Value.Tile.Y, "Action", "Buildings");
+                if (previousAction != null)
                 {
-                    this.Monitor.Log($"({dropBox.Key.Manifest.UniqueID}) Cannot add drop box on tile `{dropBox.Value.Tile}` in `{dropBox.Value.Location}`: This tile is reserved for another action.", LogLevel.Error);
+                    this.Monitor.Log($"({dropBox.Key.Manifest.UniqueID}) Cannot add drop box on tile `{dropBox.Value.Tile}` in `{dropBox.Value.Location}`: This tile is reserved for another action (`{previousAction}`).", LogLevel.Error);
                     continue;
                 }
 

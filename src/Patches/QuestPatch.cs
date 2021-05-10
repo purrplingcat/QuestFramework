@@ -38,10 +38,11 @@ namespace QuestFramework.Patches
 
                 if (__result != null && customQuest != null)
                 {
-                    if (customQuest.BaseType == QuestType.Monster && __result is SlayMonsterQuest)
+                    if (customQuest.BaseType == QuestType.Monster && __result is SlayMonsterQuest slayQuest)
                     {
                         // This is fix for use custom dialogue text for slay monster quest type
-                        (__result as SlayMonsterQuest).dialogueparts.Clear();
+                        slayQuest.dialogueparts.Clear();
+                        slayQuest.reward.Value = customQuest.Reward;
                     }
 
                     if (!Game1.player.hasQuest(id))
