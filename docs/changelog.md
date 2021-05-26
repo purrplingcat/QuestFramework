@@ -2,6 +2,8 @@
 
 ## Upcoming version
 
+- Fixed minor issue when resizing while CustomBoard is open
+- Fixed controller input problem on CustomBoards
 - Added better log for used action tiles for custom dropboxes
 - Fixed slay monster quest reward problem
 - Added new common global condition: `HasItemInInvertory`

@@ -16,7 +16,7 @@ namespace QuestFramework.Framework.Menus
     {
         public static readonly Dictionary<string, Quest> todayQuests;
 
-        public ClickableComponent AcceptQuestButton;
+        public readonly ClickableComponent acceptQuestButton;
         private readonly Texture2D _billboardTexture;
         private readonly Quest _offeredQuest;
         private readonly string _boardName;
@@ -79,7 +79,7 @@ namespace QuestFramework.Framework.Menus
                 width: 48,
                 height: 48);
 
-            this.AcceptQuestButton = new ClickableComponent(acceptButtonBounds, "")
+            this.acceptQuestButton = new ClickableComponent(acceptButtonBounds, "")
             {
                 myID = 0,
                 visible = false,
@@ -97,7 +97,7 @@ namespace QuestFramework.Framework.Menus
             if (!string.IsNullOrEmpty(boardName) && todayQuests.TryGetValue(boardName, out Quest quest))
             {
                 this._offeredQuest = quest;
-                this.AcceptQuestButton.visible = !quest.accepted.Value;
+                this.acceptQuestButton.visible = !quest.accepted.Value;
             }
             
             this._billboardTexture = boardTexture ?? Game1.content.Load<Texture2D>("LooseSprites\\Billboard");
@@ -124,7 +124,7 @@ namespace QuestFramework.Framework.Menus
 
         public override void receiveLeftClick(int x, int y, bool playSound = true)
         {
-            if (this.AcceptQuestButton.visible && this.AcceptQuestButton.containsPoint(x, y))
+            if (this.acceptQuestButton.visible && this.acceptQuestButton.containsPoint(x, y))
             {
 
                 if (this._offeredQuest == null || !this._offeredQuest.IsManaged())
@@ -132,7 +132,7 @@ namespace QuestFramework.Framework.Menus
 
                 if (Game1.player.hasQuest(this._offeredQuest.id.Value))
                 {
-                    this.AcceptQuestButton.visible = false;
+                    this.acceptQuestButton.visible = false;
                     return;
                 }
 
@@ -145,7 +145,7 @@ namespace QuestFramework.Framework.Menus
                 this._offeredQuest.daysLeft.Value = managedQuestOfTheDay.DaysLeft;
                 this._offeredQuest.dayQuestAccepted.Value = Game1.Date.TotalDays;
                 Game1.player.questLog.Add(this._offeredQuest);
-                this.AcceptQuestButton.visible = false;
+                this.acceptQuestButton.visible = false;
             }
 
             base.receiveLeftClick(x, y, playSound);
@@ -157,10 +157,10 @@ namespace QuestFramework.Framework.Menus
 
             if (this._offeredQuest != null && !this._offeredQuest.accepted.Value)
             {
-                float oldScale = this.AcceptQuestButton.scale;
-                this.AcceptQuestButton.scale = (this.AcceptQuestButton.bounds.Contains(x, y) ? 1.5f : 1f);
+                float oldScale = this.acceptQuestButton.scale;
+                this.acceptQuestButton.scale = (this.acceptQuestButton.bounds.Contains(x, y) ? 1.5f : 1f);
 
-                if (this.AcceptQuestButton.scale > oldScale)
+                if (this.acceptQuestButton.scale > oldScale)
                 {
                     Game1.playSound("Cowboy_gunshot");
                 }
@@ -186,11 +186,11 @@ namespace QuestFramework.Framework.Menus
                 SpriteFont font = (LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.ko) ? Game1.smallFont : Game1.dialogueFont;
                 string description = Game1.parseText(this._offeredQuest.questDescription, font, 640);
                 Utility.drawTextWithShadow(b, description, font, new Vector2(this.xPositionOnScreen + 320 + 32, this.yPositionOnScreen + 256), Game1.textColor, 1f, -1f, -1, -1, 0.5f);
-                if (this.AcceptQuestButton.visible)
+                if (this.acceptQuestButton.visible)
                 {
                     hide_mouse = false;
-                    IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 373, 9, 9), this.AcceptQuestButton.bounds.X, this.AcceptQuestButton.bounds.Y, this.AcceptQuestButton.bounds.Width, this.AcceptQuestButton.bounds.Height, (this.AcceptQuestButton.scale > 1f) ? Color.LightPink : Color.White, 4f * this.AcceptQuestButton.scale);
-                    Utility.drawTextWithShadow(b, Game1.content.LoadString("Strings\\UI:AcceptQuest"), Game1.dialogueFont, new Vector2(this.AcceptQuestButton.bounds.X + 12, this.AcceptQuestButton.bounds.Y + (LocalizedContentManager.CurrentLanguageLatin ? 16 : 12)), Game1.textColor);
+                    IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 373, 9, 9), this.acceptQuestButton.bounds.X, this.acceptQuestButton.bounds.Y, this.acceptQuestButton.bounds.Width, this.acceptQuestButton.bounds.Height, (this.acceptQuestButton.scale > 1f) ? Color.LightPink : Color.White, 4f * this.acceptQuestButton.scale);
+                    Utility.drawTextWithShadow(b, Game1.content.LoadString("Strings\\UI:AcceptQuest"), Game1.dialogueFont, new Vector2(this.acceptQuestButton.bounds.X + 12, this.acceptQuestButton.bounds.Y + (LocalizedContentManager.CurrentLanguageLatin ? 16 : 12)), Game1.textColor);
                 }
             }
 
