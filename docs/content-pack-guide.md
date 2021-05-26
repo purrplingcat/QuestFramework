@@ -192,7 +192,7 @@ You can define custom quest via setup value `Custom` into field `Type` or in for
 
 *Trigger*: Custom defined. In JSON api use hooks instead for handle your pure JSON custom quest. If you target a custom quest type defined by any other mod in your JSON content pack, follow instructions of the source mod of this quest type.
 
-**Needs more quest types**
+**Needs more quest types?**
 
 The [Quest Essentials](https://www.nexusmods.com/stardewvalley/????) offers some new custom types for Quest Framework, like multi-staged quests, earn money quest type and etc.
 
