@@ -91,6 +91,8 @@ Trigger           |           | `string` Completion trigger (see quest types for
 FriendshipGain    |           | `{[string]: int}` Additional friendship points for enumarated NPCs which player gains after this quest was completed.
 [Hooks](#hooks) || `Hook[]` Quest hooks (see hooks for more info)
 [ConversationTopic](#conversation-topic) || `ConversationTopic` Add or remove conversation topic (see conversation topic for more info)
+AddMailOnComplete |           | Receive the mail(s) by player after quest is completed. Supported multiple letter names. See [Completion Mails](#completion-mails) for more details
+RemoveMailOnComplete |        | Remove already received mail from player (clear mail flag) after quest is completed. Supported multiple letter names. See [Completion Mails](#completion-mails) for more details
 
 #### Example
 
@@ -190,6 +192,10 @@ You can define custom quest via setup value `Custom` into field `Type` or in for
 
 *Trigger*: Custom defined. In JSON api use hooks instead for handle your pure JSON custom quest. If you target a custom quest type defined by any other mod in your JSON content pack, follow instructions of the source mod of this quest type.
 
+**Needs more quest types**
+
+The [Quest Essentials](https://www.nexusmods.com/stardewvalley/????) offers some new custom types for Quest Framework, like multi-staged quests, earn money quest type and etc.
+
 ### Rewards
 
 There are supported some reward types for quests. You can specify reward type in field `RewardType` in your quest definition. Reward is paid to player after quest is completed by clicking the reward in questlog menu (in quest details for completed quest)
@@ -256,6 +262,45 @@ Weapon      | Which weapon player gets by complete this quest. You can specify y
       "RewardType": "Weapon"
       "Cancelable": true,
       "Trigger": "Bat 10", // Kill 10 bats
+    }
+  ]
+}
+```
+
+### Completion mails
+
+By adding fields `AddMailOnComplete` and/or `RemoveMailOnComplete` you can specify which mails will player receive after quest is completed, or which already received mail will be forgotten by player. 
+
+Add mail on complete is usefull for controll your custom events based on quests or for some other purposes. You can use mail name of received mail with Content Patcher in their condition system for control loading assets in dependency on quest completion and etc. You can specify multiple mails and with some flags. The format of a mail entry is:
+
+ ```
+ <letterId> [noletter|tomorrow|everyone]
+ ```
+ 
+ - `noletter` mail is received immediatelly without letter in farmer's mailbox
+ - `tomorrow` mail will be received at morning (next day)
+ - `everyone` mail will be received by farmer and by all farmhands recognized in multiplayer game (for single player is the same behaviour as without this flag)
+
+You can combine all of these flags per letter record. For the `RemoveMailOnComplete` you can use only the flag `everyone`. Mails to remove are removed immediatelly after complete quest, other flags are ignored and unread mails in the mailbox are not affected.
+
+```js
+{
+  "Format": "1.0",
+  "Quests": [
+    {
+      "Name": "abigail_amethyst1",
+      "Type": "ItemDelivery",
+      "Title": "The purple lunch",
+      "Description": "Abigail are very hungry. She wants to eat something special from mines.",
+      "Objective": "Bring amethyst to Abigail",
+      "DaysLeft": 5,
+      "Reward": "Chocolate Cake",
+      "RewardType": "Object"
+      "RewardAmount": 2, // Player gets two chocolate cakes after complete this quest
+      "Cancelable": true, // This quest can be cancelled by player
+      "Trigger": "Abigail 66", // Bring amethyst to Abby
+      "ReactionText": "Oh, it's looks delicious. I am really hungry."
+      "AddMailOnComplete:" "happy_abby noletter, abby_eats_rocks tomorrow everyone" // two mails will be received after this quest is completed
     }
   ]
 }
