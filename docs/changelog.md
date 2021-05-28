@@ -4,7 +4,7 @@
 
 - Added better log for used action tiles for custom dropboxes
 - Fixed slay monster quest reward problem
-- Added new common global condition: `HasItemInInvertory`
+- Added new common global condition: `HasItemInInventory`
 - Quest offer manager now internally checks if offering quest is already in log (and offers it ONLY if not)
 - Added offering quest by pick up an item
 - Reworked NPC quest offer system (optimized)
