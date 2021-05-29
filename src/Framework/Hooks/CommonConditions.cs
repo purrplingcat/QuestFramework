@@ -50,11 +50,11 @@ namespace QuestFramework.Framework.Hooks
                 ["HasMod"] = (valueToCheck, _) => CheckHasModCondition(valueToCheck),
                 ["Random"] = (valueToCheck, _) => Game1.random.NextDouble() < Convert.ToDouble(valueToCheck) / 100, // Chance is in %
                 ["EPU"] = (valueToCheck, _) => CheckEpuCondition(valueToCheck), // For compatibility with EPU conditions
-                ["HasItemInInvertory"] = CheckItemInInvertoryByTags // Check if player has an item in inventory matches given name or context tags
+                ["HasItemInInventory"] = CheckItemInInventoryByTags // Check if player has an item in inventory matches given name or context tags
             };
         }
 
-        private static bool CheckItemInInvertoryByTags(string valueToCheck, object context)
+        private static bool CheckItemInInventoryByTags(string valueToCheck, object context)
         {
             if (!Context.IsWorldReady)
                 return false;
