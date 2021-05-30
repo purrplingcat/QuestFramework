@@ -2,7 +2,7 @@
 
 namespace QuestFramework.Quests
 {
-    public interface ICompletionArgs
+    public interface ICompletionArgs : ICompletionMessage
     {
         /// <summary>
         /// Interaction with NPC

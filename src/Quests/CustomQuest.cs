@@ -193,7 +193,7 @@ namespace QuestFramework.Quests
         /// </summary>
         /// <param name="completionMessage">Completion message</param>
         /// <returns>Flag if some effects was applied (like progress changed or quest was completed)</returns>
-        public virtual bool OnCompletionCheck(object completionMessage) 
+        public virtual bool OnCompletionCheck(ICompletionMessage completionMessage) 
         {
             return false;
         }

@@ -30,6 +30,8 @@ namespace QuestFramework.Quests
             this.CompletionType = type;
         }
 
+        public string Name => "StardewValley.Quest:CompletionArgs";
+
         /// <summary>
         /// Interaction with NPC
         /// </summary>

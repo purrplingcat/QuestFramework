@@ -120,7 +120,7 @@ namespace QuestFramework.Api
         /// </summary>
         /// <param name="completionMessage">The completion message</param>
         /// <returns></returns>
-        bool CheckForQuestComplete(object completionMessage);
+        bool CheckForQuestComplete(ICompletionMessage completionMessage);
 
         /// <summary>
         /// Check for any managed quest of concrete class type is completed by provided completion message.
@@ -129,13 +129,13 @@ namespace QuestFramework.Api
         /// <typeparam name="TQuest">Quest class type</typeparam>
         /// <param name="completionMessage">The completion message</param>
         /// <returns></returns>
-        bool CheckForQuestComplete<TQuest>(object completionMessage) where TQuest : CustomQuest;
+        bool CheckForQuestComplete<TQuest>(ICompletionMessage completionMessage) where TQuest : CustomQuest;
 
         /// <summary>
         /// Adjust a quest or make some adjustable side-effects by the quest
         /// </summary>
-        /// <param name="adjustMessage">Adjusting message</param>
-        void AdjustQuest(object adjustMessage);
+        /// <param name="adjustTarget">Adjusting message</param>
+        void AdjustQuest(object adjustTarget);
 
         /// <summary>
         /// Get all registered managed quests;

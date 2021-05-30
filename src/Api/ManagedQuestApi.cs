@@ -154,7 +154,7 @@ namespace QuestFramework.Api
             this.CustomBoardController.RegisterBoardTrigger(boardTrigger);
         }
 
-        public bool CheckForQuestComplete(object completionMessage)
+        public bool CheckForQuestComplete(ICompletionMessage completionMessage)
         {
             if (completionMessage == null)
             {
@@ -164,7 +164,7 @@ namespace QuestFramework.Api
             return this.QuestManager.CheckForQuestComplete(completionMessage);
         }
 
-        public bool CheckForQuestComplete<TQuest>(object completionMessage) where TQuest : CustomQuest
+        public bool CheckForQuestComplete<TQuest>(ICompletionMessage completionMessage) where TQuest : CustomQuest
         {
             if (completionMessage == null)
             {

@@ -171,7 +171,7 @@ namespace QuestFramework.Framework
             return quest;
         }
 
-        internal bool CheckForQuestComplete<TQuest>(object completionMessage) where TQuest : CustomQuest
+        internal bool CheckForQuestComplete<TQuest>(ICompletionMessage completionMessage) where TQuest : CustomQuest
         {
             bool worked = false;
             Quest vanillaQuestProxy;
@@ -196,7 +196,7 @@ namespace QuestFramework.Framework
             return worked;
         }
 
-        internal bool CheckForQuestComplete(object completionMessage)
+        internal bool CheckForQuestComplete(ICompletionMessage completionMessage)
         {
             return this.CheckForQuestComplete<CustomQuest>(completionMessage);
         }
