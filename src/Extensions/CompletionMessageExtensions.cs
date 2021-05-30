@@ -22,7 +22,21 @@ namespace QuestFramework.Extensions
 
         public static object[] ToArray(this ICompletionMessage completionMessgage)
         {
-            return JObject.FromObject(completionMessgage).AsJEnumerable().ToArray();
+            return JObject.FromObject(completionMessgage)
+                .AsJEnumerable()
+                .ToArray();
+        }
+
+        public static IDictionary<TKey, TValue> ToDictionary<TKey, TValue>(this ICompletionMessage completionMessage)
+        {
+            return JObject.FromObject(completionMessage)
+                .ToObject<Dictionary<TKey, TValue>>();
+        }
+
+        public static IDictionary<string, string> ToDictionary(this ICompletionMessage completionMessage)
+        {
+            return JObject.FromObject(completionMessage)
+                .ToObject<Dictionary<string, string>>();
         }
     }
 }
