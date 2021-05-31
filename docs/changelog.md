@@ -2,6 +2,7 @@
 
 ## Upcoming version
 
+- Enhanced logging for loading content packs and exposing quest types
 - Fixed minor issue when resizing while CustomBoard is open
 - Fixed controller input problem on CustomBoards
 - Added better log for used action tiles for custom dropboxes

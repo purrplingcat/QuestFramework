@@ -129,6 +129,7 @@ namespace QuestFramework.Api
                 throw new ArgumentException("Quest type name contains unallowed characters.", nameof(type));
 
             this.QuestManager.RegisterQuestFactory($"{this.ModUid}/{type}", factory);
+            Monitor.Log($"{this.ModUid} exposed quest type {this.ModUid}/{type}", LogLevel.Debug);
         }
 
         public void ExposeQuestType<TQuest>(string type) where TQuest : CustomQuest, new()

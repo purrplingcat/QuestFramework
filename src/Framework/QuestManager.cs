@@ -109,6 +109,7 @@ namespace QuestFramework.Framework
                 throw new InvalidOperationException($"Quest factory {name} is already registered!");
 
             this.Factories.Add(name, factory);
+            this.monitor.Log($"Registered quest type {name}");
         }
 
         public bool IsManaged(int id)
