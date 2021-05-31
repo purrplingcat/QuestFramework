@@ -7,7 +7,7 @@
 - Fixed controller input problem on CustomBoards
 - Added better log for used action tiles for custom dropboxes
 - Fixed slay monster quest reward problem
-- Added new common global condition: `HasItemInInventory`
+- Added new common global conditions: `HasItemInInventory`, `HasActiveQuest`
 - Quest offer manager now internally checks if offering quest is already in log (and offers it ONLY if not)
 - Added offering quest by pick up an item
 - Reworked NPC quest offer system (optimized)
