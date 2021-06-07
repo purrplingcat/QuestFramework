@@ -51,7 +51,8 @@ namespace QuestFramework.Framework.Hooks
                 ["Random"] = (valueToCheck, _) => Game1.random.NextDouble() < Convert.ToDouble(valueToCheck) / 100, // Chance is in %
                 ["EPU"] = (valueToCheck, _) => CheckEpuCondition(valueToCheck), // For compatibility with EPU conditions
                 ["HasItemInInventory"] = CheckItemInInventoryByTags, // Check if player has an item in inventory matches given name or context tags
-                ["HasActiveQuest"] = (valueToCheck, _) => HasActiveQuest(valueToCheck?.Split(' '))
+                ["HasActiveQuest"] = (valueToCheck, _) => HasActiveQuest(valueToCheck?.Split(' ')),
+                ["CurrentLocation"] = (valueToCheck, _) => Game1.player?.currentLocation?.Name == valueToCheck,
             };
         }
 

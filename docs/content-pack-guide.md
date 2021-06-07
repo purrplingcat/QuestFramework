@@ -532,6 +532,7 @@ Random                   | `52` or `22.272`           | A random chance in % (0 
 EPU                      | EPU string like `!z spring/t 600 1000` | Condition processed by [Expanded Preconditions Utility](https://www.nexusmods.com/stardewvalley/mods/6529). For use this condition, EPU must be installed in SDV mods folder. See [EPU docs](https://github.com/ChroniclerCherry/stardew-valley-mods/blob/master/ExpandedPreconditionsUtility/README.md) for more information.
 HasItemInInventory       | `Battery Pack`, `item_amethyst`, `food_sweet, food_bakery` | Check if player has an item in inventory matches given name or context tags.
 HasActiveQuest           | `myQuest@purrplingcat.myquestpack`, `myQuest@purrplingcat.myquestpack another@obamoose.questpack` | Check if one or more of named quests are active in player's quest log. Named quests must be managed by QF.
+CurrentLocation          | `Town`, `Farm` and etc | Check if player's current location is the specified location in this condition by location name.
 
 Every condition name enlisted in this common conditions list you can prefix with `not:` for negate condition result.
 For example: `not:EventSeen` means event with specified id was not seen by player;
