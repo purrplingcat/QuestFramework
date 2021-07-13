@@ -2,7 +2,7 @@
 
 namespace QuestFramework.Quests.State
 {
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
     public class ActiveStateAttribute : Attribute
     {
         public string Name { get; }

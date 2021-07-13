@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,11 @@ namespace QuestFramework.Framework.Helpers
         {
             return JObject.FromObject(toBeCloned)
                 .ToObject<T>();
+        }
+
+        public static bool IsSpecialOrderAccepted(string key)
+        {
+            return Game1.player.team.SpecialOrderActive(key);
         }
     }
 }
