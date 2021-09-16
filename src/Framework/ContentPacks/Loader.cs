@@ -94,8 +94,8 @@ namespace QuestFramework.Framework.ContentPacks
 
             if (content.Quests == null || !content.Quests.Any())
             {
-                this.Monitor.Log($"Content pack `{content.Owner.Manifest.Name}` contains no quests.", LogLevel.Error);
-                isValid = false;
+                this.Monitor.Log($"Content pack `{content.Owner.Manifest.Name}` contains no quests.", LogLevel.Debug);
+                content.Quests = new List<QuestData>();
             }
 
             return isValid;
