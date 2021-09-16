@@ -1,7 +1,7 @@
 # Changelog
 
 ## Upcoming version
-
+- Added Hungarian translation by martin66789 and spanish translation by Carlos
 - Fixed minor issue when resizing while CustomBoard is open
 - Fixed controller input problem on CustomBoards
 - Added better log for used action tiles for custom dropboxes
