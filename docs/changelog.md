@@ -3,6 +3,7 @@
 ## Upcoming version
 
 - Added Hungarian translation by martin66789 and spanish translation by Carlos
+- Updated Harmony references to work with Harmony2.0
 - Enhanced logging for loading content packs and exposing quest types
 - Fixed minor issue when resizing while CustomBoard is open
 - Fixed controller input problem on CustomBoards

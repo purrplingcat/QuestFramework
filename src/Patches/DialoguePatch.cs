@@ -1,4 +1,4 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using PurrplingCore.Patching;
 using QuestFramework.Framework;
 using StardewModdingAPI;
@@ -75,7 +75,7 @@ namespace QuestFramework.Patches
             return true;
         }
 
-        protected override void Apply(HarmonyInstance harmony)
+        protected override void Apply(Harmony harmony)
         {
             harmony.Patch(
                 original: AccessTools.Method(typeof(Dialogue), nameof(Dialogue.getCurrentDialogue)),
