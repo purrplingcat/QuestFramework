@@ -1,4 +1,4 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using PurrplingCore;
 using PurrplingCore.Patching;
 using QuestFramework.Extensions;
@@ -265,7 +265,7 @@ namespace QuestFramework.Patches
                 new CompletionArgs(n, number1, number2, item, str, questType));
         }
 
-        protected override void Apply(HarmonyInstance harmony)
+        protected override void Apply(Harmony harmony)
         {
             harmony.Patch(
                 original: AccessTools.Method(typeof(Quest), nameof(Quest.getQuestFromId)),

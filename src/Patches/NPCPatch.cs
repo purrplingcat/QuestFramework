@@ -1,4 +1,4 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using PurrplingCore.Patching;
@@ -92,7 +92,7 @@ namespace QuestFramework.Patches
             }
         }
 
-        protected override void Apply(HarmonyInstance harmony)
+        protected override void Apply(Harmony harmony)
         {
             harmony.Patch(
                 original: AccessTools.Method(typeof(NPC), nameof(NPC.checkAction)),

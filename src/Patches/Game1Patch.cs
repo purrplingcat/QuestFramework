@@ -1,4 +1,4 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using PurrplingCore.Patching;
 using QuestFramework.Extensions;
 using QuestFramework.Framework;
@@ -42,7 +42,7 @@ namespace QuestFramework.Patches
             Instance.ItemOfferController.CheckItemOffersQuest(item);
         }
 
-        protected override void Apply(HarmonyInstance harmony)
+        protected override void Apply(Harmony harmony)
         {
             harmony.Patch(
                 original: AccessTools.Method(typeof(Game1), nameof(Game1.CanAcceptDailyQuest)),
