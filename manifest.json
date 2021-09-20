@@ -5,7 +5,7 @@
   "Description": "Add, edit and manage your own quests and create new quest types.",
   "UniqueID": "PurrplingCat.QuestFramework",
   "EntryDll": "QuestFramework.dll",
-  "MinimumApiVersion": "3.6.1",
+  "MinimumApiVersion": "3.12.7",
   "UpdateKeys": [
     "Nexus:6414"
   ],
