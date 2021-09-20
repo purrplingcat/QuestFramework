@@ -1,6 +1,6 @@
 ﻿# Quest Framework
 
-**Quest framework** is a Stardew Valley framework mod which provides a tools for work with quests like create custom quests, define custom quest types and handle quests. Support Content Packs and SMAPI mod provided API.
+**Quest framework** is a Stardew Valley framework mod which provides a tools for work with quests like create custom quests, define custom quest types and handle quests. Support Content Packs and SMAPI mod provided API. This mod is recommended to use with [Quest Essentials mod](https://www.nexusmods.com/stardewvalley/mods/8827), the Quest Framework extension.
 
 ## Players
 
@@ -11,6 +11,8 @@
 3. Unpack Quest Framework to the `Mods` folder
 4. Unpack Quest Framework's content packs to the `Mods` folder (follow the pack's instructions)
 5. Run the game using SMAPI
+
+**RECOMENDED:** Instal [Quest Essentials mod](https://www.nexusmods.com/stardewvalley/mods/8827), the extension for Quest Framewok.
 
 ### Requirements
 

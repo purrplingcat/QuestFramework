@@ -360,95 +360,6 @@ Color id | Description
 }
 ```
 
-## Hooks (obsolete)
-
-**HOOKS ARE OBSOLETE! It's not recomended this feature, because it will be removed in future versions**
-
-You can add some "magic" to your custom quests with hooks. Hooks do specified action with your quests when something was triggered in the game.
-
-Hooks has conditions for check if the action of hook will be triggered or not. There are two types of conditions: local and environment. You don't must specify all available conditions. You can specify conditions which you need.
-
-Field  | Description
------- | -----------
-When   | When this hook will be trigered (see hook types)
-Action | Which action will be executed (see actions)
-Has    | Conditions for execute the hook (see conditions and hook types).
-
-#### Example
-
-```js
-{
-  "Format": "1.0",
-  "Quests": [
-    {
-      "Name": "my_custom_quest",
-      "Type": "ItemDelivery", // Vanilla quest type
-      "Title": "The purple lunch",
-      "Description": "Abigail are very hungry. She wants to eat something special from mines.",
-      "Objective": "Bring amethyst to Abigail",
-      "Reward": 300, // 300g
-      "Cancelable": true,
-      "Trigger": "Abigail 66", // Bring amethyst to Abby
-      "ReactionText": "Oh, it's looks delicious. I am really hungry.",
-      "Hooks": [
-         // Quest will be accepted (added to quest log) 
-         // when farmer go near the tree on the west side of graveyard in Town
-         // and when is sunny weather today
-        {
-          "When": "Tile",
-          "Has": {
-            "Location": "Town",
-            "Area": "2038 5573 326 245",
-            "Weather": "sunny"
-          },
-          "Action": "Accept"
-        }
-      ]
-    }
-  ]
-}
-```
-
-### Actions
-
-There are these types of actions:
-
-Action name     | Description
---------------- | -----------
-Complete        | Complete the quest
-Remove          | Remove the quest from player's questlog (quest is not considered complete, just removed)
-CheckIfComplete | Handles completion checker and complete the quest if inner quest conditions are met.
-Accept          | Accept this quest and add it to player's quest log as new quest (has the sign new in quest log).
-
-### Hook types
-
-Some hook types has own specific conditions. See them bellow.
-**NOTE:** For specialized hook type's conditions you cant't use the negation `not:` prefix. This prefix is only for [common conditions](common-environment-conditions) and for global custom conditions.
-
-#### Location
-
-This hook is triggered when player entered or leaved specific location and all other conditions are met.
-
-Local condition | Description
---------------- | -----------
-Enter           | Name of the location the player enter
-Leave           | Name of the location the player left
-
-If you specify both, then the hook action will be triggered when player left the Leave location and entered the Enter location. For example:
-
-Enter condition is `Town` and leave condition is `BusStop`. This hook trigs their action when player entered Town from the Bus Stop.
-
-#### Tile
-
-This hook is triggered when player stands on specific tile position or in specific area of specific location.
-
-Local condition | Description
---------------- | -----------
-Location        | Game location
-Position        | Standing tile position (X, Y). Example `13 10`
-Area            | Specified standing area (X, Y, Width, Height) Example: `2038 5573 326 245`
-TouchAction     | Touch action property value must be this defined value for trig hook's action.
-
 ## Conversation topic
 
 [Conversation topic](https://stardewvalleywiki.com/Modding:Dialogue#Conversation_topics) can make the character speak of certain dialogue when the specific conversation topic is active. Please refer to the conversation topic explanation on the wiki before using this feature. With this field you can make NPCs give dialogue when a quest is accepted, cancelled, and or completed. The respective dialogue itself must be added using [Content patcher](https://github.com/Pathoschild/StardewMods/blob/develop/ContentPatcher/docs/author-guide.md#editdata)
@@ -945,3 +856,92 @@ By place `[quest:<questname> <modUID>]` to the dialogue player get a quest when 
 ```
 
 **NOTE:** By add quest via dialogue in this outbound way, you can't check the QF conditions and no exclamation mark will be shown above NPC head. But in this way you can offer a quest via question dialogue.
+
+## Hooks (obsolete)
+
+**HOOKS ARE OBSOLETE! It's not recomended this feature, because it will be removed in future versions** Some of hooks features are replaced with [Quest Essential's Adventure Quests](docs/adventure-quests.md).
+
+You can add some "magic" to your custom quests with hooks. Hooks do specified action with your quests when something was triggered in the game.
+
+Hooks has conditions for check if the action of hook will be triggered or not. There are two types of conditions: local and environment. You don't must specify all available conditions. You can specify conditions which you need.
+
+Field  | Description
+------ | -----------
+When   | When this hook will be trigered (see hook types)
+Action | Which action will be executed (see actions)
+Has    | Conditions for execute the hook (see conditions and hook types).
+
+#### Example
+
+```js
+{
+  "Format": "1.0",
+  "Quests": [
+    {
+      "Name": "my_custom_quest",
+      "Type": "ItemDelivery", // Vanilla quest type
+      "Title": "The purple lunch",
+      "Description": "Abigail are very hungry. She wants to eat something special from mines.",
+      "Objective": "Bring amethyst to Abigail",
+      "Reward": 300, // 300g
+      "Cancelable": true,
+      "Trigger": "Abigail 66", // Bring amethyst to Abby
+      "ReactionText": "Oh, it's looks delicious. I am really hungry.",
+      "Hooks": [
+         // Quest will be accepted (added to quest log) 
+         // when farmer go near the tree on the west side of graveyard in Town
+         // and when is sunny weather today
+        {
+          "When": "Tile",
+          "Has": {
+            "Location": "Town",
+            "Area": "2038 5573 326 245",
+            "Weather": "sunny"
+          },
+          "Action": "Accept"
+        }
+      ]
+    }
+  ]
+}
+```
+
+### Actions
+
+There are these types of actions:
+
+Action name     | Description
+--------------- | -----------
+Complete        | Complete the quest
+Remove          | Remove the quest from player's questlog (quest is not considered complete, just removed)
+CheckIfComplete | Handles completion checker and complete the quest if inner quest conditions are met.
+Accept          | Accept this quest and add it to player's quest log as new quest (has the sign new in quest log).
+
+### Hook types
+
+Some hook types has own specific conditions. See them bellow.
+**NOTE:** For specialized hook type's conditions you cant't use the negation `not:` prefix. This prefix is only for [common conditions](common-environment-conditions) and for global custom conditions.
+
+#### Location
+
+This hook is triggered when player entered or leaved specific location and all other conditions are met.
+
+Local condition | Description
+--------------- | -----------
+Enter           | Name of the location the player enter
+Leave           | Name of the location the player left
+
+If you specify both, then the hook action will be triggered when player left the Leave location and entered the Enter location. For example:
+
+Enter condition is `Town` and leave condition is `BusStop`. This hook trigs their action when player entered Town from the Bus Stop.
+
+#### Tile
+
+This hook is triggered when player stands on specific tile position or in specific area of specific location.
+
+Local condition | Description
+--------------- | -----------
+Location        | Game location
+Position        | Standing tile position (X, Y). Example `13 10`
+Area            | Specified standing area (X, Y, Width, Height) Example: `2038 5573 326 245`
+TouchAction     | Touch action property value must be this defined value for trig hook's action.
