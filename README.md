@@ -21,7 +21,7 @@
 
 ### Compatibility
 
-Quest Framework is compatible with Stardew Valley 1.4+ on Linux/Mac/Windows, both single-player and multiplayer.
+Quest Framework is compatible with Stardew Valley 1.5+ on Linux/Mac/Windows, both single-player and multiplayer.
 
 ## Modders
 
