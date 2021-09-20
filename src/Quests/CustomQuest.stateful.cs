@@ -21,6 +21,7 @@ namespace QuestFramework.Quests
         /// A state data
         /// </summary>
         public TState State { get; private set; }
+        public bool NeedsSync { get; private set; }
 
         /// <summary>
         /// Create custom quest with state (Statefull quest)
@@ -47,6 +48,12 @@ namespace QuestFramework.Quests
         /// </summary>
         public void Sync()
         {
+            this.NeedsSync = true;
+            this.NeedsUpdate = true;
+        }
+
+        public void PerformSync()
+        {
             var payload = new StatePayload(
                 questName: this.GetFullName(),
                 farmerId: Game1.player.UniqueMultiplayerID,
@@ -72,6 +79,7 @@ namespace QuestFramework.Quests
             {
                 this.ClearState();
                 this.State = this.PrepareState();
+                this.OnStateRestored();
                 return;
             }
 
@@ -88,6 +96,16 @@ namespace QuestFramework.Quests
             {
                 this.State = payload.StateData.ToObject<TState>();
             }
+
+            this.OnStateRestored();
+        }
+
+        protected virtual void OnStateRestored()
+        {
+        }
+
+        protected virtual void OnStateReset()
+        {
         }
 
         private void ClearState()
@@ -113,9 +131,9 @@ namespace QuestFramework.Quests
         {
             base.Update();
 
-            if (this.State is IReactiveState activeState && activeState.WasChanged)
+            if (this.NeedsSync || this.State is IReactiveState activeState && activeState.WasChanged)
             {
-                this.Sync();
+                this.PerformSync();
             }
         }
 
@@ -152,7 +170,8 @@ namespace QuestFramework.Quests
             if (this.State is IPersistentState resetableState)
             {
                 resetableState.Reset();
-                this.Sync();
+                this.OnStateReset();
+                this.PerformSync();
                 return;
             }
 
@@ -162,7 +181,8 @@ namespace QuestFramework.Quests
             }
 
             this.State = this.PrepareState();
-            this.Sync();
+            this.OnStateReset();
+            this.PerformSync();
         }
 
         /// <summary>

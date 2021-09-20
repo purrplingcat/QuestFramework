@@ -2,6 +2,7 @@
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Quests;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace QuestFramework.Extensions
@@ -85,6 +86,16 @@ namespace QuestFramework.Extensions
                 .GetStats(Game1.player.UniqueMultiplayerID);
 
             return stats.GetQuestStatSummary(customQuest.GetFullName()).LastCompleted == null;
+        }
+
+        public static bool CheckGlobalConditions(this CustomQuest customQuest, Dictionary<string, string> conditions, IEnumerable<string> ignore = null, bool ignoreUnknown = false)
+        {
+            return QuestFrameworkMod.Instance.ConditionManager.CheckConditions(conditions, customQuest, ignore, ignoreUnknown);
+        }
+
+        public static bool CheckGlobalCondition(this CustomQuest customQuest, string condition, string value, bool ignoreUnknown = false)
+        {
+            return QuestFrameworkMod.Instance.ConditionManager.CheckCondition(condition, value, customQuest, ignoreUnknown);
         }
     }
 }

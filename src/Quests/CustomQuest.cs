@@ -16,7 +16,7 @@ namespace QuestFramework.Quests
     /// <summary>
     /// Custom quest definition
     /// </summary>
-    public class CustomQuest
+    public class CustomQuest : IDisposable
     {
         private int _customTypeId;
         private string _trigger;
@@ -49,6 +49,11 @@ namespace QuestFramework.Quests
         public QuestLogColors Colors { get; set; }
         public List<Hook> Hooks { get; set; }
         public Dictionary<string, int> FriendshipGain { get; }
+
+        public virtual void OnRegister()
+        {
+        }
+
         public Dictionary<string, string> Tags { get; }
 
         public string Name
@@ -61,6 +66,10 @@ namespace QuestFramework.Quests
 
                 this._name = value;
             }
+        }
+
+        public virtual void OnAdjust(object adjustMessage)
+        {
         }
 
         public string Trigger 
@@ -104,6 +113,11 @@ namespace QuestFramework.Quests
             this.Tags = new Dictionary<string, string>();
             this._defaultObjective = new CustomQuestObjective("default", "");
             this._currentObjectives = new List<CustomQuestObjective>();
+            this.OnInitialize();
+        }
+
+        protected virtual void OnInitialize()
+        {
         }
 
         public CustomQuest(string name) : this()
@@ -133,6 +147,11 @@ namespace QuestFramework.Quests
             }
         }
 
+        public void ForceUpdate()
+        {
+            this.NeedsUpdate = true;
+        }
+
         internal void ConfirmAccept(IQuestInfo questInfo)
         {
             StatsManager.AddAcceptedQuest(this.GetFullName());
@@ -151,6 +170,14 @@ namespace QuestFramework.Quests
         /// </summary>
         internal virtual void Update()
         {
+            this.OnUpdate();
+        }
+
+        /// <summary>
+        /// Do some things when quest is updating
+        /// </summary>
+        protected virtual void OnUpdate()
+        {
         }
 
         /// <summary>
@@ -159,6 +186,17 @@ namespace QuestFramework.Quests
         /// If you override this method, be sure to call <code>base.Reset()</code>.
         /// </summary>
         public virtual void Reset() { }
+
+        /// <summary>
+        /// Called when quest completion is checked 
+        /// from <see cref="Farmer.checkForQuestComplete(NPC, int, int, Item, string, int, int)"/> or from QF managed API.
+        /// </summary>
+        /// <param name="completionMessage">Completion message</param>
+        /// <returns>Flag if some effects was applied (like progress changed or quest was completed)</returns>
+        public virtual bool OnCompletionCheck(ICompletionMessage completionMessage) 
+        {
+            return false;
+        }
 
         /// <summary>
         /// Get full quest name in format {questName}@{ownerModUniqueId}
@@ -226,6 +264,17 @@ namespace QuestFramework.Quests
                 return name;
 
             return $"{name}@{this.OwnedByModUid}";
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+        }
+
+
+        public void Dispose()
+        {
+            this.Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using Microsoft.Xna.Framework;
 using PurrplingCore.Patching;
 using QuestFramework.Framework;
@@ -24,7 +24,7 @@ namespace QuestFramework.Patches
             Instance = this;
         }
 
-        protected override void Apply(HarmonyInstance harmony)
+        protected override void Apply(Harmony harmony)
         {
             harmony.Patch(
                 original: AccessTools.Method(typeof(GameLocation), nameof(GameLocation.performTouchAction)),
